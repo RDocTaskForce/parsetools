@@ -1,0 +1,30 @@
+Package: parsetools
+Type: Package
+Title: Parse Tools
+Version: 0.1
+Date: 2016-12-13
+Authors@R: c(
+    person("Andrew", "Redd", , "andrew.redd@hsc.utah.edu", c("aut", "cre")),
+    person("R Documentation Task Force", role=c("aut"))
+    )
+Maintainer: Andrew Redd <andrew.redd@hsc.utah.edu>
+License: GPL-2
+Imports:
+    methods,
+    utils, 
+    tools
+Suggests:
+    testthat
+Description: Tools for dealing with parse data.
+Collate: 
+    'children.R'
+    'checks.R'
+    'is_parse_data.R'
+    'comments.R'
+    'family.R'
+    'get_parse_data.R'
+    'grouping.R'
+    'is_root.R'
+    'parent.R'
+    'zzz.R'
+RoxygenNote: 6.0.1
