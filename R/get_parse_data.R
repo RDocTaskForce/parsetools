@@ -47,7 +47,7 @@ if(F){#!@test
 as_parse_data <- function(df){
     #! Convert data.frame to `parse-data`
     is.valid <- valid_parse_data(df)
-    if (!isTRUE) stop("Cannot convert to parse-data: ", is.valid)
+    if (!isTRUE(is.valid)) stop("Cannot convert to parse-data: ", is.valid)
     sort(structure( fix_eq_assign(classify_comment(df))
                   , class=c( 'parse-data', 'data.frame')
                   ))
@@ -55,8 +55,8 @@ as_parse_data <- function(df){
 if(FALSE){#!@testing
     df <- getParseData(parse(text="rnorm(10,0,1)"))
     expect_is   (as_parse_data(df), 'parse-data')
-    expect_error(as_parse_data(datasets::iris), "identical\\(names\\(df\\).+ is not TRUE")
-    expect_error(as_parse_data(stats::rnorm(10,0,1)), "is.data.frame\\(df\\) is not TRUE")
+    expect_error(as_parse_data(datasets::iris), "Cannot convert to parse-data: names of data do not conform.")
+    expect_error(as_parse_data(stats::rnorm(10,0,1)), "Cannot convert to parse-data: Not a data.frame object")
 }
 
 
@@ -241,7 +241,21 @@ if(FALSE){
 `transform.parse-data` <- function(`_data`, ...)structure(NextMethod(), class=c('parse-data', 'data.frame'))
 
 #' @export
-`[.parse-data` <- function(x,...)structure(NextMethod(), class=c('parse-data', 'data.frame'))
+`[.parse-data` <- function(x, ...){
+    result <- NextMethod()
+    if(inherits(result, 'data-frame')) 
+        structure(result, class=c('parse-data', 'data.frame'))
+    else 
+        result
+}
+if(FALSE){#!@testing
+    pd       <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
+    expect_is(pd, 'parse-data')
+    expect_is(pd[pd$parent==0, ], 'parse-data')
+    expect_false(is(pd[pd$parent==0, 'id'], 'parse-data'))
+}
+
+
 
 #' @export
 `-.parse-data` <- function(e1, e2){

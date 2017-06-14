@@ -1,5 +1,5 @@
 {#######################################################################
-# is_parse_data.R
+# pd_classes.R
 # This file is part of the R package `parsetools`.
 #
 # Author: Andrew Redd

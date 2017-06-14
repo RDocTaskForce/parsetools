@@ -29,11 +29,11 @@ comment.classes <- data.frame(
     , stringsAsFactors = FALSE
     )
 
-classify_comment.character <- function(text){
-    stopifnot(is.character(text))
-    lead <- substring(comment, 1, 2)
-    ifelse( nchar(comment) > 0
-          , ifelse( substring(comment, 1, 1) == "#"
+classify_comment.character <- function(x){
+    stopifnot(is.character(x))
+    lead <- substring(x, 1, 2)
+    ifelse( nchar(x) > 0
+          , ifelse( substring(x, 1, 1) == "#"
                   , ifelse( lead == comment.classes[1, 1], comment.classes[1, 2]
                   , ifelse( lead == comment.classes[2, 1], comment.classes[2, 2]
                   , ifelse( lead == comment.classes[3, 1], comment.classes[3, 2]
@@ -43,39 +43,26 @@ classify_comment.character <- function(text){
                           )))))
                   , "")
           , "")
-
-    
-}
-if(FALSE){#!@testing
-    
-    
-}
-classify_comment <- function(comment){
-    #! classify a comment as a type of comment
-    if(inherits(comment, 'data.frame')){
-        comment <- ._check_parse_data(comment)
-        #! if passed a data.frame the token attribute is modified to
-        #! reflect the new comment.
-        if (inherits(comment, 'parse-data'))
-            return(comment)
-        idx <- comment$token == "COMMENT"
-        comment[idx, "token"] <- Recall(comment[idx, "text"])
-        structure(comment, class=c("parse-data", "data.frame"))
-    } else if(is.character(comment)){
-    } else stop("Unhandled type(", class(comment)[[1L]], ") for comment.text.")
 }
 if(FALSE){#! @testing
-    expect_equal(classify_comment("## normal comment       "), "NORMAL_COMMENT")
-    expect_equal(classify_comment("#' Roxygen comment      "), "ROXYGEN_COMMENT")
-    expect_equal(classify_comment("#! Documentation comment"), "DOC_COMMENT")
-    expect_equal(classify_comment("#< Relative comment     "), "RELATIVE_COMMENT")
-    expect_equal(classify_comment("#^ Continuation comment "), "CONTINUATION_COMMENT")
-    expect_equal(classify_comment("#@ Tag comment          "), "TAG_COMMENT")
+    expect_equal(classify_comment.character("## normal comment       "), "NORMAL_COMMENT")
+    expect_equal(classify_comment.character("#' Roxygen comment      "), "ROXYGEN_COMMENT")
+    expect_equal(classify_comment.character("#! Documentation comment"), "DOC_COMMENT")
+    expect_equal(classify_comment.character("#< Relative comment     "), "RELATIVE_COMMENT")
+    expect_equal(classify_comment.character("#^ Continuation comment "), "CONTINUATION_COMMENT")
+    expect_equal(classify_comment.character("#@ Tag comment          "), "TAG_COMMENT")
     
-    expect_equal(classify_comment("1"), "")
-    
-    
-    pd <- utils::getParseData(parse(text="{
+    expect_equal(classify_comment.character("1"), "")
+}    
+classify_comment.data.frame <- function(x){
+    stopifnot(valid_parse_data(x))
+    idx <- x$token == "COMMENT"
+    x[idx, "token"] <- classify_comment.character(x[idx, "text"])
+    structure(x, class=c("parse-data", "data.frame"))
+}
+if(FALSE){#! @testing
+    x <- 
+    df <- utils::getParseData(parse(text="{
         ## normal comment           
         #' Roxygen comment          
         #! Documentation comment    
@@ -83,11 +70,31 @@ if(FALSE){#! @testing
         #^ Continuation comment     
         #@ Tag comment              
     }"))
+    pd <- classify_comment.data.frame(df)
+    expect_is(pd, 'data.frame')
+    expect_is(pd, 'parse-data')
+    expect_equal( pd$token
+                , c( "expr", "'{'"
+                   , "NORMAL_COMMENT", "ROXYGEN_COMMENT", "DOC_COMMENT"
+                   , "RELATIVE_COMMENT", "CONTINUATION_COMMENT", "TAG_COMMENT"
+                   , "'}'")
+                )
+}
+classify_comment <- function(x)UseMethod("classify_comment")
+if(FALSE){#! @testing
+    df <- utils::getParseData(parse(text="{
+        ## normal comment           
+        #' Roxygen comment          
+        #! Documentation comment    
+        #< Relative comment         
+        #^ Continuation comment     
+        #@ Tag comment              
+    }"))
+    pd <- classify_comment(df)
     comments <- get_comments(pd)
-    pd2 <- classify_comment(comments)
-    expect_is(pd2, 'data.frame')
-    expect_true(is_parse_data(pd2))
-    expect_equal( pd2$token
+    expect_is(comments, 'data.frame')
+    expect_is(comments, 'parse-data')
+    expect_equal( comments$token
                 , c( "NORMAL_COMMENT", "ROXYGEN_COMMENT", "DOC_COMMENT"
                    , "RELATIVE_COMMENT", "CONTINUATION_COMMENT", "TAG_COMMENT"
                    )
@@ -153,7 +160,6 @@ is_doc_comment.data.frame   <- function(x, id=x$id, ...){
     x <- classify_comment(x)
     x[ x$id %in% id, 'token'] %in% comment.classes$class
 }
-
 if(FALSE){#! @testing
     expect_false(is_doc_comment("## normal comment       "))
     expect_true (is_doc_comment("#' Roxygen comment      "))
@@ -188,16 +194,16 @@ function( type = comment.classes$class  #< type of the comments to extract
         x[x$token %in% type, ]
     }
 }
+
 #' @export
 get_doc_comments          <- make_get_comment.classes()
+
 #' @export
 get_relative_comments     <- make_get_comment.classes("RELATIVE_COMMENT")
+
 #' @export
 get_continuation_comments <- make_get_comment.classes("CONTINUATION_COMMENT")
-#' @export
-get_doc_comments          <- make_get_comment.classes(c( "DOC_COMMENT"
-                                                       , "ROXYGEN_COMMENT"
-                                                       ))
+
 #' @export
 get_argument_descriptors  <- make_get_comment.classes(c( "RELATIVE_COMMENT"
                                                        , "CONTINUATION_COMMENT"
@@ -242,24 +248,55 @@ if(FALSE){#! @testing
 }
 
 #' @export
+strip_doc_comment_leads.character <- function(comment, rm.space=TRUE){
+    comment <- gsub("^\\s+", "", comment)    
+    comment <- gsub("^#[!^<'{}@]", "", comment)
+    if(rm.space) comment <- trimws(comment)
+    comment
+}
+if(FALSE){#! @testing
+    expect_equal(strip_doc_comment_leads.character("#  normal comment       "), "#  normal comment")
+    expect_equal(strip_doc_comment_leads.character("#' Roxygen comment      "), "Roxygen comment")
+    expect_equal(strip_doc_comment_leads.character("#! Documentation comment"), "Documentation comment")
+    expect_equal(strip_doc_comment_leads.character("#< Relative comment     "), "Relative comment")
+    expect_equal(strip_doc_comment_leads.character("#^ Continuation comment "), "Continuation comment")
+    expect_equal(strip_doc_comment_leads.character("#@ Tag comment          "), "Tag comment")
+}
+
+#' @export
+strip_doc_comment_leads.data.frame <- function(comment, rm.space=TRUE){
+    pd <- ._check_parse_data(comment)
+    pd$text <- strip_doc_comment_leads.character(pd$text, rm.space=rm.space)
+    pd
+}
+if(FALSE){#! @testing
+    pd <- utils::getParseData(parse(text="{
+        ## normal comment           
+        #' Roxygen comment          
+        #! Documentation comment    
+        #< Relative comment         
+        #^ Continuation comment     
+        #@ Tag comment              
+    }"))
+    comments <- get_comments(pd)
+    pd2 <- strip_doc_comment_leads.data.frame(comments)
+    expect_is(pd2, 'data.frame')
+    expect_is(pd2, 'parse-data')
+    expect_equal( pd2$text
+                , c( "## normal comment", "Roxygen comment"
+                   , "Documentation comment", "Relative comment"
+                   , "Continuation comment", "Tag comment"
+                   )
+                )
+}
+
+#' @export
 strip_doc_comment_leads <-
 function( comment.text  #< The text of the comments.
         , rm.space = TRUE  #< should the space at the beginning of the line be removed.
         ){
     #! Remove the characters identifying a documentation comment.
-    if(is.data.frame(comment.text)){
-        stopifnot(is_parse_data(comment.text))
-        comment.text$text <- Recall(comment.text$text, rm.space=rm.space)
-        comment.text
-    } else if(is.character(comment.text)) {
-        comment.text <- gsub("^\\s+", "", comment.text)    
-        comment.text <- gsub("^#[!^<'{}@]", "", comment.text)
-        if(rm.space){ 
-            comment.text <- gsub("^\\s+", "", comment.text)
-            comment.text <- gsub("\\s+$", "", comment.text)
-        }
-        comment.text
-    } else stop("Unhandled type(", class(comment.text)[[1L]], ") for comment.text.")
+    UseMethod("strip_doc_comment_leads")
 }
 if(FALSE){#! @testing
     expect_equal(strip_doc_comment_leads("#  normal comment       "), "#  normal comment")
@@ -280,7 +317,7 @@ if(FALSE){#! @testing
     comments <- get_comments(pd)
     pd2 <- strip_doc_comment_leads(comments)
     expect_is(pd2, 'data.frame')
-    expect_true(is_parse_data(pd2))
+    expect_is(pd2, 'parse-data')
     expect_equal( pd2$text
                 , c( "## normal comment", "Roxygen comment"
                    , "Documentation comment", "Relative comment"

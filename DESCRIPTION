@@ -19,12 +19,12 @@ Description: Tools for dealing with parse data.
 Collate: 
     'children.R'
     'checks.R'
-    'is_parse_data.R'
+    'pd_classes.R'
     'comments.R'
     'family.R'
     'get_parse_data.R'
     'grouping.R'
-    'is_root.R'
+    'root.R'
     'parent.R'
     'zzz.R'
 RoxygenNote: 6.0.1

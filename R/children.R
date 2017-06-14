@@ -49,7 +49,7 @@ function( pd                        #< The <parse-data> information
 }
 if(FALSE){#! @test
     pd       <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
-    id       <- all_root_ids(pd)
+    id       <- pd[pd$parent==0, 'id']
     kids.ids <- get_child_ids(pd, id, 1, include.self = FALSE)
     expect_equal( kids.ids, c(3,2,5,6,9,10,12,13,16,17,19,20)
                 , info="for default values"

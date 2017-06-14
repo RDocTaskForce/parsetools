@@ -26,8 +26,8 @@
 ._check_id <- function(id){
     #! Verify and/or extract id is valid.
     if (is.data.frame(id)){
-        stopifnot(inherits(id, 'parse-data'))
-        id <- id[['id']]
+        pd <- ._check_parse_data(id)
+        id <- pd[['id']]
     }
     if (is.numeric(id) && !is.integer(id)) 
         id <- as.integer(id)
@@ -51,4 +51,9 @@ if(FALSE){#!@testing
         as_parse_data(pd)
     } else stop("Cannot convert to parse-data.")
 }
-
+if(FALSE){#!@testing
+    df <- getParseData(parse(text='rnorm(10, mean=0, sd=1)'))
+    pd <- ._check_parse_data(df)
+    expect_is(pd, "parse-data")
+    expect_error(._check_parse_data(NULL), "Cannot convert to parse-data.")
+}
