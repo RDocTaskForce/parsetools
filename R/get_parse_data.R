@@ -252,7 +252,7 @@ if(FALSE){#!@testing
     pd       <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
     expect_is(pd, 'parse-data')
     expect_is(pd[pd$parent==0, ], 'parse-data')
-    expect_false(is(pd[pd$parent==0, 'id'], 'parse-data'))
+    expect_false(methods::is(pd[pd$parent==0, 'id'], 'parse-data'))
 }
 
 

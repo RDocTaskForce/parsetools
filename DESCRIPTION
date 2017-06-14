@@ -26,5 +26,6 @@ Collate:
     'grouping.R'
     'root.R'
     'parent.R'
+    'iff_blocks.R'
     'zzz.R'
 RoxygenNote: 6.0.1

@@ -35,7 +35,7 @@
     return(invisible(id))
 }
 if(FALSE){#!@testing
-    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
+    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     
     expect_identical(._check_id(pd), pd$id, info="Passing parse-data")
     expect_error(._check_id(iris)         , info="data.frame but not parse-data")
@@ -52,7 +52,7 @@ if(FALSE){#!@testing
     } else stop("Cannot convert to parse-data.")
 }
 if(FALSE){#!@testing
-    df <- getParseData(parse(text='rnorm(10, mean=0, sd=1)'))
+    df <- getParseData(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     pd <- ._check_parse_data(df)
     expect_is(pd, "parse-data")
     expect_error(._check_parse_data(NULL), "Cannot convert to parse-data.")
