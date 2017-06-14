@@ -291,13 +291,12 @@ if(FALSE){#! @testing
 }
 
 #' @export
+#' @title Remove the characters identifying a documentation comment.
 strip_doc_comment_leads <-
-function( comment.text  #< The text of the comments.
+function( comment          #< The text of the comments or parse data.
         , rm.space = TRUE  #< should the space at the beginning of the line be removed.
-        ){
-    #! Remove the characters identifying a documentation comment.
-    UseMethod("strip_doc_comment_leads")
-}
+        )UseMethod("strip_doc_comment_leads")
+
 if(FALSE){#! @testing
     expect_equal(strip_doc_comment_leads("#  normal comment       "), "#  normal comment")
     expect_equal(strip_doc_comment_leads("#' Roxygen comment      "), "Roxygen comment")
