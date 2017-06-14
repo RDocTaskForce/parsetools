@@ -1,0 +1,12 @@
+# Travis configuration file.
+
+language: r
+cache: packages
+sudo: false
+
+r_packages:
+  - jimhester/covr
+  - testthat
+  
+after_success:
+  - Rscript -e 'covr::codecov()'
