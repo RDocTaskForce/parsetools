@@ -14,8 +14,8 @@ Imports:
     utils, 
     tools
 Suggests:
-    testthat, covr
-Description: Tools for dealing with parse data.
+    testthat
+Description: Tools and utilities for dealing with parse data.
 Collate: 
     'accessors.R'
     'children.R'
