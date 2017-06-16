@@ -14,12 +14,15 @@ Imports:
     utils, 
     tools
 Suggests:
-    testthat
+    testthat, covr
 Description: Tools for dealing with parse data.
 Collate: 
+    'accessors.R'
     'children.R'
     'checks.R'
-    'pd_classes.R'
+    'pd_assign.R'
+    'pd_call.R'
+    'pd_function.R'
     'comments.R'
     'family.R'
     'get_parse_data.R'

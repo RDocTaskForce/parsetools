@@ -182,6 +182,23 @@ function( pd                    #< parse data from `<get_parse_data>`
     pd[pd$id %in% all_root_ids(pd, include.groups=include.groups), ]
     #! @return parse data with for the root nodes.
 }
+if(FALSE){#!@testing
+    pd <- get_parse_data(parse(text={"a <- 1
+        {# section 1
+        b <- 2
+        {# section 2
+        c <- 3
+        }# end of section 1
+        d <- 4
+        }# end of section 2
+        e <- 5
+    "}))
+    expect_equal(all_root_nodes(pd, TRUE)$id   , c(7, 52, 63))
+    expect_equal(all_root_nodes(pd, TRUE)$line1, c(1,  2,  9))
+
+    expect_equal(all_root_nodes(pd, FALSE)$id   , c(7, 19, 31, 47, 63))
+    expect_equal(all_root_nodes(pd, FALSE)$line1, c(1,  3,  5,  7,  9))
+}
 
 #' @export
 ascend_to_root <-

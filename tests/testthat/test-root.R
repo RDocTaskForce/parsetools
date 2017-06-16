@@ -1,6 +1,6 @@
 #! This file was automatically produced by lint on  2017-06-06 12:03:28
 #! changes will be overwritten.
-context('tests extracted from file `../R/root.R`')
+context('tests extracted from file `./R/root.R`')
 test_that("'is_root'", {#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
     expect_true (is_root(pd, 23))
@@ -97,4 +97,21 @@ test_that("'all_root_ids'", {#!@testthat all_root_ids
     "}))
     id <- all_root_ids(pd)
     expect_equal(id, c(43, 61, 74))
+})
+test_that("'all_root_nodes'", {#!@testing
+    pd <- get_parse_data(parse(text={"a <- 1
+        {# section 1
+        b <- 2
+        {# section 2
+        c <- 3
+        }# end of section 1
+        d <- 4
+        }# end of section 2
+        e <- 5
+    "}))
+    expect_equal(all_root_nodes(pd, TRUE)$id   , c(7, 52, 63))
+    expect_equal(all_root_nodes(pd, TRUE)$line1, c(1,  2,  9))
+
+    expect_equal(all_root_nodes(pd, FALSE)$id   , c(7, 19, 31, 47, 63))
+    expect_equal(all_root_nodes(pd, FALSE)$line1, c(1,  3,  5,  7,  9))
 })

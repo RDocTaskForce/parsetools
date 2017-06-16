@@ -121,7 +121,7 @@ get_next_sibling_id <- function(pd, id){
 
 
 #' @export
-get_firstborn_ids <-
+get_firstborn_id <-
 function(pd, id=all_root_ids(pd)){
     id <- ._check_id(id)
     kids <- lapply(id, get_child_ids, pd=pd)
@@ -131,7 +131,7 @@ function(pd, id=all_root_ids(pd)){
 #' @export
 get_firstborn <-
 function(pd, id=all_root_ids(pd)){
-    pd[pd$id %in% get_firstborn_ids(pd, id), ]
+    pd[pd$id %in% get_firstborn_id(pd, id), ]
 }
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"a <- 1

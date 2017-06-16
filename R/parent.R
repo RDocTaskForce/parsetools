@@ -56,8 +56,9 @@ function( pd, id
              )
     if (length(id) > 1) {
             return(lapply( id, get_ancestor_ids, pd=pd
-                         , nancestors = nancestors
-                         , aggregate  = aggregate
+                         , nancestors   = nancestors
+                         , aggregate    = aggregate
+                         , include.self = include.self
                          ))
     } else {
         if (aggregate) ancestors <- if (include.self) id else integer(0)
@@ -83,7 +84,12 @@ if(FALSE){#! @testing
     expect_identical(get_ancestor_ids(pd, 1, nancestors= 0 , aggregate=FALSE, include.self=TRUE),    1L             , info = "nancestors=0, include.self=TRUE")
     
     
-    expect_error(get_ancestor_ids(pd, 1, nancestors= 0 , include.self=FALSE))
+    expect_error(get_ancestor_ids(pd, 1, nancestors=  0, include.self=FALSE))
     expect_error(get_ancestor_ids(pd, 1, nancestors= -1))
-
+    
+    expect_is(get_ancestor_ids(pd, c(11, 18)), 'list')
+    expect_identical(get_ancestor_ids(pd, c(23, 11), Inf, T, T), list(c(23L, 0L), c(11L, 12L, 23L, 0L)))
+    expect_identical(get_ancestor_ids(pd, c(23, 11),  2L, T, T), list(c(23L, 0L), c(11L, 12L, 23L    )))
+    expect_identical(get_ancestor_ids(pd, c(23, 11),  2L, T, F), list(c(     0L), c(     12L, 23L    )))
+    expect_identical(get_ancestor_ids(pd, c(23, 11),  2L, F, F), list(c(     0L), c(          23L    )))
 }

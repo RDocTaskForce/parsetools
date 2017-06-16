@@ -1,6 +1,6 @@
 #! This file was automatically produced by lint on  2017-06-06 12:03:28
 #! changes will be overwritten.
-context('tests extracted from file `../R/comments.R`')
+context('tests extracted from file `./R/comments.R`')
 test_that("'classify_comment.character'", {#! @testing
     expect_equal(classify_comment.character("## normal comment       "), "NORMAL_COMMENT")
     expect_equal(classify_comment.character("#' Roxygen comment      "), "ROXYGEN_COMMENT")
@@ -79,6 +79,18 @@ test_that("'is_doc_comment.data.frame'", {#! @testing
     expect_true (is_doc_comment("#^ Continuation comment "))
     expect_true (is_doc_comment("#@ Tag comment          "))
 
+    pd <- utils::getParseData(parse(text="{
+        ## normal comment           
+        #' Roxygen comment          
+        #! Documentation comment    
+        #< Relative comment         
+        #^ Continuation comment     
+        #@ Tag comment              
+    }"))
+    rtn <- is_doc_comment(pd)
+    expect_is(rtn, 'logical')
+    expect_equal(rtn, c(F,F,F,T,T,T,T,T,F))
+
     pd <- get_parse_data(parse(text="{
         ## normal comment           
         #' Roxygen comment          
@@ -93,20 +105,26 @@ test_that("'is_doc_comment.data.frame'", {#! @testing
 })
 test_that("'get_associated_continuation'", {#! @testing
     pd <- get_parse_data(parse(text="
+    #' A Title for this function
     function( x = 0 #< just a random argument
             , y = 1 #< yet another
                     #^ argument.
             ){x**y}
+    # Regular Comment
     "))
     id <- get_relative_comments(pd)$id[[2]]
     
-    pd[pd$token == 'CONTINUATION_COMMENT', 'id']
     x <- get_associated_continuation(pd, id)
-    expect_equal( x$line1, c(3,4))
-    expect_equal( x$id, c(17,19))
+    expect_equal( x$line1, c(4,5))
+    expect_equal( x$id, c(20,22))
     expect_equal( x$text, c( "#< yet another"
                            , "#^ argument."
                            ))
+    
+    roxy <- get_roxygen_comments(pd)
+    expect_identical(roxy, get_associated_continuation(pd, id = roxy$id))
+
+    expect_error(get_associated_continuation(pd, id = get_normal_comments(pd)$id))
 })
 test_that("'strip_doc_comment_leads.character'", {#! @testing
     expect_equal(strip_doc_comment_leads.character("#  normal comment       "), "#  normal comment")
