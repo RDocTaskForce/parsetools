@@ -56,11 +56,78 @@ test_that("'if structures'", {#!@testing if structures
             alternate
         }
     "}))
-    token(id, pd)
     id <- all_root_ids(pd) # 33
     
     expect_true(is_if_expr(pd, id))
     expect_equal(get_if_predicate_id(pd, id),  7L)
     expect_equal(get_if_branch_id   (pd, id), 18L)
     expect_equal(get_if_alternate_id(pd, id), 30L)
+})
+test_that("'iff_is_tagged'", {#!@testing
+    pd  <- get_parse_data(parse(text={"
+        if(FALSE){#!@tag
+        }
+        if(F){#@tag
+        }
+        if(F){# @tag
+        }
+        {#!@tag 
+        # not an if(F) block
+        }
+        {#@tag
+        }
+        {# @tag
+        }
+        "}))
+    tag <- 'tag'
+    id  <- all_root_ids(pd)
+    expect_equal(length(id), 6)
+    expect_true (iff_is_tagged(pd, tag, id[[1]]))
+    expect_true (iff_is_tagged(pd, tag, id[[3]], FALSE))
+    expect_false(iff_is_tagged(pd, tag, id[[3]], TRUE ))
+    expect_false(iff_is_tagged(pd, tag, id[[6]]))
+    expect_equal(iff_is_tagged(pd, tag, id)
+                , c(T,T,F,F,F,F))
+    expect_equal(iff_is_tagged(pd, tag, id, FALSE)
+                , c(T,T,T,F,F,F))
+                
+    pd <- get_parse_data(parse(text='rnorm(1)'))
+    expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
+    
+    pd <- get_parse_data(parse(text='if(F)#!@tag not in block\nF'))
+    expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
+    
+    pd <- get_parse_data(parse(text='if(F){FALSE}'))
+    expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
+    
+    pd <- get_parse_data(parse(text='if(F){# @tag\nF\n}'))
+    expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
+    
+    pd <- get_parse_data(parse(text='if(F){#@tag\nF\n}'))
+    expect_true(iff_is_tagged(pd, tag, all_root_ids(pd)))    
+})
+test_that("'all_tagged_iff_ids'", {#!@testing
+    pd  <- get_parse_data(parse(text={"
+        if(FALSE){#!@tag
+            # yes
+        }
+        if(F){#@tag
+            # yes
+        }
+        if(F){# @tag
+            # determines doc.only parameter
+        }
+        {#!@tag 
+            # not an if(F) block
+        }
+        {#@tag
+            # no
+        }
+        {# @tag
+            # no
+        }
+        "}))
+    tag <- 'tag'
+    id  <- all_root_ids(pd)
+    tagged.iff.ids <- all_tagged_iff_ids(pd, tag)
 })

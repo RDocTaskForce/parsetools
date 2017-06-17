@@ -56,12 +56,6 @@ if(FALSE){#!@testing
     tag <- 'tag'
     id <- pd$id
     expect_equal(sum(has_tag(pd, tag)), 2)
-
-    tagged <- get_tagged_lines(pd, 'tag')
-    expect_equal(nrow(tagged), 1)
-    expect_true("#! @tag should extract" %in% tagged$text)
-    expect_false("#! @notag{@tag}@ should not extract" %in% tagged$text)
-    expect_false("#! @notag{@tag}@ should not extract." %in% tagged$text)
 }
 
 #' @export
@@ -97,66 +91,25 @@ function( pd, tag
     ids[has_tag(pd, tag, ids)]
 }
 if(FALSE){#!@testing
-    fun <- function(object){
-        #! function with only comment lines
-        #!       @tag   TRUE
-        #!      @@tag   FALSE
-        #! @notag{@tag}@ FALSE
-        #        @tag   TRUE, even though a regular comment    
-        object @tag
-        NULL
-    }
-    pd  <- parsetools::get_parse_data(fun)
+    pd  <- parsetools::get_parse_data(parse(text={"
+        fun <- function(object){
+            #! function with only comment lines
+            #!       @tag   TRUE
+            #!      @@tag   FALSE
+            #! @notag{@tag}@ FALSE
+            #        @tag   TRUE, even though a regular comment    
+            object @tag
+            NULL
+        }
+    "}))
     tag <- 'tag'
     id  <- pd$id
     
-    expect_equal(get_tagged_comment_ids(pd, tag, TRUE ),   13L      )
-    expect_equal(get_tagged_comment_ids(pd, tag, FALSE), c(13L, 19L))
+    expect_equal(get_tagged_comment_ids(pd, tag, TRUE ),   15L      )
+    expect_equal(get_tagged_comment_ids(pd, tag, FALSE), c(15L, 21L))
 }
 
 
-#' @export
-iff_is_tagged <- 
-function( pd, tag, id
-        , doc.only = TRUE
-        , ...
-        ){
-    if (length(id) > 1) return(sapply(id, iff_is_tagged, pd=pd, tag=tag, doc.only=doc.only))
-    if (!is_iff_block(pd, id)) return(FALSE)
-    if (token(. <- get_if_branch_id(pd, id)) != 'expr') return(FALSE)
-    if (token(. <- get_firstborn_id(pd, . )) != "'{'" ) return(FALSE)
-    if (!is_comment(pd, . <- get_next_sibling_id(pd, .))) return(FALSE)
-    if (doc.only && !is_doc_comment(pd, .)) return(FALSE)
-    return(has_tag(pd, tag, .))
-}
-if(FALSE){#!@ testing
-    pd  <- get_parse_data(parse(text={"
-        if(FALSE){#!@tag
-        }
-        if(F){#@tag
-        }
-        if(F){# @tag
-        }
-        {#!@tag 
-        # not an if(F) block
-        }
-        {#@tag
-        }
-        {# @tag
-        }
-        "}))
-    tag <- 'tag'
-    id  <- all_root_ids(pd)
-    expect_equal(length(id), 6)
-    expect_true (iff_is_tagged(pd, tag, id[[1]]))
-    expect_true (iff_is_tagged(pd, tag, id[[3]], FALSE))
-    expect_false(iff_is_tagged(pd, tag, id[[3]], TRUE ))
-    expect_false(iff_is_tagged(pd, tag, id[[6]]))
-    expect_equal(iff_is_tagged(pd, tag, id)
-                , c(T,T,F,F,F,F))
-    expect_equal(iff_is_tagged(pd, tag, id, FALSE)
-                , c(T,T,T,F,F,F))
-}
 
 
 

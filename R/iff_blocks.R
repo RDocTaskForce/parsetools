@@ -35,7 +35,7 @@ function( pd
     id <- ._check_id(id)
     if (length(id) > 1) return(sapply(id, is_iff_block, pd=pd, allow.short=allow.short))
     
-    if (pd[pd$id==id,'token'] != 'expr') return(FALSE)
+    if (token(id) != 'expr') return(FALSE)
     kids <- get_child_ids(pd, id)
     if (length(kids) < 2) return(FALSE)
     if (!identical(pd[match(utils::head(kids, 2), pd$id), 'token'], c("IF", "'('"))) return(FALSE)
@@ -127,7 +127,8 @@ function( pd, id){
     stopifnot(is_if_expr(pd, id))
     kids <- get_child_ids(pd, id)
     if (length(kids)<5) stop("inproper if statement")
-    kids[[5L]]
+    branch.id <- kids[[5L]]
+    #TODO fix when a comment is in the way.
 }
 get_if_alternate_id <- 
 function( pd, id){
@@ -145,7 +146,6 @@ if(FALSE){#!@testing if structures
             alternate
         }
     "}))
-    token(id, pd)
     id <- all_root_ids(pd) # 33
     
     expect_true(is_if_expr(pd, id))
@@ -161,15 +161,16 @@ function( pd, tag, id
         , doc.only = TRUE
         , ...
         ){
-    if (length(id) > 1) return(sapply(id, iff_is_tagged, pd=pd, tag=tag, doc.only=doc.only))
+    if (length(id) > 1) 
+        return(sapply(id, iff_is_tagged, pd=pd, tag=tag, doc.only=doc.only))
     if (!is_iff_block(pd, id)) return(FALSE)
-    if (token(. <- get_if_branch_id(pd, id)) != 'expr') return(FALSE)
-    if (token(. <- get_firstborn_id(pd, . )) != "'{'" ) return(FALSE)
+    if (token(. <- get_if_branch_id(pd, id)) != 'expr')   return(FALSE)
+    if (token(. <- get_firstborn_id(pd, . )) != "'{'" )   return(FALSE)
     if (!is_comment(pd, . <- get_next_sibling_id(pd, .))) return(FALSE)
     if (doc.only && !is_doc_comment(pd, .)) return(FALSE)
     return(has_tag(pd, tag, .))
 }
-if(FALSE){#!@ testing
+if(FALSE){#!@testing
     pd  <- get_parse_data(parse(text={"
         if(FALSE){#!@tag
         }
@@ -196,6 +197,21 @@ if(FALSE){#!@ testing
                 , c(T,T,F,F,F,F))
     expect_equal(iff_is_tagged(pd, tag, id, FALSE)
                 , c(T,T,T,F,F,F))
+                
+    pd <- get_parse_data(parse(text='rnorm(1)'))
+    expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
+    
+    pd <- get_parse_data(parse(text='if(F)#!@tag not in block\nF'))
+    expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
+    
+    pd <- get_parse_data(parse(text='if(F){FALSE}'))
+    expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
+    
+    pd <- get_parse_data(parse(text='if(F){# @tag\nF\n}'))
+    expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
+    
+    pd <- get_parse_data(parse(text='if(F){#@tag\nF\n}'))
+    expect_true(iff_is_tagged(pd, tag, all_root_ids(pd)))    
 }
 
 all_tagged_iff_ids <- 
@@ -204,7 +220,7 @@ function(pd, tag, doc.only=TRUE){
     is.tagged <- iff_is_tagged(pd, tag, id, doc.only=doc.only)
     id[is.tagged]
 }
-if(FALSE){#!@ testing
+if(FALSE){#!@testing
     pd  <- get_parse_data(parse(text={"
         if(FALSE){#!@tag
             # yes
