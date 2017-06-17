@@ -1,6 +1,6 @@
 #! This file was automatically produced by lint on  2017-06-06 12:03:28
 #! changes will be overwritten.
-context('tests extracted from file `./R/pd_assign.R`')
+context('tests extracted from file `/mnt/data/projects/rdtf/parsetools/R/pd_assign.R`')
 test_that("'is_pd_assignment'", {#! @testthat is_pd_assignment
     pd <- get_parse_data(parse(text="x <-  1"))
     expect_true(is_pd_assignment(pd))

@@ -107,3 +107,129 @@ if(FALSE){#!@testing
     iff.ids <- all_iff_ids(pd, root.only=FALSE, ignore.groups = FALSE)
     expect_equal(length(iff.ids), 4)
 }
+
+
+is_if_expr <- 
+function( pd, id){
+    if (length(id)>1) sapply(id, is_if_expr, pd=pd)
+    (token(id) == 'expr') &&
+    (token(get_firstborn_id(pd, id)) == 'IF')
+}
+get_if_predicate_id <- 
+function( pd, id ){
+    stopifnot(is_if_expr(pd, id))
+    kids <- get_child_ids(pd, id)
+    if (length(kids)<5) stop("inproper if statement")
+    kids[[3L]]
+}
+get_if_branch_id <- 
+function( pd, id){
+    stopifnot(is_if_expr(pd, id))
+    kids <- get_child_ids(pd, id)
+    if (length(kids)<5) stop("inproper if statement")
+    kids[[5L]]
+}
+get_if_alternate_id <- 
+function( pd, id){
+    stopifnot(is_if_expr(pd, id))
+    kids <- get_child_ids(pd, id)
+    if (length(kids)<7 || token(kids[[6]]) != 'ELSE') 
+        stop("inproper if-else statement")
+    kids[[7L]]
+}
+if(FALSE){#!@testing if structures
+    pd <- get_parse_data(parse(text={"
+        if(predicate){
+            body
+        } else {
+            alternate
+        }
+    "}))
+    token(id, pd)
+    id <- all_root_ids(pd) # 33
+    
+    expect_true(is_if_expr(pd, id))
+    expect_equal(get_if_predicate_id(pd, id),  7L)
+    expect_equal(get_if_branch_id   (pd, id), 18L)
+    expect_equal(get_if_alternate_id(pd, id), 30L)
+}
+
+
+#' @export
+iff_is_tagged <- 
+function( pd, tag, id
+        , doc.only = TRUE
+        , ...
+        ){
+    if (length(id) > 1) return(sapply(id, iff_is_tagged, pd=pd, tag=tag, doc.only=doc.only))
+    if (!is_iff_block(pd, id)) return(FALSE)
+    if (token(. <- get_if_branch_id(pd, id)) != 'expr') return(FALSE)
+    if (token(. <- get_firstborn_id(pd, . )) != "'{'" ) return(FALSE)
+    if (!is_comment(pd, . <- get_next_sibling_id(pd, .))) return(FALSE)
+    if (doc.only && !is_doc_comment(pd, .)) return(FALSE)
+    return(has_tag(pd, tag, .))
+}
+if(FALSE){#!@ testing
+    pd  <- get_parse_data(parse(text={"
+        if(FALSE){#!@tag
+        }
+        if(F){#@tag
+        }
+        if(F){# @tag
+        }
+        {#!@tag 
+        # not an if(F) block
+        }
+        {#@tag
+        }
+        {# @tag
+        }
+        "}))
+    tag <- 'tag'
+    id  <- all_root_ids(pd)
+    expect_equal(length(id), 6)
+    expect_true (iff_is_tagged(pd, tag, id[[1]]))
+    expect_true (iff_is_tagged(pd, tag, id[[3]], FALSE))
+    expect_false(iff_is_tagged(pd, tag, id[[3]], TRUE ))
+    expect_false(iff_is_tagged(pd, tag, id[[6]]))
+    expect_equal(iff_is_tagged(pd, tag, id)
+                , c(T,T,F,F,F,F))
+    expect_equal(iff_is_tagged(pd, tag, id, FALSE)
+                , c(T,T,T,F,F,F))
+}
+
+all_tagged_iff_ids <- 
+function(pd, tag, doc.only=TRUE){
+    id <- all_iff_ids(pd)
+    is.tagged <- iff_is_tagged(pd, tag, id, doc.only=doc.only)
+    id[is.tagged]
+}
+if(FALSE){#!@ testing
+    pd  <- get_parse_data(parse(text={"
+        if(FALSE){#!@tag
+            # yes
+        }
+        if(F){#@tag
+            # yes
+        }
+        if(F){# @tag
+            # determines doc.only parameter
+        }
+        {#!@tag 
+            # not an if(F) block
+        }
+        {#@tag
+            # no
+        }
+        {# @tag
+            # no
+        }
+        "}))
+    tag <- 'tag'
+    id  <- all_root_ids(pd)
+    tagged.iff.ids <- all_tagged_iff_ids(pd, tag)
+}
+
+
+
+

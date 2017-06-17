@@ -1,6 +1,6 @@
 #! This file was automatically produced by lint on  2017-06-06 12:03:28
 #! changes will be overwritten.
-context('tests extracted from file `./R/get_parse_data.R`')
+context('tests extracted from file `/mnt/data/projects/rdtf/parsetools/R/get_parse_data.R`')
 test_that("'valid_parse_data'", {#!@test
     df <- utils::getParseData(parse(text="rnorm(10,0,1)"))
     expect_true (valid_parse_data(df), 'parse-data')
