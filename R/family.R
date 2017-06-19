@@ -115,9 +115,14 @@ get_sibling_ids <- function(pd, id){
 get_next_sibling_id <- function(pd, id){
     sids <- get_sibling_ids(pd, id)
     . <- which(sids>id)
-    if(length(.)) sids[min(.)] else NA_integer_
+    if (length(.)) sids[min(.)] else NA_integer_
 }
-
+#' @export
+get_prev_sibling_id <- function(pd, id){
+    sids <- get_sibling_ids(pd, id)
+    . <- which(sids<id)
+    if (length(.)) sids[max(.)] else NA_integer_
+}
 
 
 #' @export

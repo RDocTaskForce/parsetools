@@ -31,5 +31,7 @@ Collate:
     'parent.R'
     'tags.R'
     'iff_blocks.R'
+    'pd_if.R'
+    'testing_blocks.R'
     'zzz.R'
 RoxygenNote: 6.0.1

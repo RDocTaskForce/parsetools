@@ -16,6 +16,11 @@ test_that("'has_tag'", {#!@testing
     id <- pd$id
     expect_equal(sum(has_tag(pd, tag)), 2)
 })
+test_that("'clean_tag_comments'", {#!@testing
+    expect_equal( clean_tag_comments("#@testing", "testing")
+                , "#! @testing"
+                )
+})
 test_that("'strip_tag'", {#! @testthat
     expect_equal( strip_tag("@tag should be removed", 'tag')
                 , "should be removed")

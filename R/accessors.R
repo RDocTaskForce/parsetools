@@ -67,3 +67,25 @@ if(FALSE){#!@testing
     expect_equal(nodes(c(45,3, 58), pd), pd[c('45', '3', '58'), ])
     
 }
+
+#@internal
+start_line <- function(id, pd=get('pd', parent.frame())){
+    pd[match(id, pd$id), 'line1']
+}
+
+#@internal
+start_col <- function(id, pd=get('pd', parent.frame())){
+    pd[match(id, pd$id), 'col1']
+}
+
+#@internal
+filename <- function(pd){
+    src            <- attr(pd, 'srcfile')
+    if (!is.null(src)) src$filename else "<UNKNOWN>"
+}
+
+#@internal
+lines <- function(id, pd=get('pd', parent.frame())){
+    text <- utils::getParseText(pd, id)
+    unlist(strsplit(text, '\n', fixed=TRUE))
+}

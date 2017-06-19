@@ -1,5 +1,6 @@
 make_tag_regex <- 
-function( tag              #< tag for pattern
+function( tag              #< tag pattern, interpreted as a regular expression
+                           #^ or alternatives if more that one is passed in. 
         , ...              #< discarded
         ){
     if(length(tag)>1) 
@@ -37,10 +38,20 @@ if(FALSE){#!@
     expect_true(all(grepl(rx, edge.cases, perl=TRUE)))
 }
 
+#' @title Check if there is a documentation `@` tag.
+#' @inheritParams get_child_ids
+#' @param tag tag to test for
+#' @param ... options passed on
+#' @export
 has_tag <- 
 function( pd, tag, id = pd$id, ...){
+    #' @description
+    #' 
+    #' Check if a node of \code{parse-data} identified by \code{id}
+    #' is both a comment and contains a documentation tag itentifed by
+    #' the `@` symbol.
     tag.rx <- make_tag_regex(tag, ...)
-    is_comment(pd, id) & grepl(tag.rx, text(id, pd), perl=TRUE)
+    is_comment(pd, id) & grepl(tag.rx, text(id, pd), perl=TRUE, ignore.case=TRUE)
 }
 if(FALSE){#!@testing
     fun <- function(object){
@@ -58,6 +69,19 @@ if(FALSE){#!@testing
     expect_equal(sum(has_tag(pd, tag)), 2)
 }
 
+clean_tag_comments <- 
+function( x
+        , tag
+        ){
+    tag <- paste0("(", paste(tag, collapse="|"), ")")
+    gsub(paste0("^#@", tag, "\\b"), "#! @\\1", x)
+}
+if(FALSE){#!@testing
+    expect_equal( clean_tag_comments("#@testing", "testing")
+                , "#! @testing"
+                )
+}
+
 #' @export
 strip_tag <-
 function( x     #< text to strip from
@@ -66,6 +90,8 @@ function( x     #< text to strip from
         ){
     #! remove a tag that identified a line.
     pattern <- paste0(make_tag_regex(tag, ...), '\\s*')
+    x <- clean_tag_comments(x, tag)
+    
     gsub( pattern=pattern, replacement='', x
         , perl=TRUE, ignore.case=TRUE)
     #< text with the @ tag removed.

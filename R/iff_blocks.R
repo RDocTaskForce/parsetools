@@ -23,6 +23,13 @@
 #
 }#######################################################################
 
+#@internal
+unquote <- function(x){
+    #! remove quotes from x
+    #! @param x a [character] string.
+    gsub("^('|\")(.*)\\1$", "\\2",x)
+}
+
 #' @export
 is_iff_block <-
 function( pd
@@ -108,53 +115,6 @@ if(FALSE){#!@testing
     expect_equal(length(iff.ids), 4)
 }
 
-
-is_if_expr <- 
-function( pd, id){
-    if (length(id)>1) sapply(id, is_if_expr, pd=pd)
-    (token(id) == 'expr') &&
-    (token(get_firstborn_id(pd, id)) == 'IF')
-}
-get_if_predicate_id <- 
-function( pd, id ){
-    stopifnot(is_if_expr(pd, id))
-    kids <- get_child_ids(pd, id)
-    if (length(kids)<5) stop("inproper if statement")
-    kids[[3L]]
-}
-get_if_branch_id <- 
-function( pd, id){
-    stopifnot(is_if_expr(pd, id))
-    kids <- get_child_ids(pd, id)
-    if (length(kids)<5) stop("inproper if statement")
-    branch.id <- kids[[5L]]
-    #TODO fix when a comment is in the way.
-}
-get_if_alternate_id <- 
-function( pd, id){
-    stopifnot(is_if_expr(pd, id))
-    kids <- get_child_ids(pd, id)
-    if (length(kids)<7 || token(kids[[6]]) != 'ELSE') 
-        stop("inproper if-else statement")
-    kids[[7L]]
-}
-if(FALSE){#!@testing if structures
-    pd <- get_parse_data(parse(text={"
-        if(predicate){
-            body
-        } else {
-            alternate
-        }
-    "}))
-    id <- all_root_ids(pd) # 33
-    
-    expect_true(is_if_expr(pd, id))
-    expect_equal(get_if_predicate_id(pd, id),  7L)
-    expect_equal(get_if_branch_id   (pd, id), 18L)
-    expect_equal(get_if_alternate_id(pd, id), 30L)
-}
-
-
 #' @export
 iff_is_tagged <- 
 function( pd, tag, id
@@ -214,6 +174,7 @@ if(FALSE){#!@testing
     expect_true(iff_is_tagged(pd, tag, all_root_ids(pd)))    
 }
 
+#' @export
 all_tagged_iff_ids <- 
 function(pd, tag, doc.only=TRUE){
     id <- all_iff_ids(pd)
@@ -247,5 +208,118 @@ if(FALSE){#!@testing
 }
 
 
+get_iff_associated_name <-
+function(pd, id){ 
+    prev.id  <- get_prev_sibling_id(pd, id)
+    while (TRUE){
+        if (is.na(prev.id)) return(NULL)
+        if (!is_iff_block(pd, prev.id)) break
+        prev.id <- get_prev_sibling_id(pd, prev.id)
+    }
+    if (is_pd_assignment(pd, prev.id)) {
+        #! If the user does not provide the information string
+        #! it will be infered as the name of the assignment which
+        #! immediately preceeded the block(s).
+        
+        value.id <- get_pd_assign_value_id(pd, prev.id)
+        structure( utils::getParseText(pd, get_pd_assign_variable_id(pd, prev.id))
+                 , type = if (is_pd_function(pd, value.id)) "function_assignment"
+                          else "assignment"
+                 )
+    } else if(is_pd_symbol_call(pd, prev.id)) {
+        switch( text(get_pd_call_symbol_id(pd, prev.id))
+              , setClass = {
+                    args <- get_pd_call_args(pd, prev.id)
+                    #! The names for `setClass` calls will also be inferred.
+                    name <- unquote(args[[if('Class' %in% names(args)) 'Class' else 1L]][1,'text'])
+                    structure(name, type = "setClass")
+                }
+              , setMethod = {
+                    args <- get_pd_call_args(pd, prev.id)
+                    fname <- unquote(args[[ifelse('f' %in% names(args), 'f', 1L)]][1,'text'])
+                    signature <- args[[ifelse('signature' %in% names(args), 'signature', 2L)]]
+                    signature <- paste(unquote(signature$text), collapse=',')
+                    name <- paste(fname, signature, sep='.')
+                    structure(name, type="setMethod")
+                    
+                }
+              , setGeneric = {
+                    args <- get_pd_call_args(pd, prev.id)
+                    fname <- unquote(args[[ifelse('f' %in% names(args), 'f', 1L)]][1,'text'])
+                    structure(fname, type='setGeneric')
+                }
+              , NULL)
+    }
+}
+if(FALSE){#!@testing
+    pd <- get_parse_data(parse(text={'
+    if(F){#!@testing
+        # a malplaced testing block
+        FALSE
+    }
+    hello_world <- function(){
+        print("hello world")
+    }
+    if(FALSE){#!@testthat
+        expect_output(hello_world(), "hello world")
+    }
+    
+    ldf <- data.frame(id = 1:26, letters)
+    if(FALSE){#!@testing
+        # not a function assignment
+    }
+
+    f2 <- function(){stop("this does nothing")}
+    if(F){#! @example
+        hw()
+    }
+    if(F){#! @test
+        expect_error(f2())
+    }
+    
+    setClass("A")
+    if(F){#!@testing 
+        #testing a setClass
+    }
+    
+    setMethod("print", "A")
+    if(F){#!@testing 
+        #testing a setMethod
+    }
+    
+    setGeneric("my_generic", function(x){x})
+    if(F){#!@testing 
+        #testing a setClass
+    }
+    
+    rnorm(10)
+    if(F){#!@testing
+        # no previous name
+    }
+    '}))
+    iff.ids <- all_tagged_iff_ids(pd, c('testing', 'testthat', 'test'))
+    
+    expect_null( get_iff_associated_name(pd, iff.ids[[1L]]), info="iff at beginning")
+    expect_equal( get_iff_associated_name(pd, iff.ids[[2L]])
+                , structure("hello_world", type = "function_assignment")
+                , info="iff after function assignment")
+    expect_equal( get_iff_associated_name(pd, iff.ids[[3L]])
+                , structure("ldf", type = "assignment")
+                , info="iff after other assignment")
+    expect_equal( get_iff_associated_name(pd, iff.ids[[4L]])
+                , structure("f2", type = "function_assignment")
+                , info="iff after other iff")
+    expect_equal( get_iff_associated_name(pd, iff.ids[[5L]])
+                , structure("A", type = "setClass")
+                , info="iff after other iff")
+    expect_equal( get_iff_associated_name(pd, iff.ids[[6L]])
+                , structure("print.A", type = "setMethod")
+                , info="iff after other iff")
+    expect_equal( get_iff_associated_name(pd, iff.ids[[7L]])
+                , structure("my_generic", type = "setGeneric")
+                , info="iff after other iff")
+    expect_null ( get_iff_associated_name(pd, iff.ids[[8L]])
+                , info="following call")
+}
 
 

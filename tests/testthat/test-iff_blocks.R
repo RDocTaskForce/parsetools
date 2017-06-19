@@ -48,21 +48,6 @@ test_that("'all_iff_ids'", {#!@testing
     iff.ids <- all_iff_ids(pd, root.only=FALSE, ignore.groups = FALSE)
     expect_equal(length(iff.ids), 4)
 })
-test_that("'if structures'", {#!@testing if structures
-    pd <- get_parse_data(parse(text={"
-        if(predicate){
-            body
-        } else {
-            alternate
-        }
-    "}))
-    id <- all_root_ids(pd) # 33
-    
-    expect_true(is_if_expr(pd, id))
-    expect_equal(get_if_predicate_id(pd, id),  7L)
-    expect_equal(get_if_branch_id   (pd, id), 18L)
-    expect_equal(get_if_alternate_id(pd, id), 30L)
-})
 test_that("'iff_is_tagged'", {#!@testing
     pd  <- get_parse_data(parse(text={"
         if(FALSE){#!@tag
@@ -130,4 +115,74 @@ test_that("'all_tagged_iff_ids'", {#!@testing
     tag <- 'tag'
     id  <- all_root_ids(pd)
     tagged.iff.ids <- all_tagged_iff_ids(pd, tag)
+})
+test_that("'get_iff_associated_name'", {#!@testing
+    pd <- get_parse_data(parse(text={'
+    if(F){#!@testing
+        # a malplaced testing block
+        FALSE
+    }
+    hello_world <- function(){
+        print("hello world")
+    }
+    if(FALSE){#!@testthat
+        expect_output(hello_world(), "hello world")
+    }
+    
+    ldf <- data.frame(id = 1:26, letters)
+    if(FALSE){#!@testing
+        # not a function assignment
+    }
+
+    f2 <- function(){stop("this does nothing")}
+    if(F){#! @example
+        hw()
+    }
+    if(F){#! @test
+        expect_error(f2())
+    }
+    
+    setClass("A")
+    if(F){#!@testing 
+        #testing a setClass
+    }
+    
+    setMethod("print", "A")
+    if(F){#!@testing 
+        #testing a setMethod
+    }
+    
+    setGeneric("my_generic", function(x){x})
+    if(F){#!@testing 
+        #testing a setClass
+    }
+    
+    rnorm(10)
+    if(F){#!@testing
+        # no previous name
+    }
+    '}))
+    iff.ids <- all_tagged_iff_ids(pd, c('testing', 'testthat', 'test'))
+    
+    expect_null( get_iff_associated_name(pd, iff.ids[[1L]]), info="iff at beginning")
+    expect_equal( get_iff_associated_name(pd, iff.ids[[2L]])
+                , structure("hello_world", type = "function_assignment")
+                , info="iff after function assignment")
+    expect_equal( get_iff_associated_name(pd, iff.ids[[3L]])
+                , structure("ldf", type = "assignment")
+                , info="iff after other assignment")
+    expect_equal( get_iff_associated_name(pd, iff.ids[[4L]])
+                , structure("f2", type = "function_assignment")
+                , info="iff after other iff")
+    expect_equal( get_iff_associated_name(pd, iff.ids[[5L]])
+                , structure("A", type = "setClass")
+                , info="iff after other iff")
+    expect_equal( get_iff_associated_name(pd, iff.ids[[6L]])
+                , structure("print.A", type = "setMethod")
+                , info="iff after other iff")
+    expect_equal( get_iff_associated_name(pd, iff.ids[[7L]])
+                , structure("my_generic", type = "setGeneric")
+                , info="iff after other iff")
+    expect_null ( get_iff_associated_name(pd, iff.ids[[8L]])
+                , info="following call")
 })
