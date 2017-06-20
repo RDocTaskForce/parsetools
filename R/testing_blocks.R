@@ -26,14 +26,20 @@
 
 
 
-.testing.tags <- c("test", "testing", "testthat")
+.testing.tags <- c("test", "tests", "testing", "testthat")
 
 #@internal
 extract_test_block <- function(pd, id){
     #! @param id iff block id, not the content
     pd <- ._check_parse_data(pd)
     id <- ._check_id(id)
-    if (length(id) > 1) return(c(lapply(id, extract_test_block, pd=pd), recursive=TRUE))
+    if (length(id) > 1){
+        .l <- lapply(id, extract_test_block, pd=pd)
+        return(structure( c(.l, recursive=TRUE)
+                        , test.names      = sapply(.l, attr, 'name')
+                        , start.locations = utils::head(cumsum(c(1, sapply(.l, length))),-1)
+                        ))
+    }
     stopifnot(is_iff_block(pd,id))
     content.id  <- get_if_branch_id(pd, id)
     
@@ -181,15 +187,19 @@ if(FALSE){#!@testing
                 , info="following call")
                 
     expect_equal( extract_test_block(pd, iff.ids[2:3])
-                , c( '#line 9 "<text>"'
-                   , 'test_that("\'hello_world\'", {#!@testthat'
-                   , '        expect_output(hello_world(), "hello world")'
-                   , '    })'
-                   , '#line 14 "<text>"'
-                   , 'test_that("\'ldf\'", {#!@testing'
-                   , '        # not a function assignment'
-                   , '    })'
-                   ), info = "multiple ids")
+                , structure(c( '#line 9 "<text>"'
+                             , 'test_that("\'hello_world\'", {#!@testthat'
+                             , '        expect_output(hello_world(), "hello world")'
+                             , '    })'
+                             , '#line 14 "<text>"'
+                             , 'test_that("\'ldf\'", {#!@testing'
+                             , '        # not a function assignment'
+                             , '    })'
+                             )
+                           , test.names = c("hello_world", "ldf")
+                           , start.locations = c(1, 5)
+                           )    
+                , info = "multiple ids")
 
     pd <- get_parse_data(parse(text={"
         if(FALSE){#@testing An info string
@@ -242,14 +252,17 @@ writeLines(text, tmp)
 
 test.blocks <- extract_test_blocks(tmp)
 expect_equal( test.blocks
-            , c( paste0("#line 4 \"", tmp , "\"")
-               , "test_that(\"'hello_world'\", {#!@testthat"
-               , "    expect_output(hello_world(), \"hello world\")"
-               , "})"
-               , paste0("#line 9 \"", tmp , "\"")
-               , "test_that(\"'f2'\", {#! @test"
-               , "    expect_error(f2())"
-               , "})"
-               )
-            , info = "srite to file and read back.")
+            , structure(c( sprintf('#line 4 "%s"', tmp)
+                         , 'test_that("\'hello_world\'", {#!@testthat'
+                         , '    expect_output(hello_world(), "hello world")'
+                         , '})'
+                         , sprintf('#line 9 "%s"', tmp)
+                         , 'test_that("\'f2\'", {#! @test'
+                         , '    expect_error(f2())'
+                         , '})'
+                         )
+                       , test.names = c("hello_world", "f2")
+                       , start.locations = c(1, 5)
+                       )    
+            , info = "Write to file and read back.")
 }
