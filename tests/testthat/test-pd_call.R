@@ -1,6 +1,6 @@
 #! This file was automatically produced by lint on  2017-06-06 12:03:28
 #! changes will be overwritten.
-context('tests extracted from file `/mnt/data/projects/rdtf/parsetools/R/pd_call.R`')
+context('tests extracted from file `./R/pd_call.R`')
 test_that("'is_pd_call'", {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)

@@ -1,6 +1,6 @@
 #! This file was automatically produced by lint on  2017-06-06 12:03:28
 #! changes will be overwritten.
-context('tests extracted from file `/mnt/data/projects/rdtf/parsetools/R/family.R`')
+context('tests extracted from file `./R/family.R`')
 test_that("'get_family'", {#!@testing
     pd <- get_parse_data(parse(text={"a <- 1
         {# section 1

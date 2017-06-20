@@ -83,6 +83,7 @@ function( pd
     #! @inheritParams  is_iff_block
     pd <- ._check_parse_data(pd)
     id <- if (root.only) all_root_ids(pd, !ignore.groups) else pd$id
+    if (!length(id)) return(integer(0))
     is.iff <- is_iff_block(pd, id, ...)
     id[is.iff]
 }
@@ -178,6 +179,7 @@ if(FALSE){#!@testing
 all_tagged_iff_ids <- 
 function(pd, tag, doc.only=TRUE){
     id <- all_iff_ids(pd)
+    if (!length(id)) return(id)
     is.tagged <- iff_is_tagged(pd, tag, id, doc.only=doc.only)
     id[is.tagged]
 }
@@ -205,6 +207,13 @@ if(FALSE){#!@testing
     tag <- 'tag'
     id  <- all_root_ids(pd)
     tagged.iff.ids <- all_tagged_iff_ids(pd, tag)
+
+    pd  <- get_parse_data(parse(text={"
+        # this has no iff blocks
+        "}))
+    tag <- 'tag'
+    tagged.iff.ids <- all_tagged_iff_ids(pd, tag)
+    expect_identical(tagged.iff.ids, integer(0))
 }
 
 

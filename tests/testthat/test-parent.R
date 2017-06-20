@@ -1,6 +1,6 @@
 #! This file was automatically produced by lint on  2017-06-06 12:03:28
 #! changes will be overwritten.
-context('tests extracted from file `/mnt/data/projects/rdtf/parsetools/R/parent.R`')
+context('tests extracted from file `./R/parent.R`')
 test_that("'get_parent_id'", {#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
     expect_identical(get_parent_id(pd, 1), 3L)

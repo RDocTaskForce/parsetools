@@ -1,6 +1,6 @@
 #! This file was automatically produced by lint on  2017-06-06 12:03:28
 #! changes will be overwritten.
-context('tests extracted from file `/mnt/data/projects/rdtf/parsetools/R/comments.R`')
+context('tests extracted from file `./R/comments.R`')
 test_that("'classify_comment.character'", {#! @testing
     expect_equal(classify_comment.character("## normal comment       "), "NORMAL_COMMENT")
     expect_equal(classify_comment.character("#' Roxygen comment      "), "ROXYGEN_COMMENT")

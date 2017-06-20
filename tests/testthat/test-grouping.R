@@ -1,6 +1,6 @@
 #! This file was automatically produced by lint on  2017-06-06 12:03:28
 #! changes will be overwritten.
-context('tests extracted from file `/mnt/data/projects/rdtf/parsetools/R/grouping.R`')
+context('tests extracted from file `./R/grouping.R`')
 test_that("'is_grouping'", {#! @testing
     pd <- get_parse_data(parse(text='{
         this(is+a-grouping)

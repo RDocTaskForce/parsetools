@@ -1,6 +1,6 @@
 #! This file was automatically produced by lint on  2017-06-06 12:03:28
 #! changes will be overwritten.
-context('tests extracted from file `/mnt/data/projects/rdtf/parsetools/R/tags.R`')
+context('tests extracted from file `./R/tags.R`')
 test_that("'has_tag'", {#!@testing
     fun <- function(object){
         #! function with only comment lines

@@ -67,9 +67,9 @@ extract_test_block <- function(pd, id){
                 , paste( filename(pd), start_line(id), start_col(id), sep=':')
                 )
         if (attr(name, 'type') == 'setGeneric')
-            paste0("setGeneric(", shQuote(name, 'cmd'), ", ...)")
+            paste0("setGeneric(", shQuote(name), ", ...)")
         else if(attr(name, 'type') == 'setClass')
-            paste0("setClass(", shQuote(name, 'cmd'), ", ...)")
+            paste0("setClass(", shQuote(name), ", ...)")
         else 
             name
     }
@@ -78,9 +78,9 @@ extract_test_block <- function(pd, id){
     
     
     out.text <- if (length(content)<2)
-                    sprintf("test_that(\"%s\", %s)", shQuote(name), content)
+                    sprintf("test_that(%s, %s)", shQuote(name), content)
         else
-            out.text <- c( sprintf("test_that(\"%s\", %s", shQuote(name), content[[1]])
+            out.text <- c( sprintf("test_that(%s, %s", shQuote(name), content[[1]])
                          , content[-c(1, length(content))]
                          , paste0(content[length(content)], ")"))
     out.text <- c( line.directive, out.text)
@@ -143,56 +143,56 @@ if(FALSE){#!@testing
 
     expect_equal( extract_test_block(pd, iff.ids[[2L]])
                 , structure(c( '#line 9 "<text>"'
-                             , 'test_that("\'hello_world\'", {#!@testthat'
+                             , 'test_that(\'hello_world\', {#!@testthat'
                              , '        expect_output(hello_world(), "hello world")'
                              , '    })'
                              ), name=structure("hello_world", type = "function_assignment"))
                 , info="testing after function assignment")
     expect_equal( extract_test_block(pd, iff.ids[[3L]])
                 , structure(c( '#line 14 "<text>"'
-                             , 'test_that("\'ldf\'", {#!@testing'
+                             , 'test_that(\'ldf\', {#!@testing'
                              , '        # not a function assignment'
                              , '    })'
                              ), name = structure("ldf", type = "assignment"))
                 , info="testing after other assignment")
     expect_equal( extract_test_block(pd, iff.ids[[4L]])
                 , structure(c( '#line 22 "<text>"'
-                             , 'test_that("\'f2\'", {#! @test'
+                             , 'test_that(\'f2\', {#! @test'
                              , '        expect_error(f2())'
                              , '    })'
                              ), name=structure("f2", type = "function_assignment"))
                 , info="testing after other iff")
     expect_equal( extract_test_block(pd, iff.ids[[5L]])
                 , structure(c( '#line 27 "<text>"'
-                             , 'test_that("\'setClass("A", ...)\'", {#!@testing '
+                             , 'test_that("setClass(\'A\', ...)", {#!@testing '
                              , '        #testing a setClass'
                              , '    })'
-                             ), name="setClass(\"A\", ...)")
-                , info="testing after other iff")
+                             ), name="setClass('A', ...)")
+                , info="testing after setClass")
     expect_equal( extract_test_block(pd, iff.ids[[6L]])
                 , structure(c( '#line 32 "<text>"'
-                             , 'test_that("\'print.A\'", {#!@testing '
+                             , 'test_that(\'print.A\', {#!@testing '
                              , '        #testing a setMethod'
                              , '    })'
                              ), name=structure("print.A", type = "setMethod"))
-                , info="testing after other iff")
+                , info="testing after setMethod")
     expect_equal( extract_test_block(pd, iff.ids[[7L]])
                 , structure(c( '#line 37 "<text>"'
-                             , 'test_that("\'setGeneric("my_generic", ...)\'", {#!@testing '
+                             , 'test_that("setGeneric(\'my_generic\', ...)", {#!@testing '
                              , '        #testing a setClass'
                              , '    })'
-                             ), name="setGeneric(\"my_generic\", ...)")
-                , info="testing after other iff")
+                             ), name="setGeneric('my_generic', ...)")
+                , info="testing after setGeneric")
     expect_error( extract_test_block(pd, iff.ids[[8L]])
                 , info="following call")
                 
     expect_equal( extract_test_block(pd, iff.ids[2:3])
                 , structure(c( '#line 9 "<text>"'
-                             , 'test_that("\'hello_world\'", {#!@testthat'
+                             , 'test_that(\'hello_world\', {#!@testthat'
                              , '        expect_output(hello_world(), "hello world")'
                              , '    })'
                              , '#line 14 "<text>"'
-                             , 'test_that("\'ldf\'", {#!@testing'
+                             , 'test_that(\'ldf\', {#!@testing'
                              , '        # not a function assignment'
                              , '    })'
                              )
@@ -208,7 +208,7 @@ if(FALSE){#!@testing
     "}))
     expect_equal( extract_test_block(pd, all_root_ids(pd))
                 , structure(c( "#line 2 \"<text>\""
-                             , "test_that(\"'An info string'\", {#@testing An info string"
+                             , "test_that('An info string', {#@testing An info string"
                              , "            expect_true(T)"
                              , "        })"
                              )
@@ -221,7 +221,11 @@ extract_test_blocks_parse_data <-
 function( pd ){
     pd <- ._check_parse_data(pd)
     iff.ids <- all_tagged_iff_ids(pd, .testing.tags)
-    extract_test_block(pd, iff.ids)
+    .l <- lapply(iff.ids, extract_test_block, pd=pd)
+    return(structure( c(.l, recursive=TRUE)
+                    , test.names      = sapply(.l, attr, 'name')
+                    , start.locations = utils::head(cumsum(c(1, sapply(.l, length))),-1)
+                    ))
 }
 
 #' @export
@@ -253,11 +257,11 @@ writeLines(text, tmp)
 test.blocks <- extract_test_blocks(tmp)
 expect_equal( test.blocks
             , structure(c( sprintf('#line 4 "%s"', tmp)
-                         , 'test_that("\'hello_world\'", {#!@testthat'
+                         , 'test_that(\'hello_world\', {#!@testthat'
                          , '    expect_output(hello_world(), "hello world")'
                          , '})'
                          , sprintf('#line 9 "%s"', tmp)
-                         , 'test_that("\'f2\'", {#! @test'
+                         , 'test_that(\'f2\', {#! @test'
                          , '    expect_error(f2())'
                          , '})'
                          )
