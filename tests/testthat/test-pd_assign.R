@@ -1,7 +1,8 @@
-#! This file was automatically produced by lint on  2017-06-06 12:03:28
+#! This file was automatically produced by documentation::extract_tests on  2017-07-08 09:16:20
 #! changes will be overwritten.
-context('tests extracted from file `./R/pd_assign.R`')
-test_that("'is_pd_assignment'", {#! @testthat is_pd_assignment
+context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_assign.R`')
+#line 19 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_assign.R"
+test_that("is_pd_assignment", {#! @testthat is_pd_assignment
     pd <- get_parse_data(parse(text="x <-  1"))
     expect_true(is_pd_assignment(pd))
     pd <- get_parse_data(parse(text="x <<- 1"))
@@ -13,7 +14,8 @@ test_that("'is_pd_assignment'", {#! @testthat is_pd_assignment
     pd <- get_parse_data(parse(text="x = 1"))
     expect_true(is_pd_assignment(pd))
 })
-test_that("'get_pd_assign_value_id'", {#!@testing
+#line 47 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_assign.R"
+test_that("get_pd_assign_value_id", {#!@testing
 pd <- get_parse_data(parse(text="x<-1"))
 val.id <- get_pd_assign_value_id(pd)
 expect_equal(val.id, 5L)
@@ -34,7 +36,8 @@ pd <- get_parse_data(parse(text="1->>x"))
 val.id <- get_pd_assign_value_id(pd)
 expect_equal(val.id, 2L)
 })
-test_that("'get_pd_assign_value'", {#! @testthat get_pd_assign_value
+#line 79 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_assign.R"
+test_that("get_pd_assign_value", {#! @testthat get_pd_assign_value
 pd <- get_parse_data(parse(text="x<-1"))
 
 val.pd <- get_pd_assign_value(pd)
@@ -56,7 +59,8 @@ pd <- get_parse_data(parse(text="1->>x"))
 val.pd <- get_pd_assign_value(pd)
 expect_true("NUM_CONST" %in% val.pd$token)
 })
-test_that("'get_pd_assign_variable'", {#!@testthat
+#line 117 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_assign.R"
+test_that("get_pd_assign_variable", {#!@testthat
     pd <- get_parse_data(parse(text ={"hello_world <- function(){
         print('hello world')
     }
@@ -67,7 +71,8 @@ test_that("'get_pd_assign_variable'", {#!@testthat
     expect_equal(getParseText(var.pd, all_root_ids(var.pd)), "hello_world")
 
 })
-test_that("'get_pd_assign_variable_id'", {#!@testthat
+#line 144 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_assign.R"
+test_that("get_pd_assign_variable_id", {#!@testthat
 "hello_world <- function(){
     print('hello world')
 }
@@ -82,7 +87,8 @@ sort-> pd
     var.id <- get_pd_assign_variable_id(pd)
     expect_equal(var.id, all_root_ids(var.pd))
 })
-test_that("'is_pd_function'", {#! @testthat is_pd_function
+#line 169 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_assign.R"
+test_that("is_pd_function", {#! @testthat is_pd_function
     pd <- get_parse_data(parse(text="function(){}"))
     expect_true(is_pd_function(pd))
 

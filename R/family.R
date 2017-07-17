@@ -124,19 +124,23 @@ get_prev_sibling_id <- function(pd, id){
     if (length(.)) sids[max(.)] else NA_integer_
 }
 
+#@internal
+is_firstborn <- function(id, pd=get('pd', parent.frame())){ 
+    id == get_firstborn_id(pd, get_parent_id(pd,id))
+}
 
 #' @export
 get_firstborn_id <-
 function(pd, id=all_root_ids(pd)){
     id <- ._check_id(id)
     kids <- lapply(id, get_child_ids, pd=pd)
-    Filter(is.finite, sapply(kids, min))
+    as.integer(sapply(kids, min))
 }
 
 #' @export
 get_firstborn <-
 function(pd, id=all_root_ids(pd)){
-    pd[pd$id %in% get_firstborn_id(pd, id), ]
+    nodes(get_firstborn_id(pd, id))
 }
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"a <- 1
@@ -151,5 +155,13 @@ if(FALSE){#!@testing
     "}))
     expect_equal(get_firstborn(pd, 52)$token, "'{'")
     expect_equal(get_firstborn(pd, 7)$text, "<-")
+    
+    expect_warning(get_firstborn_id(pd, c(7, 52, .Machine$integer.max)))
+    expect_identical( suppressWarnings(get_firstborn_id(pd, c(7, 52, .Machine$integer.max)))
+                    , c(2L, 10L, NA_integer_))
+    
+    expect_true(is_firstborn(2, pd=pd))
+    expect_identical(suppressWarnings(is_firstborn(-1)), NA)
+    expect_identical(is_firstborn(c(1,3,7)), c(TRUE, FALSE, TRUE))
 }
 

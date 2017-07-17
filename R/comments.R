@@ -3,7 +3,7 @@
 # This file is part of the R package `parsetools`.
 #
 # Author: Andrew Redd
-# Copyright: 2017 University of Utah
+# Copyright: 2017 The R Consortium
 #
 # LICENSE
 # ========

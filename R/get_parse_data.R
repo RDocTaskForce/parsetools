@@ -3,7 +3,7 @@
 # This file is part of the R package `parsetools`.
 #
 # Author: Andrew Redd
-# Copyright: 2017 University of Utah
+# Copyright: 2017 The R Consortium
 #
 # LICENSE
 # ========
@@ -114,6 +114,7 @@ get_srcfile <- function(x){
 
 
 #' @export
+#' @aliases parse-data
 #' @title Get cleaned parse data 
 #' 
 #' @param x     an object to get parse-data from.
@@ -240,8 +241,7 @@ function(x, ...){
     }
     get_parse_data.default(x, ...)
 }
-if(FALSE){#!@testing
-{# basic
+if(FALSE){#@test get_parse_data.function basic
 test.text <-
 "#' Roxygen Line Before
 hw <-
@@ -257,7 +257,7 @@ pd.regular <- get_parse_data(hw)
 expect_that(pd.regular, is_a("data.frame"))
 expect_that(pd.regular[1,"text"], equals("#' Roxygen Line Before"))
 }
-{# grouped 
+if(FALSE){#@test get_parse_data.function grouped 
 grouped.text <-
 "{#' Roxygen Line Before
 hw <-
@@ -271,7 +271,7 @@ pd <- get_parse_data(hw)
 expect_is(pd, "parse-data")
 expect_that(pd[1,"text"], equals("#' Roxygen Line Before"))
 }
-{# nested
+if(FALSE){#@test get_parse_data.function nested
 nested.text <-{
 "{# Section Block
 #' Roxygen Line Before
@@ -288,10 +288,10 @@ pd <- get_parse_data(nested)
 expect_is(pd, "data.frame")
 expect_is(pd, "parse-data")
 
-pd <- get_parse_data(function(){})
-expect_that(pd, is_a("data.frame"))
+# pd <- get_parse_data(function(){})
+# expect_that(pd, is_a("data.frame"))
 }
-{# S4 Generic
+if(FALSE){#@test get_parse_data.function S4 Generic
 setGeneric("my_generic", 
     function(object #< An object to do something with
             ){
@@ -307,8 +307,6 @@ pd <- get_parse_data(my_generic)
 expect_is(pd, 'parse-data')
 
 }
-}
-
 #' @export
 get_parse_data.default <-
 function( x, ...){

@@ -3,7 +3,7 @@
 # This file is part of the R package `parsetools`.
 #
 # Author: Andrew Redd
-# Copyright: 2017 University of Utah
+# Copyright: 2017 The R Consortium
 #
 # LICENSE
 # ========
@@ -28,17 +28,17 @@ is_grouping <-
 function( pd
         , id = pd$id
         ){
-  #! test if an id is a grouping element
-  #! @param id id number in \code{pd}
-  #! @param pd parse data to use to check \code{id}
-  #! 
+  #' @title test if an id is a grouping element
+  #' @param id id number in \code{pd}
+  #' @param pd parse data to use to check \code{id}
+  #' 
   id <- ._check_id(id)
   if(length(id) > 1) return(sapply(id, is_grouping, pd=pd))
 
   child  <- get_child(pd, id, 1)
   parent <- get_parent_id(pd, id)
-  #! @description
-  #! a grouping is defined as a non empty set 
+  #' @description
+  #' a grouping is defined as a non empty set 
   return(  nrow(child)
         #! started with a '{' token and 
         && child$token[1] == "'{'"

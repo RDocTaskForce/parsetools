@@ -48,6 +48,9 @@ function( pd, id
         , aggregate    = TRUE #< All (T) or only final (F).
         , include.self = TRUE #< should `id` be included in list of ancestors
                               #^ if `aggregate` is true.
+        , only.present = FALSE#< should the list be restricted to only those 
+                              #^ node that are present?  Most revelvent for 
+                              #^ when parent is zero.
         ){
     #! Get the ancestors of id in pd.
     id <- ._check_id(id)
@@ -59,37 +62,53 @@ function( pd, id
                          , nancestors   = nancestors
                          , aggregate    = aggregate
                          , include.self = include.self
+                         , only.present = only.present
                          ))
-    } else {
-        if (aggregate) ancestors <- if (include.self) id else integer(0)
-        parent <- if (include.self) id else integer(0)
-        while(nancestors > 0L){
-            nancestors <- nancestors - 1
-            parent <- get_parent_id(pd, id)
-            if (is.na(parent)) break
-            if (aggregate) ancestors <- c(ancestors, parent)
-            if (parent==0) break
-            id <- parent
-        }
-        if (aggregate) ancestors else parent
     }
+    
+    if ( include.self && only.present && !(id %in% pd$id))
+            stop("only.present=TRUE and include.self=TRUE but id is not present in pd.")
+    if (nancestors == 0){
+        if ( include.self              ) return (id)
+        if (!include.self &&  aggregate) return (integer(0))
+    } 
+    if (aggregate) ancestors <- if (include.self) id else integer(0)
+    while(nancestors > 0L){
+        nancestors <- nancestors - 1
+        parent <- get_parent_id(pd, id)
+        if (is.na(parent)) break
+        if (only.present && !parent %in% pd$id){
+            parent <- id
+            break
+        }
+        if (aggregate) ancestors <- c(ancestors, parent)
+        if (parent==0) break
+        id <- parent
+    }
+    if (aggregate) ancestors else parent
 }
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
-    expect_identical(get_ancestor_ids(pd, 1, nancestors=Inf, aggregate=TRUE , include.self=TRUE ), c(1L, 3L, 23L,0L), info = "defaults, but fully specified.")
-    expect_identical(get_ancestor_ids(pd, 1, nancestors=Inf, aggregate=TRUE , include.self=FALSE), c(    3L, 23L,0L), info = "include.self=FALSE")
-    expect_identical(get_ancestor_ids(pd, 1, nancestors= 2 , aggregate=TRUE , include.self=FALSE), c(    3L, 23L   ), info = "nancestors=2, include.self=FALSE")
-    expect_identical(get_ancestor_ids(pd, 1, nancestors= 2 , aggregate=TRUE , include.self=TRUE ), c(1L, 3L, 23L   ), info = "nancestors=2, include.self=TRUE")
-    expect_identical(get_ancestor_ids(pd, 1, nancestors= 2 , aggregate=FALSE, include.self=FALSE),           23L    , info = "nancestors= 2, aggregate=FALSE")
-    expect_identical(get_ancestor_ids(pd, 1, nancestors= 0 , aggregate=FALSE, include.self=TRUE),    1L             , info = "nancestors=0, include.self=TRUE")
+    expect_identical(get_ancestor_ids(pd, 1, nancestors=Inf, aggregate=TRUE , include.self=TRUE , only.present = FALSE), c(1L, 3L, 23L,0L), info = "defaults, but fully specified.")
+    expect_identical(get_ancestor_ids(pd, 1, nancestors=Inf, aggregate=TRUE , include.self=FALSE, only.present = FALSE), c(    3L, 23L,0L), info = "include.self=FALSE")
+    expect_identical(get_ancestor_ids(pd, 1, nancestors= 2 , aggregate=TRUE , include.self=FALSE, only.present = FALSE), c(    3L, 23L   ), info = "nancestors=2, include.self=FALSE")
+    expect_identical(get_ancestor_ids(pd, 1, nancestors= 2 , aggregate=TRUE , include.self=TRUE , only.present = FALSE), c(1L, 3L, 23L   ), info = "nancestors=2, include.self=TRUE")
+    expect_identical(get_ancestor_ids(pd, 1, nancestors= 2 , aggregate=FALSE, include.self=FALSE, only.present = FALSE),           23L    , info = "nancestors= 2, aggregate=FALSE")
+    expect_identical(get_ancestor_ids(pd, 1, nancestors= 0 , aggregate=FALSE, include.self=TRUE , only.present = FALSE),    1L             , info = "nancestors=0, include.self=TRUE")
     
+    expect_identical(get_ancestor_ids(pd, 1, nancestors=Inf, aggregate=FALSE, include.self=FALSE, only.present = FALSE),               0L , info = "nancestors= 2, aggregate=FALSE")
+    expect_identical(get_ancestor_ids(pd, 1, nancestors=Inf, aggregate=FALSE, include.self=FALSE, only.present = TRUE ),           23L    , info = "nancestors= 2, aggregate=FALSE")
+    expect_identical(get_ancestor_ids(pd,23, nancestors=Inf, aggregate=FALSE, include.self=FALSE, only.present = TRUE ),           23L    , info = "nancestors= 2, aggregate=FALSE")
+    expect_identical(get_ancestor_ids(pd,23, nancestors=Inf, aggregate=TRUE , include.self=FALSE, only.present = TRUE ), integer(0)       , info = "nancestors= 2, aggregate=FALSE")
     
     expect_error(get_ancestor_ids(pd, 1, nancestors=  0, include.self=FALSE))
     expect_error(get_ancestor_ids(pd, 1, nancestors= -1))
     
     expect_is(get_ancestor_ids(pd, c(11, 18)), 'list')
-    expect_identical(get_ancestor_ids(pd, c(23, 11), Inf, T, T), list(c(23L, 0L), c(11L, 12L, 23L, 0L)))
-    expect_identical(get_ancestor_ids(pd, c(23, 11),  2L, T, T), list(c(23L, 0L), c(11L, 12L, 23L    )))
-    expect_identical(get_ancestor_ids(pd, c(23, 11),  2L, T, F), list(c(     0L), c(     12L, 23L    )))
-    expect_identical(get_ancestor_ids(pd, c(23, 11),  2L, F, F), list(c(     0L), c(          23L    )))
+    expect_identical(get_ancestor_ids(pd, c(23, 11), Inf, T, T, F), list(c(23L, 0L), c(11L, 12L, 23L, 0L)))
+    expect_identical(get_ancestor_ids(pd, c(23, 11),  2L, T, T, F), list(c(23L, 0L), c(11L, 12L, 23L    )))
+    expect_identical(get_ancestor_ids(pd, c(23, 11),  2L, T, F, F), list(c(     0L), c(     12L, 23L    )))
+    expect_identical(get_ancestor_ids(pd, c(23, 11),  2L, F, F, F), list(c(     0L), c(          23L    )))
+    expect_identical(get_ancestor_ids(pd, c(23, 11), Inf, T, T, T), list(c(23L    ), c(11L, 12L, 23L    )))
+    expect_identical(get_ancestor_ids(pd, c(23, 11), Inf, F, T, T), list(c(23L    ), c(          23L    )))
 }

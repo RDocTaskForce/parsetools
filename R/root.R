@@ -3,7 +3,7 @@
 # This file is part of the R package `parsetools`.
 #
 # Author: Andrew Redd
-# Copyright: 2017 University of Utah
+# Copyright: 2017 The R Consortium
 #
 # LICENSE
 # ========
@@ -28,11 +28,12 @@ is_root <-
 function( pd, id = pd$id
         , ignore.groups = TRUE  #< Ignore groups? see details.
         ){
-    #! Test if a node is a root node
-    #! @inheritParams is_grouping
-    #! @description
-    #! A root node is defined to be a node that either has no parent
-    #! or whose parent is a grouping node.
+    #' @title Test if a node is a root node
+    #' @inheritParams get_child_ids
+    #' @param ignore.groups Should \link[=is_grouping]{groupings} be ignored?
+    #' @description
+    #' A root node is defined to be a node that either has no parent
+    #' or whose parent is a grouping node.
     id <- ._check_id(id)
     if (length(id) > 1) return(sapply(id, FUN=is_root, pd=pd, ignore.groups=ignore.groups))
     if (!(id %in% pd$id)) stop("id not present in pd")
@@ -40,12 +41,13 @@ function( pd, id = pd$id
     parent <- pd[pd$id == id,'parent']
     if (parent == 0 ) return(TRUE)
     if (ignore.groups && is_grouping(pd, parent)) return(TRUE)
-    #! @details 
-    #! If `ignore.groups=TRUE` then groupings are ignored and root nodes within the 
-    #! group are interpreted as roots, otherwise nodes within a group are not interpreted as root.
-    #! Groupings are always interpreted as root if the parent is 0 or if the parent is a group and also 
-    #! a root.
+    #' @details 
+    #' If `ignore.groups=TRUE` then groupings are ignored and root nodes within the 
+    #' group are interpreted as roots, otherwise nodes within a group are not interpreted as root.
+    #' Groupings are always interpreted as root if the parent is 0 or if the parent is a group and also 
+    #' a root.
     return(FALSE)
+    #' @return a logical vector of same length as \code{id}
 }
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))

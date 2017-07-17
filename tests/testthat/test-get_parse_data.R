@@ -1,19 +1,22 @@
-#! This file was automatically produced by lint on  2017-06-06 12:03:28
+#! This file was automatically produced by documentation::extract_tests on  2017-07-08 09:16:20
 #! changes will be overwritten.
-context('tests extracted from file `./R/get_parse_data.R`')
-test_that("'valid_parse_data'", {#!@test
+context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/get_parse_data.R`')
+#line 40 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/get_parse_data.R"
+test_that("valid_parse_data", {#!@test
     df <- utils::getParseData(parse(text="rnorm(10,0,1)"))
     expect_true (valid_parse_data(df), 'parse-data')
     expect_equal(valid_parse_data(datasets::iris      ), "names of data do not conform.")
     expect_equal(valid_parse_data(stats::rnorm(10,0,1)), "Not a data.frame object")
 })
-test_that("'as_parse_data'", {#!@testing
+#line 55 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/get_parse_data.R"
+test_that("as_parse_data", {#!@testing
     df <- utils::getParseData(parse(text="rnorm(10,0,1)"))
     expect_is   (as_parse_data(df), 'parse-data')
     expect_error(as_parse_data(datasets::iris), "Cannot convert to parse-data: names of data do not conform.")
     expect_error(as_parse_data(stats::rnorm(10,0,1)), "Cannot convert to parse-data: Not a data.frame object")
 })
-test_that("'as.data.frame.parseData'", {#!@testing
+#line 80 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/get_parse_data.R"
+test_that("as.data.frame.parseData", {#!@testing
     if(F)
         debug(as.data.frame.parseData)
     p <- parse(text={"
@@ -31,7 +34,8 @@ test_that("'as.data.frame.parseData'", {#!@testing
     df1 <- as.data.frame.parseData(x, srcfile=srcfile)
     expect_true(valid_parse_data(df1))
 })
-test_that("'get_parse_data.srcfile'", {#!@testing
+#line 141 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/get_parse_data.R"
+test_that("get_parse_data.srcfile", {#!@testing
     text <- "    my_function <- function(object #< An object to do something with
             ){
         #' A title
@@ -71,7 +75,8 @@ test_that("'get_parse_data.srcfile'", {#!@testing
 
     unlink(tmp)
 })
-test_that("'get_parse_data.srcref'", {#!@testing
+#line 205 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/get_parse_data.R"
+test_that("get_parse_data.srcref", {#!@testing
     text <-{"my_function <- 
         function( object #< An object to do something with
                 ){
@@ -96,8 +101,8 @@ test_that("'get_parse_data.srcref'", {#!@testing
     expect_is(pd, 'parse-data')
     expect_identical(attr(pd, 'srcfile'), srcfile)
 })
-test_that("'get_parse_data.function'", {#!@testing
-{# basic
+#line 243 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/get_parse_data.R"
+test_that("get_parse_data.function basic", {#@test get_parse_data.function basic
 test.text <-
 "#' Roxygen Line Before
 hw <-
@@ -112,8 +117,9 @@ x <- fun <- hw
 pd.regular <- get_parse_data(hw)
 expect_that(pd.regular, is_a("data.frame"))
 expect_that(pd.regular[1,"text"], equals("#' Roxygen Line Before"))
-}
-{# grouped 
+})
+#line 259 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/get_parse_data.R"
+test_that("get_parse_data.function grouped", {#@test get_parse_data.function grouped 
 grouped.text <-
 "{#' Roxygen Line Before
 hw <-
@@ -126,8 +132,9 @@ fun <- hw
 pd <- get_parse_data(hw)
 expect_is(pd, "parse-data")
 expect_that(pd[1,"text"], equals("#' Roxygen Line Before"))
-}
-{# nested
+})
+#line 273 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/get_parse_data.R"
+test_that("get_parse_data.function nested", {#@test get_parse_data.function nested
 nested.text <-{
 "{# Section Block
 #' Roxygen Line Before
@@ -144,10 +151,11 @@ pd <- get_parse_data(nested)
 expect_is(pd, "data.frame")
 expect_is(pd, "parse-data")
 
-pd <- get_parse_data(function(){})
-expect_that(pd, is_a("data.frame"))
-}
-{# S4 Generic
+# pd <- get_parse_data(function(){})
+# expect_that(pd, is_a("data.frame"))
+})
+#line 293 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/get_parse_data.R"
+test_that("get_parse_data.function S4 Generic", {#@test get_parse_data.function S4 Generic
 setGeneric("my_generic", 
     function(object #< An object to do something with
             ){
@@ -162,9 +170,9 @@ expect_true(isGeneric(fdef = my_generic))
 pd <- get_parse_data(my_generic)
 expect_is(pd, 'parse-data')
 
-}
 })
-test_that("'get_parse_data.default'", {#!@testing
+#line 327 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/get_parse_data.R"
+test_that("get_parse_data.default", {#!@testing
     x <- 
     exprs <- parse(text=c('x <- rnorm(10, mean=0, sd=1)'
                          ,'y <- mean(x)'
@@ -172,7 +180,8 @@ test_that("'get_parse_data.default'", {#!@testing
     pd <- get_parse_data(exprs, keep.source=TRUE)
     expect_is(pd, 'parse-data', info = "get_parse_datwa.default with srcfile")
 })
-test_that("'fix_eq_assign'", {#! @testthat
+#line 371 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/get_parse_data.R"
+test_that("fix_eq_assign", {#! @testthat
 pd <- utils::getParseData(parse(text="a=1"))
 fixed.pd <- fix_eq_assign(pd)
 expect_true(nrow(pd)+1 == nrow(fixed.pd))
@@ -188,13 +197,15 @@ fixed.pd <- fix_eq_assign(pd)
 expect_true(nrow(pd)+2 == nrow(fixed.pd))
 expect_that(sum(fixed.pd$parent==0), equals(1))
 })
-test_that("'`[.parse-data`'", {#!@testing
+#line 417 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/get_parse_data.R"
+test_that("`[.parse-data`", {#!@testing
     pd       <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
     expect_is(pd, 'parse-data')
     expect_is(pd[pd$parent==0, ], 'parse-data')
     expect_false(methods::is(pd[pd$parent==0, 'id'], 'parse-data'))
 })
-test_that("'`-.parse-data`'", {#! @test `-.parse-data`
+#line 433 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/get_parse_data.R"
+test_that("`-.parse-data`", {#! @test `-.parse-data`
 pd <- get_parse_data(parse(text={
 "{# Section Block
 #' Roxygen Line Beore

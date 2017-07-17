@@ -1,7 +1,8 @@
-#! This file was automatically produced by lint on  2017-06-06 12:03:28
+#! This file was automatically produced by documentation::extract_tests on  2017-07-08 09:16:20
 #! changes will be overwritten.
-context('tests extracted from file `./R/tags.R`')
-test_that("'has_tag'", {#!@testing
+context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/tags.R`')
+#line 56 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/tags.R"
+test_that("has_tag", {#!@testing
     fun <- function(object){
         #! function with only comment lines
         #!       @tag   TRUE
@@ -16,12 +17,14 @@ test_that("'has_tag'", {#!@testing
     id <- pd$id
     expect_equal(sum(has_tag(pd, tag)), 2)
 })
-test_that("'clean_tag_comments'", {#!@testing
+#line 79 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/tags.R"
+test_that("clean_tag_comments", {#!@testing
     expect_equal( clean_tag_comments("#@testing", "testing")
                 , "#! @testing"
                 )
 })
-test_that("'strip_tag'", {#! @testthat
+#line 99 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/tags.R"
+test_that("strip_tag", {#! @testthat
     expect_equal( strip_tag("@tag should be removed", 'tag')
                 , "should be removed")
     expect_equal( strip_tag("@nomd{@tag}@ should not be removed", 'tag')
@@ -29,7 +32,8 @@ test_that("'strip_tag'", {#! @testthat
     expect_equal( strip_tag("@@tag should not be removed.", 'tag')
                 , "@@tag should not be removed.")
 })
-test_that("'get_tagged_comment_ids'", {#!@testing
+#line 119 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/tags.R"
+test_that("get_tagged_comment_ids", {#!@testing
     pd  <- parsetools::get_parse_data(parse(text={"
         fun <- function(object){
             #! function with only comment lines
