@@ -1,4 +1,4 @@
-#! This file was automatically produced by documentation::extract_tests on  2017-07-08 09:16:19
+#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
 #! changes will be overwritten.
 context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/checks.R`')
 #line 37 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/checks.R"

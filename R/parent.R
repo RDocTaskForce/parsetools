@@ -25,7 +25,10 @@
 
 #' @export
 get_parent_id <- function(pd, id=pd$id) {
-    #! Get the parent of the expression identified by `id` in `pd`.
+    #' @title Get the parent of the expression identified by `id` in `pd`.
+    #' @inheritParams get_child_ids
+    #' 
+    #' @description Get the parent of the expression identified by `id` in `pd`.
     id <- ._check_id(id)
     pd[match(id, pd$id), 'parent']
 }
@@ -52,7 +55,18 @@ function( pd, id
                               #^ node that are present?  Most revelvent for 
                               #^ when parent is zero.
         ){
-    #! Get the ancestors of id in pd.
+    #' @title Get the ancestors of id in pd.
+    #' 
+    #' @inheritParams get_parent_id
+    #' @param nancestors     Number of generations to go back
+    #' @param aggregate      All (T) or only final (F).
+    #' @param include.self   should `id` be included in list of ancestors
+    #'                       if `aggregate` is true.
+    #' @param only.present   should the list be restricted to only those 
+    #'                       node that are present?  Most revelvent for 
+    #'                       when parent is zero.
+    #' @description
+    #'    Get the ancestors for \code{id}.  See argument descriptions for details.
     id <- ._check_id(id)
     stopifnot( nancestors >= 0
              , include.self || (nancestors >  0)

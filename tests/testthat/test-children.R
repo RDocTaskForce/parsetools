@@ -1,7 +1,7 @@
-#! This file was automatically produced by documentation::extract_tests on  2017-07-08 09:16:19
+#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
 #! changes will be overwritten.
 context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/children.R`')
-#line 50 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/children.R"
+#line 61 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/children.R"
 test_that("get_child_ids", {#! @test
     pd       <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
     id       <- pd[pd$parent==0, 'id']
@@ -44,7 +44,7 @@ test_that("get_child_ids", {#! @test
     expect_true( all(pd$id %in% get_child_ids(pd, 0, Inf)))
     
 })
-#line 103 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/children.R"
+#line 113 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/children.R"
 test_that("get_child", {#!@test
     'rnorm(10, mean=0, sd=1)' -> text
     pd       <- get_parse_data(parse(text=text))
@@ -68,7 +68,7 @@ test_that("get_child", {#!@test
                     , pd[pd$parent != 23 & pd$parent != 0, ]
                     , info='defaults')
 })
-#line 149 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/children.R"
+#line 155 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/children.R"
 test_that("get_children", {#! @test
     'rnorm(10, mean=0, sd=1)' -> text
     pd  <- get_parse_data(parse(text=text))

@@ -23,6 +23,7 @@
 #
 }#######################################################################
 
+#@internal
 make_tag_regex <- 
 function( tag              #< tag pattern, interpreted as a regular expression
                            #^ or alternatives if more that one is passed in. 
@@ -65,7 +66,7 @@ if(FALSE){#!@
 
 #' @title Check if there is a documentation `@` tag.
 #' @inheritParams get_child_ids
-#' @param tag tag to test for
+#' @param tag tag(s) to test for
 #' @param ... options passed on
 #' @export
 has_tag <- 
@@ -79,7 +80,9 @@ function( pd, tag, id = pd$id, ...){
     is_comment(pd, id) & grepl(tag.rx, text(id, pd), perl=TRUE, ignore.case=TRUE)
 }
 if(FALSE){#!@testing
-    fun <- function(object){
+    # Note that testthat:::test_code will strip comments from code
+    # this requires a parse statement.
+    pd  <- get_parse_data(parse(text='fun <- function(object){
         #! function with only comment lines
         #!       @tag   TRUE
         #!      @@tag   FALSE
@@ -87,17 +90,21 @@ if(FALSE){#!@testing
         #        @tag   TRUE, even though a regular comment    
         object @tag
         NULL
-    }
-    pd  <- parsetools::get_parse_data(fun)
+    }'))
     tag <- 'tag'
     id <- pd$id
     expect_equal(sum(has_tag(pd, tag)), 2)
 }
 
+#@ internal
 clean_tag_comments <- 
 function( x
         , tag
         ){
+    #' @title clean tag comments
+    #' @inheritParams strip_tag
+    #' @description
+    #'    replaces '\code{#@tag}' with '\code{#! @tag}'
     tag <- paste0("(", paste(tag, collapse="|"), ")")
     gsub(paste0("^#@", tag, "\\b"), "#! @\\1", x)
 }
@@ -111,15 +118,21 @@ if(FALSE){#!@testing
 strip_tag <-
 function( x     #< text to strip from
         , tag   #< tag to remove
-        , ...   #< options
+        , ...   #< passed on options.
         ){
-    #! remove a tag that identified a line.
+    #' @title  Remove a tag that identified a line.
+    #' @param x     text to strip from
+    #' @param tag   tag(s) to remove
+    #' @param ...   passed on options]
+    #' @description
+    #'    Removes \code{@tag} tags from the text.
+    #'    Also will remove '\code{#@tag}' replacing with '\code{#!}'.
     pattern <- paste0(make_tag_regex(tag, ...), '\\s*')
     x <- clean_tag_comments(x, tag)
     
     gsub( pattern=pattern, replacement='', x
         , perl=TRUE, ignore.case=TRUE)
-    #< text with the @ tag removed.
+    #< @return text with the @ tag removed.
 }
 if(FALSE){#! @testthat
     expect_equal( strip_tag("@tag should be removed", 'tag')
@@ -135,11 +148,19 @@ get_tagged_comment_ids <-
 function( pd, tag
         , doc.only = TRUE #< Restrict to documentation comments only?
         ){
+    #' @title Get tagged comment ids
+    #' @inheritParams has_tag
+    #' @param doc.only Restrict to documentation comments only?
+    #' @description
+    #'   Finds all ids that are comments and contain the given '@' \code{tag}.
+    #'   If doc.only is true(default) then only documentation comments are 
+    #'   considered, otherwise all comments are examined.
     ids <- if (doc.only)
         pd[is_doc_comment(pd), 'id']
     else
         pd[is_comment(pd), 'id']
     ids[has_tag(pd, tag, ids)]
+    #' @return an integer vector of ids.
 }
 if(FALSE){#!@testing
     pd  <- parsetools::get_parse_data(parse(text={"

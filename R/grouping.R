@@ -58,6 +58,10 @@ if(FALSE){#! @testing
 }
 
 #' @export
+#' @title get the grouping ids
+#' @inheritParams get_child_ids
+#' @description get the ids that represent the grouping nodes.
+#' @return an integer vector of ids.
 get_groupings <- function(pd) {pd[is_grouping(pd=pd), 'id']}
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='{

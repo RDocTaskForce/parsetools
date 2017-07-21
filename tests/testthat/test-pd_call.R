@@ -1,7 +1,7 @@
-#! This file was automatically produced by documentation::extract_tests on  2017-07-08 09:16:20
+#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
 #! changes will be overwritten.
 context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_call.R`')
-#line 37 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_call.R"
+#line 40 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_call.R"
 test_that("is_pd_call", {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
@@ -15,7 +15,7 @@ test_that("is_pd_call", {#!@testing
     expect_equal(is_pd_call(pd, ids), c(F, F, T))
     
 })
-#line 67 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_call.R"
+#line 75 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_call.R"
 test_that("is_pd_symbol_call", {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
@@ -28,7 +28,7 @@ test_that("is_pd_symbol_call", {#!@testing
     expect_false(is_pd_symbol_call(pd, ids[[1]]))
     expect_equal(is_pd_symbol_call(pd, ids), c(F, F, T))
 })
-#line 92 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_call.R"
+#line 104 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_call.R"
 test_that("get_pd_call_symbol_id", {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
@@ -39,7 +39,7 @@ test_that("get_pd_call_symbol_id", {#!@testing
     id <- ids[[3]]
     expect_equal(get_pd_call_symbol_id(pd, id), 45L)
 })
-#line 114 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_call.R"
+#line 129 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_call.R"
 test_that("get_pd_call_symbol", {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
@@ -50,7 +50,7 @@ test_that("get_pd_call_symbol", {#!@testing
     id <- ids[[3]]
     expect_equal(get_pd_call_symbol(pd, id), pd['45',])
 })
-#line 146 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_call.R"
+#line 166 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_call.R"
 test_that("get_pd_call_args", {#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
     args <- get_pd_call_args(pd)

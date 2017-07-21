@@ -106,9 +106,8 @@ get_child <-
 function( pd, id 
         , ...       #< passed to <get_child_ids>.
         ) {
-    #! @InheritParams get_child_ids
-    #! @rdname get_children
-    #! @export
+    #' @inheritParams get_child_ids
+    #' @rdname get_children
     pd[pd$id %in% get_child_ids( pd, id,...), ]
 }
 if(FALSE){#!@test
@@ -140,20 +139,16 @@ get_children <-
 function( pd, id
         , ...       #< passed to <get_child>.
         ){
-    #! @InheritParams get_child_ids
-    #! Find the children of an expression
-    #!
-    #! This takes the \code{pd} and find all the children of the expression
-    #! with the given \code{id}.
-    #! 
-    #! @param id the id of the given expression in \code{pd}
-    #! @param pd the data from a parsed file or expression.
-    #!   The results of \code{\link{getParseData}}.
-    #! @param ngenerations the number of levels to search.  If a negative number is
-    #!   given all children will be found.
-    #!
-    #! @family  parse-functions
-    #! @export
+    #' @inheritParams get_child_ids
+    #' @param ... passed on.
+    #' @title Find the children of an expression
+    #'
+    #' @description 
+    #'   This takes the \code{pd} and find all the children of the expression
+    #'   with the given \code{id}.
+    #' 
+    #' @family  parse-functions
+    #' @return a list of parse-data objects corresponding to \code{id}
     id <- ._check_id(id)
     return(lapply(id, get_child, pd=pd, ...))
 }

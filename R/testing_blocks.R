@@ -28,10 +28,12 @@
 
 .testing.tags <- c("test", "tests", "testing", "testthat")
 
-#@internal
-extract_test_block <- function(pd, id){
-    #! @param id iff block id, not the content
+#' @export 
+extract_test_block <- function(pd, id=all_tagged_iff_ids(pd, .testing.tags)){
+    #' @title Extract testing blocks from the parse-data.
+    #' @param pd a \link{parse-data} object.
     pd <- ._check_parse_data(pd)
+    #' @param id iff block id, not the content
     id <- ._check_id(id)
     if (length(id) > 1){
         .l <- lapply(id, extract_test_block, pd=pd)
@@ -40,6 +42,11 @@ extract_test_block <- function(pd, id){
                         , start.locations = utils::head(cumsum(c(1, sapply(.l, length))),-1)
                         ))
     }
+    #' @description
+    #'   Extract the content of a testing block as a character vector of lines.
+    #'   The name, which is attached as an attribute is taken from the info
+    #'   string or inferred by location, see Details.
+    #'   
     stopifnot(is_iff_block(pd,id))
     content.id  <- get_if_branch_id(pd, id)
     
@@ -85,8 +92,8 @@ extract_test_block <- function(pd, id){
                          , paste0(content[length(content)], ")"))
     out.text <- c( line.directive, out.text)
     structure(out.text, name = name)
-    #! @return a character vector with the lines for the specific test(s) 
-    #^ with the name of the test included as an attribute.
+    #' @return a character vector with the lines for the specific test(s) 
+    #'         with the name of the test included as an attribute.
 }
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={'
@@ -217,6 +224,7 @@ if(FALSE){#!@testing
 }
 
 
+#@internal
 extract_test_blocks_parse_data <- 
 function( pd ){
     pd <- ._check_parse_data(pd)
@@ -231,6 +239,12 @@ function( pd ){
 #' @export
 extract_test_blocks <- 
 function( file ){
+    #' @title extract tests from a file.
+    #' @param file the file to retrieve tests from.
+    #' @description
+    #'    Convenience function for extracting all tests from a file.
+    #'    This parses the file and passes the work to 
+    #'    \code{\link{extract_test_block}}.
     pd <- get_parse_data(parse(file=file))
     extract_test_blocks_parse_data(pd)
 }

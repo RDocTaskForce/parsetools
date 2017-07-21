@@ -30,6 +30,7 @@ function( pd, id = pd$id
         ){
     #' @title Test if a node is a root node
     #' @inheritParams get_child_ids
+    #' @aliases root root-ids
     #' @param ignore.groups Should \link[=is_grouping]{groupings} be ignored?
     #' @description
     #' A root node is defined to be a node that either has no parent
@@ -114,7 +115,14 @@ function( pd                    #< parse data from `<get_parse_data>`
         , include.groups = TRUE #< Include groups as root nodes (T)
                                 #^ or descend into [groups](is.grouped) for roots?
         ){
-    #! give the root ids in `pd`
+    #' @title give all root ids in `pd`
+    #' @inheritParams is_root
+    #' @param include.groups Include groups as root nodes (T) 
+    #'                       or descend into [groups](is.grouped) for roots?
+    #' 
+    #' @description
+    #'   return all \link[=is_root]{root} ids present in \code{pd}.
+    #'   see \code{\link{is_grouping}} for details on what a grouping is. 
     roots <- pd[ !(abs(pd$parent) %in% pd$id                )
                & !(    pd$token   %in% .excluded.root.tokens)
                , 'id']
@@ -127,6 +135,7 @@ function( pd                    #< parse data from `<get_parse_data>`
         roots <- sort(c(roots[!.], sub.ids))
     }
     return(roots)
+    #' @return an integer vector of parse-data ids.
 }
 if(F){#!@testthat all_root_ids
     pd <- get_parse_data(parse(text={"a <- 1
@@ -175,14 +184,17 @@ all_root_nodes <-
 function( pd                    #< parse data from `<get_parse_data>`
         , include.groups = TRUE #< descend into grouped code \code{\{\}}?
         ){
-    #! Find all root node from parse data
-    #!
-    #! A root node in a file is a standalone expression, such as in
-    #! source file a function definition.
-    #! when discussing a subset it is any expression that does not have
-    #! a parent in the subset.
+    #' @title Find all root node from parse data
+    #' @inheritParams get_child_ids
+    #' @param include.groups descend into grouped code \code{\{\}}?
+    #' 
+    #' @description
+    #'   A root node in a file is a standalone expression, such as in
+    #'   source file a function definition.
+    #'   when discussing a subset it is any expression that does not have
+    #'   a parent in the subset.
     pd[pd$id %in% all_root_ids(pd, include.groups=include.groups), ]
-    #! @return parse data with for the root nodes.
+    #' @return \code{\link{parse-data}} with for the root nodes.
 }
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"a <- 1
@@ -202,21 +214,25 @@ if(FALSE){#!@testing
     expect_equal(all_root_nodes(pd, FALSE)$line1, c(1,  3,  5,  7,  9))
 }
 
-#' @export
+#@internal
 ascend_to_root <-
 function( pd, id = pd$id
         , ignore.groups=TRUE    #< Ignore groups? see <is_root>.
         ) {
+    #' @title ascend from id to root
+    #' @inheritParams is_root
+    #' @description
+    #'   From the \code{id} obtains the root expression id.
     id <- ._check_id(id)
     if (length(id) > 1) return(sapply(id, ascend_to_root, pd=pd, ignore.groups=ignore.groups))
     parent <- id
     while (TRUE) {
-        if (is.na(parent) || parent == 0) return(0)
+        if (is.na(parent) || parent == 0) return(0L)
         if (parent < 0) parent <- -parent
         if (is_root(pd, parent, ignore.groups=ignore.groups)) return(parent)
         parent <- get_parent_id(pd, parent)
     }
-    #! @return the root id for the row.
+    #! @return integer vector of root ids.
 }
 if(FALSE){#@testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))

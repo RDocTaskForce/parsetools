@@ -29,7 +29,10 @@ is_pd_call <-
 function( pd            #< parse data of assignemnt
         , id = all_root_ids(pd)[1] #< id of interest.
         ){
-    #! Check if provided parse-data is a function call.
+    #' @title Is a call?
+    #' @inheritParams get_child_ids
+    #' @description
+    #'   Checks if the \code{id} identifies in \code{pd} a call expression.
     if (length(id)>1) return(sapply(id, is_pd_call, pd=pd))
     if (token(id) != 'expr') return(FALSE)
     token(get_firstborn_id(pd, id)) == "'('"
@@ -54,7 +57,11 @@ is_pd_symbol_call <-
 function( pd            #< parse data of assignemnt
         , id = all_root_ids(pd)[1] #< id of interest.
         ){
-    #! Check if the call is specifically a symbol call
+    #' @title Check if the call is specifically a symbol call
+    #' @inheritParams is_pd_call
+    #' @description
+    #'   Checks if the \code{id} identifies in \code{pd} specifically a 
+    #'   symbol call expression, That is a call from a symbol.
     if (length(id) > 1) return(sapply(id, is_pd_call, pd=pd))
     if (!is_pd_call(pd, id)) return(FALSE)
     eldest <- get_firstborn_id(pd, id)
@@ -63,6 +70,7 @@ function( pd            #< parse data of assignemnt
     if (token(second) != "expr") return(FALSE)
     grandchild <- get_firstborn_id(pd, second)
     token(grandchild) == 'SYMBOL_FUNCTION_CALL'
+    #' @return a logical of the same length as \code{id}
 }
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"
@@ -83,7 +91,11 @@ get_pd_call_symbol_id <-
 function( pd            #< parse data of assignemnt
         , id = all_root_ids(pd)[1] #< id of interest.
         ){
-    #! Get the symbol of the function being called.
+    #' @title Get the symbol of the function being called.
+    #' @inheritParams is_pd_symbol_call
+    #' @description
+    #'    Gets the id of the symbol of the call.  
+    #'    That is the name of the function being called.
     stopifnot(is_pd_symbol_call(pd,id))
     get_child_ids(pd, 
         get_next_sibling_id(pd, 
@@ -105,7 +117,10 @@ get_pd_call_symbol <-
 function( pd            #< parse data of assignemnt
         , id = all_root_ids(pd)[1] #< id of interest.
         ){
-    #! Get the symbol of the function being called.
+    #' @title Get the symbol of the function being called.
+    #' @inheritParams is_pd_symbol_call
+    #' @description a wrapper to \code{\link{is_pd_symbol_call}} to subset
+    #'     the \code{\link{parse-data}}.
     stopifnot(is_pd_symbol_call(pd,id))
     get_child(pd, 
         get_next_sibling_id(pd, 
@@ -127,6 +142,10 @@ get_pd_call_args <-
 function( pd            #< parse data of assignemnt
         , id = all_root_ids(pd)[1] #< id of interest.
         ){
+    #' @title get the arguments of a call.
+    #' @inheritParams is_pd_symbol_call
+    #' @description
+    #'   Retrieves the arguments of a call as a list.
     kids <- get_child(pd=pd, id=id, ngenerations=1L, include.self=FALSE)
     groups <- cumsum(kids$token %in% c("'('", "','", "')'"))
     args <- split( kids[groups > 0 & groups < max(groups),][-1,]
@@ -142,6 +161,7 @@ function( pd            #< parse data of assignemnt
                         ''
                 })
     arg.pd
+    #' @return a named list where each element is the parse-data for the argument.
 }
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))

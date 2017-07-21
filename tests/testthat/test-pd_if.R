@@ -1,7 +1,7 @@
-#! This file was automatically produced by documentation::extract_tests on  2017-07-08 09:16:20
+#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
 #! changes will be overwritten.
 context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_if.R`')
-#line 59 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_if.R"
+#line 80 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_if.R"
 test_that("if structures", {#!@testing if structures
     pd <- get_parse_data(parse(text={"
         if(predicate){

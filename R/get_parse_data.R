@@ -29,10 +29,12 @@
 
 #' @export
 valid_parse_data <-
-function( df #< a [data.frame] object.
-        ){
-    #! Test if the given `df` data.frame conformes to `<parse-data>` conventions.
-    #! @return either TRUE if valid as parse-data or the reason why not.
+function( df ){
+    #' @title is a data.frame a valid parse-data?
+    #' @param df a data.frame object.
+    #' @description 
+    #'   Test if the given `df` data.frame conformes to `<parse-data>` conventions.
+    #' @return either TRUE if valid as parse-data or the reason why not.
     if (!inherits(df, "data.frame")) return("Not a data.frame object")
     if (!all(.pd.expected.names %in% names(df))) return("names of data do not conform.")
     return(TRUE)
@@ -292,20 +294,22 @@ expect_is(pd, "parse-data")
 # expect_that(pd, is_a("data.frame"))
 }
 if(FALSE){#@test get_parse_data.function S4 Generic
-setGeneric("my_generic", 
-    function(object #< An object to do something with
-            ){
-        #' A title
-        #' 
-        #' A Description
-        print("It Works!")
-        #< A return value.
-    })
-expect_null(utils::getParseData(my_generic))
-expect_true(isGeneric(fdef = my_generic))
-pd <- get_parse_data(my_generic)
-expect_is(pd, 'parse-data')
-
+    # Note that testthat:::test_code will strip comments from code
+    # this requires a parse & eval statement.
+    p <- parse(text="setGeneric(\"my_generic\", 
+        function(object #< An object to do something with
+                ){
+            #' A title
+            #' 
+            #' A Description
+            print(\"It Works!\")
+            #< A return value.
+        })", keep.source=TRUE)
+    eval(p)
+    expect_null(utils::getParseData(my_generic))
+    expect_true(isGeneric(fdef = my_generic))
+    pd <- get_parse_data(my_generic)
+    expect_is(pd, 'parse-data')
 }
 #' @export
 get_parse_data.default <-
@@ -389,7 +393,7 @@ expect_that(sum(fixed.pd$parent==0), equals(1))
 
 #' @export
 `subset.parse-data` <- function(x, ...)structure(NextMethod(), class=c('parse-data', 'data.frame'))
-if(FALSE){
+if(FALSE){#@testing
     pd <- get_parse_data(parse(text={
     "{# Section Block
     #' Roxygen Line Beore

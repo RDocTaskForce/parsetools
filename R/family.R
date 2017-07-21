@@ -30,12 +30,16 @@ function( pd, id
         , include.self = TRUE
         , ngenerations = Inf
         , ...
-        , include.doc.comments     = TRUE   #< include associated documentation comments.
-        , include.regular.comments = FALSE  #< include associated regular comments.
+        , include.doc.comments     = TRUE
+        , include.regular.comments = FALSE
         ){
-    #! Get family of nodes.
-    #! @InheritParams get_child_ids
-    #!
+    #' @title Get family of nodes.
+    #' @inheritParams get_child_ids
+    #' @param ...                       currently ignored. 
+    #' @param include.doc.comments      include associated documentation comments.
+    #' @param include.regular.comments  include associated regular comments.
+    #' @description
+    #'   Subset the \code{pd} to the family of \code{id}.
     id <- ._check_id(id)
     kids <- get_child_ids(pd, id, include.self=include.self, ngenerations=ngenerations, ...)
     cids <- 
@@ -50,6 +54,7 @@ function( pd, id
               , 'id']
         }
     pd[pd$id %in% c(kids, cids), ]
+    #' @return a subset of the \code{\link{parse-data}} \code{pd}.
 }
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"a <- 1
@@ -108,30 +113,53 @@ if(FALSE){#!@testing
 
 #' @export
 get_sibling_ids <- function(pd, id){
+    #' @title Identify siblings.
+    #' @inheritParams get_child_ids
+    #' @description \subsection{get_sibling_ids}{
+    #'   A convenience function for identifying siblings of the given id.
+    #'   Siblings are nodes with the same parent.
+    #' }
     get_child_ids(pd, get_parent_id(pd, id))
 }
 
 #' @export
 get_next_sibling_id <- function(pd, id){
+    #' @rdname get_sibling_ids
+    #' @description \subsection{get_next_sibling_id}{
+    #'   gives the id of the next youngest sibling of the current id.
+    #' }
     sids <- get_sibling_ids(pd, id)
     . <- which(sids>id)
     if (length(.)) sids[min(.)] else NA_integer_
 }
 #' @export
 get_prev_sibling_id <- function(pd, id){
+    #' @rdname get_sibling_ids
+    #' @description \subsection{get_prev_sibling_id}{
+    #'   gives the id of the next older sibling of the current id.
+    #' }
     sids <- get_sibling_ids(pd, id)
     . <- which(sids<id)
     if (length(.)) sids[max(.)] else NA_integer_
 }
 
-#@internal
+#' @export
+#' @title Test if id is the firstborn.
 is_firstborn <- function(id, pd=get('pd', parent.frame())){ 
+    #' @inheritParams get_child_ids
+    #' @description
+    #'   Test if an expression is the firstborn, ie. oldest or lowest id.
     id == get_firstborn_id(pd, get_parent_id(pd,id))
 }
 
 #' @export
+#' @title get the firstborn child.
 get_firstborn_id <-
 function(pd, id=all_root_ids(pd)){
+    #' @inheritParams get_child_ids
+    #' @description
+    #'   Get the id of the firstborn child of id.
+    #'   Without the "_id" is a wrapper for giving the nodes.
     id <- ._check_id(id)
     kids <- lapply(id, get_child_ids, pd=pd)
     as.integer(sapply(kids, min))
@@ -140,6 +168,7 @@ function(pd, id=all_root_ids(pd)){
 #' @export
 get_firstborn <-
 function(pd, id=all_root_ids(pd)){
+    #' @rdname get_firstborn_id
     nodes(get_firstborn_id(pd, id))
 }
 if(FALSE){#!@testing

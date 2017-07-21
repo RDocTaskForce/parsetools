@@ -1,7 +1,7 @@
-#! This file was automatically produced by documentation::extract_tests on  2017-07-08 09:16:20
+#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
 #! changes will be overwritten.
 context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/testing_blocks.R`')
-#line 91 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/testing_blocks.R"
+#line 98 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/testing_blocks.R"
 test_that("extract_test_block", {#!@testing
     pd <- get_parse_data(parse(text={'
     if(F){#!@testing
@@ -129,7 +129,7 @@ test_that("extract_test_block", {#!@testing
                            , name = "An info string")
                 , info = "using text string")
 })
-#line 237 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/testing_blocks.R"
+#line 251 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/testing_blocks.R"
 test_that("extract_test_blocks", {#! @testthat
 text <- {'hello_world <- function(){
     print("hello world")

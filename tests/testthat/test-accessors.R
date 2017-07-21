@@ -1,4 +1,4 @@
-#! This file was automatically produced by documentation::extract_tests on  2017-07-08 09:16:19
+#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
 #! changes will be overwritten.
 context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R`')
 #line 30 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
@@ -78,4 +78,14 @@ expect_identical(ids_starting_on_line(4), tail(pd$id, 2))
 expect_identical(ids_ending_on_line(1), 1:5)
 expect_identical(ids_ending_on_line(4), c(26L, 23L, 24L))
 
+})
+#line 202 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
+test_that("get_prev_terminal_id", {#@testing
+    pd <- "   rnorm( 10,  0,   3)" %>% parse(text=.) %>% get_parse_data()
+    id <- 4
+    expect_equal(get_prev_terminal_id(pd, id), 2L)
+
+    expect_equal( get_prev_terminal_id(pd, pd$id)
+                , c(NA, NA, NA, 1, rep(2, 2), 4, 6, 6, 9, 11, 11, 14)
+                )
 })
