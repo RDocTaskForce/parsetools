@@ -3,7 +3,7 @@
 # This file is part of the R package `parsetools`.
 #
 # Author: Andrew Redd
-# Copyright: 2017 University of Utah
+# Copyright: 2017 The R Consortium
 #
 # LICENSE
 # ========
@@ -23,6 +23,7 @@
 #
 }#######################################################################
 
+#@internal
 comment.classes <- data.frame(
       prefix = c( "#'"             , "#!"         , "#<"              , "#^"                  , "#@"         )
     , class  = c( "ROXYGEN_COMMENT", "DOC_COMMENT", "RELATIVE_COMMENT", "CONTINUATION_COMMENT", "TAG_COMMENT")
@@ -102,6 +103,17 @@ if(FALSE){#! @testing
 }
 
 #' @export
+#' @title Is this a comment?
+#' @param x   object to test
+#' @param ... other arguments, noteably \code{id} for \code{\link{parse-data}}.
+#' @description 
+#'   \subsection{is_doc_comment}{
+#'      A generic function for determining if an object is a comment.
+#'      Used for testing character vectors, as well as \code{\link{parse-data}} and
+#'      generic data frames.
+#'   }
+#' @return Should return a logical vector, for parse-data and data.frame should
+#'         be length of \code{nrow(x)}.  For character same length as x.
 is_comment <- function(x, ...)UseMethod("is_comment")
 
 #' @export
@@ -148,6 +160,11 @@ if(FALSE){#!@testing
 
 
 #' @export
+#' @rdname is_comment
+#' @description
+#'   \subsection{is_doc_comment}{
+#'       Additionally tests if the comment is a documentation type comment.
+#'   }
 is_doc_comment <- function(x, ...)UseMethod("is_doc_comment")
 #' @export
 is_doc_comment.character <- function(x, ...){classify_comment(x) %in% comment.classes$class}
@@ -195,6 +212,10 @@ if(FALSE){#! @testing
 
 # nocov start
 #' @export
+#' @title Getter functions
+#' @param pd a \code{\link{parse-data}} object.
+#' @return a subsetted \code{\link{parse-data}} object.
+#' @description \subsection{get_comments}{Get all comments, documentation or otherwise.}
 get_comments <- function(pd){ pd[is_comment(pd),]}
 make_get_comment.classes <-
 function( type = comment.classes$class  #< type of the comments to extract
@@ -208,31 +229,45 @@ function( type = comment.classes$class  #< type of the comments to extract
 }
 
 #' @export
+#' @rdname get_comments
+#' @description \subsection{get_doc_comments}{Get all documentation comments(any type).}
 get_doc_comments          <- make_get_comment.classes()
 
 #' @export
+#' @rdname get_comments
+#' @description \subsection{get_roxygen_comments}{Get Roxygen \code{#'} comments only.}
 get_roxygen_comments      <- make_get_comment.classes("ROXYGEN_COMMENT")
 
 #' @export
+#' @rdname get_comments
+#' @description \subsection{get_relative_comments}{Get relative \code{#<} comments only.}
 get_relative_comments     <- make_get_comment.classes("RELATIVE_COMMENT")
 
 #' @export
+#' @rdname get_comments
+#' @description \subsection{get_continuation_comments}{Get continuation \code{#^} comments only.}
 get_continuation_comments <- make_get_comment.classes("CONTINUATION_COMMENT")
 
 #' @export
+#' @rdname get_comments
+#' @description \subsection{get_argument_descriptors}{
+#'     Get comments used for argument description (\code{#<}, and \code{#^}.}
 get_argument_descriptors  <- make_get_comment.classes(c( "RELATIVE_COMMENT"
                                                        , "CONTINUATION_COMMENT"
                                                        ))
 
 #' @export
+#' @rdname get_comments
+#' @description \subsection{get_normal_comments}{Get normal (non-documenting) comments only.}
 get_normal_comments       <- make_get_comment.classes("NORMAL_COMMENT")
 # nocov end
 
-#' @export
+#@internal
 get_associated_continuation <-
 function( pd            #< parse data.
         , id=pd$id[1]   #< id of the comment of interest
         ){
+    .Deprecated(msg="Support for continuations comments is in flux and support may be removed.")
     #! retrieve the continuation comments associated with the comment of interest.
     #TODO check if this works better with next sibling formulation.
     pd <- classify_comment(pd)
@@ -249,7 +284,7 @@ function( pd            #< parse data.
     #! @return filtered parse data with the comments, will be empty if the id 
     #! does not denote a documentation comment.
 }
-if(FALSE){#! @testing
+if(FALSE){# Deprecated testing code.
     pd <- get_parse_data(parse(text="
     #' A Title for this function
     function( x = 0 #< just a random argument
@@ -291,6 +326,7 @@ if(FALSE){#! @testing
 
 #' @export
 strip_doc_comment_leads.data.frame <- function(comment, rm.space=TRUE){
+    #@rdname strip_doc_comment_leads
     pd <- ._check_parse_data(comment)
     pd$text <- strip_doc_comment_leads.character(pd$text, rm.space=rm.space)
     pd

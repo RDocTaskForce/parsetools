@@ -28,9 +28,15 @@ is_pd_function <-
 function( pd #< a [parse-data] object
         , id = all_root_ids(pd)
         ){
-    #! test if parse data is a function
+    #' @title test if a function
+    #' @inheritParams is_pd_assignment
+    #' @description
+    #'   Test if the \code{id} points to a function.
+    #'   
+    if (length(id) > 1) sapply(id, is_pd_function, pd=pd)
     kids.pd <- get_child(id=id, pd, ngenerations=1, FALSE)
     kids.pd[1, 'token'] == 'FUNCTION'
+    #' @return a logical vector, same length as \code{id}.
 }
 if(F){#! @testthat is_pd_function
     pd <- get_parse_data(parse(text="function(){}"))

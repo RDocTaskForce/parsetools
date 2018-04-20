@@ -3,7 +3,7 @@
 # This file is part of the R package `parsetools`.
 #
 # Author: Andrew Redd
-# Copyright: 2017 University of Utah
+# Copyright: 2017 The R Consortium
 #
 # LICENSE
 # ========
@@ -28,10 +28,12 @@
 
 .testing.tags <- c("test", "tests", "testing", "testthat")
 
-#@internal
-extract_test_block <- function(pd, id){
-    #! @param id iff block id, not the content
+#' @export 
+extract_test_block <- function(pd, id=all_tagged_iff_ids(pd, .testing.tags)){
+    #' @title Extract testing blocks from the parse-data.
+    #' @param pd a \link{parse-data} object.
     pd <- ._check_parse_data(pd)
+    #' @param id iff block id, not the content
     id <- ._check_id(id)
     if (length(id) > 1){
         .l <- lapply(id, extract_test_block, pd=pd)
@@ -40,6 +42,11 @@ extract_test_block <- function(pd, id){
                         , start.locations = utils::head(cumsum(c(1, sapply(.l, length))),-1)
                         ))
     }
+    #' @description
+    #'   Extract the content of a testing block as a character vector of lines.
+    #'   The name, which is attached as an attribute is taken from the info
+    #'   string or inferred by location, see Details.
+    #'   
     stopifnot(is_iff_block(pd,id))
     content.id  <- get_if_branch_id(pd, id)
     
@@ -85,8 +92,8 @@ extract_test_block <- function(pd, id){
                          , paste0(content[length(content)], ")"))
     out.text <- c( line.directive, out.text)
     structure(out.text, name = name)
-    #! @return a character vector with the lines for the specific test(s) 
-    #^ with the name of the test included as an attribute.
+    #' @return a character vector with the lines for the specific test(s) 
+    #'         with the name of the test included as an attribute.
 }
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={'
@@ -143,56 +150,56 @@ if(FALSE){#!@testing
 
     expect_equal( extract_test_block(pd, iff.ids[[2L]])
                 , structure(c( '#line 9 "<text>"'
-                             , 'test_that(\'hello_world\', {#!@testthat'
+                             , 'test_that("hello_world", {#!@testthat'
                              , '        expect_output(hello_world(), "hello world")'
                              , '    })'
                              ), name=structure("hello_world", type = "function_assignment"))
                 , info="testing after function assignment")
     expect_equal( extract_test_block(pd, iff.ids[[3L]])
                 , structure(c( '#line 14 "<text>"'
-                             , 'test_that(\'ldf\', {#!@testing'
+                             , 'test_that("ldf", {#!@testing'
                              , '        # not a function assignment'
                              , '    })'
                              ), name = structure("ldf", type = "assignment"))
                 , info="testing after other assignment")
     expect_equal( extract_test_block(pd, iff.ids[[4L]])
                 , structure(c( '#line 22 "<text>"'
-                             , 'test_that(\'f2\', {#! @test'
+                             , 'test_that("f2", {#! @test'
                              , '        expect_error(f2())'
                              , '    })'
                              ), name=structure("f2", type = "function_assignment"))
                 , info="testing after other iff")
     expect_equal( extract_test_block(pd, iff.ids[[5L]])
                 , structure(c( '#line 27 "<text>"'
-                             , 'test_that("setClass(\'A\', ...)", {#!@testing '
+                             , 'test_that("setClass(\\\"A\\\", ...)", {#!@testing '
                              , '        #testing a setClass'
                              , '    })'
-                             ), name="setClass('A', ...)")
+                             ), name="setClass(\"A\", ...)")
                 , info="testing after setClass")
     expect_equal( extract_test_block(pd, iff.ids[[6L]])
                 , structure(c( '#line 32 "<text>"'
-                             , 'test_that(\'print.A\', {#!@testing '
+                             , 'test_that("print.A", {#!@testing '
                              , '        #testing a setMethod'
                              , '    })'
                              ), name=structure("print.A", type = "setMethod"))
                 , info="testing after setMethod")
     expect_equal( extract_test_block(pd, iff.ids[[7L]])
                 , structure(c( '#line 37 "<text>"'
-                             , 'test_that("setGeneric(\'my_generic\', ...)", {#!@testing '
+                             , 'test_that("setGeneric(\\"my_generic\\", ...)", {#!@testing '
                              , '        #testing a setClass'
                              , '    })'
-                             ), name="setGeneric('my_generic', ...)")
+                             ), name="setGeneric(\"my_generic\", ...)")
                 , info="testing after setGeneric")
     expect_error( extract_test_block(pd, iff.ids[[8L]])
                 , info="following call")
                 
     expect_equal( extract_test_block(pd, iff.ids[2:3])
                 , structure(c( '#line 9 "<text>"'
-                             , 'test_that(\'hello_world\', {#!@testthat'
+                             , 'test_that("hello_world", {#!@testthat'
                              , '        expect_output(hello_world(), "hello world")'
                              , '    })'
                              , '#line 14 "<text>"'
-                             , 'test_that(\'ldf\', {#!@testing'
+                             , 'test_that("ldf", {#!@testing'
                              , '        # not a function assignment'
                              , '    })'
                              )
@@ -208,7 +215,7 @@ if(FALSE){#!@testing
     "}))
     expect_equal( extract_test_block(pd, all_root_ids(pd))
                 , structure(c( "#line 2 \"<text>\""
-                             , "test_that('An info string', {#@testing An info string"
+                             , "test_that(\"An info string\", {#@testing An info string"
                              , "            expect_true(T)"
                              , "        })"
                              )
@@ -217,6 +224,7 @@ if(FALSE){#!@testing
 }
 
 
+#@internal
 extract_test_blocks_parse_data <- 
 function( pd ){
     pd <- ._check_parse_data(pd)
@@ -231,6 +239,12 @@ function( pd ){
 #' @export
 extract_test_blocks <- 
 function( file ){
+    #' @title extract tests from a file.
+    #' @param file the file to retrieve tests from.
+    #' @description
+    #'    Convenience function for extracting all tests from a file.
+    #'    This parses the file and passes the work to 
+    #'    \code{\link{extract_test_block}}.
     pd <- get_parse_data(parse(file=file))
     extract_test_blocks_parse_data(pd)
 }
@@ -257,11 +271,11 @@ writeLines(text, tmp)
 test.blocks <- extract_test_blocks(tmp)
 expect_equal( test.blocks
             , structure(c( sprintf('#line 4 "%s"', tmp)
-                         , 'test_that(\'hello_world\', {#!@testthat'
+                         , 'test_that("hello_world", {#!@testthat'
                          , '    expect_output(hello_world(), "hello world")'
                          , '})'
                          , sprintf('#line 9 "%s"', tmp)
-                         , 'test_that(\'f2\', {#! @test'
+                         , 'test_that("f2", {#! @test'
                          , '    expect_error(f2())'
                          , '})'
                          )

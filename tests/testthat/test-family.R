@@ -1,7 +1,8 @@
-#! This file was automatically produced by lint on  2017-06-06 12:03:28
+#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
 #! changes will be overwritten.
-context('tests extracted from file `./R/family.R`')
-test_that("'get_family'", {#!@testing
+context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/family.R`')
+#line 59 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/family.R"
+test_that("get_family", {#!@testing
     pd <- get_parse_data(parse(text={"a <- 1
         {# section 1
         b <- 2
@@ -55,7 +56,8 @@ test_that("'get_family'", {#!@testing
     
     
 })
-test_that("'get_firstborn'", {#!@testing
+#line 174 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/family.R"
+test_that("get_firstborn", {#!@testing
     pd <- get_parse_data(parse(text={"a <- 1
         {# section 1
         b <- 2
@@ -68,4 +70,12 @@ test_that("'get_firstborn'", {#!@testing
     "}))
     expect_equal(get_firstborn(pd, 52)$token, "'{'")
     expect_equal(get_firstborn(pd, 7)$text, "<-")
+    
+    expect_warning(get_firstborn_id(pd, c(7, 52, .Machine$integer.max)))
+    expect_identical( suppressWarnings(get_firstborn_id(pd, c(7, 52, .Machine$integer.max)))
+                    , c(2L, 10L, NA_integer_))
+    
+    expect_true(is_firstborn(2, pd=pd))
+    expect_identical(suppressWarnings(is_firstborn(-1)), NA)
+    expect_identical(is_firstborn(c(1,3,7)), c(TRUE, FALSE, TRUE))
 })

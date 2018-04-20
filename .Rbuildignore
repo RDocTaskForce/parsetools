@@ -1,2 +1,4 @@
 ^\.
-README.md
+^README\.md$
+^CONDUCT\.md$
+^CONTRIB\.md$

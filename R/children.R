@@ -3,7 +3,7 @@
 # This file is part of the R package `parsetools`.
 #
 # Author: Andrew Redd
-# Copyright: 2017 University of Utah
+# Copyright: 2017 The R Consortium
 #
 # LICENSE
 # ========
@@ -24,16 +24,27 @@
 }#######################################################################
 
 #' @export
+#' @title Get all nodes that are children of `id`.
 get_child_ids <-
-function( pd                        #< The <parse-data> information
-        , id                        #< id of the expression of interest
-        , ngenerations    = 1       #< Number of levels to descend.
-        , include.self    = FALSE   #< Should the root node (`id`) be included?
-        , all.generations = TRUE    #< Should all generations(TRUE) or only the
-                                    #^ the final (FALSE) generation be returned?
+function( pd                        
+        , id                        
+        , ngenerations    = 1       
+        , include.self    = FALSE   
+        , all.generations = TRUE    
+                                    
         ) {
-    #!  Get all nodes that are children of `id`.
-    #!  @export
+    #' @param pd              The \code{\link{parse-data}} information
+    #' @param id              id of the expression of interest
+    #' @param ngenerations    Number of levels to descend.
+    #' @param include.self    Should the root node (\code{id}) be included?
+    #' @param all.generations Should all generations(TRUE) or only the
+    #'                        the final (FALSE) generation be returned?
+    #' 
+    #' @description
+    #'   Get all ids in `pd` that are children of \code{id}.
+    #'   i.e. lower in the heirarchy or with id as a parent.
+    #'   If \code{ngenerations} is greater than 1 and \code{all.generations} 
+    #'   is \code{TRUE}, all descendents are aggregated and returned.
     id <- ._check_id(id)
     parents <- id
     ids <- if(include.self) parents else integer(0)
@@ -84,6 +95,10 @@ if(FALSE){#! @test
     expect_equal( kids.ids, c(23, c(3,2,5,6,9,10,12,13,16,17,19,20), c(1,4,11,18))
                 , info='ngenerations=2, include.self=TRUE, all.generations=TRUE'
                 )
+                
+    expect_identical( get_child_ids(pd, .Machine$integer.max), integer(0))
+    expect_true( all(pd$id %in% get_child_ids(pd, 0, Inf)))
+    
 }
 
 #' @export
@@ -91,9 +106,8 @@ get_child <-
 function( pd, id 
         , ...       #< passed to <get_child_ids>.
         ) {
-    #! @InheritParams get_child_ids
-    #! @rdname get_children
-    #! @export
+    #' @inheritParams get_child_ids
+    #' @rdname get_children
     pd[pd$id %in% get_child_ids( pd, id,...), ]
 }
 if(FALSE){#!@test
@@ -125,20 +139,16 @@ get_children <-
 function( pd, id
         , ...       #< passed to <get_child>.
         ){
-    #! @InheritParams get_child_ids
-    #! Find the children of an expression
-    #!
-    #! This takes the \code{pd} and find all the children of the expression
-    #! with the given \code{id}.
-    #! 
-    #! @param id the id of the given expression in \code{pd}
-    #! @param pd the data from a parsed file or expression.
-    #!   The results of \code{\link{getParseData}}.
-    #! @param ngenerations the number of levels to search.  If a negative number is
-    #!   given all children will be found.
-    #!
-    #! @family  parse-functions
-    #! @export
+    #' @inheritParams get_child_ids
+    #' @param ... passed on.
+    #' @title Find the children of an expression
+    #'
+    #' @description 
+    #'   This takes the \code{pd} and find all the children of the expression
+    #'   with the given \code{id}.
+    #' 
+    #' @family  parse-functions
+    #' @return a list of parse-data objects corresponding to \code{id}
     id <- ._check_id(id)
     return(lapply(id, get_child, pd=pd, ...))
 }

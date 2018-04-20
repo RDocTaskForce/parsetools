@@ -1,8 +1,11 @@
-#! This file was automatically produced by lint on  2017-06-06 12:03:28
+#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
 #! changes will be overwritten.
-context('tests extracted from file `./R/tags.R`')
-test_that("'has_tag'", {#!@testing
-    fun <- function(object){
+context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/tags.R`')
+#line 82 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/tags.R"
+test_that("has_tag", {#!@testing
+    # Note that testthat:::test_code will strip comments from code
+    # this requires a parse statement.
+    pd  <- get_parse_data(parse(text='fun <- function(object){
         #! function with only comment lines
         #!       @tag   TRUE
         #!      @@tag   FALSE
@@ -10,18 +13,19 @@ test_that("'has_tag'", {#!@testing
         #        @tag   TRUE, even though a regular comment    
         object @tag
         NULL
-    }
-    pd  <- parsetools::get_parse_data(fun)
+    }'))
     tag <- 'tag'
     id <- pd$id
     expect_equal(sum(has_tag(pd, tag)), 2)
 })
-test_that("'clean_tag_comments'", {#!@testing
+#line 111 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/tags.R"
+test_that("clean_tag_comments", {#!@testing
     expect_equal( clean_tag_comments("#@testing", "testing")
                 , "#! @testing"
                 )
 })
-test_that("'strip_tag'", {#! @testthat
+#line 137 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/tags.R"
+test_that("strip_tag", {#! @testthat
     expect_equal( strip_tag("@tag should be removed", 'tag')
                 , "should be removed")
     expect_equal( strip_tag("@nomd{@tag}@ should not be removed", 'tag')
@@ -29,7 +33,8 @@ test_that("'strip_tag'", {#! @testthat
     expect_equal( strip_tag("@@tag should not be removed.", 'tag')
                 , "@@tag should not be removed.")
 })
-test_that("'get_tagged_comment_ids'", {#!@testing
+#line 165 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/tags.R"
+test_that("get_tagged_comment_ids", {#!@testing
     pd  <- parsetools::get_parse_data(parse(text={"
         fun <- function(object){
             #! function with only comment lines
