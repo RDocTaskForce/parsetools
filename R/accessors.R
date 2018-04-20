@@ -23,6 +23,16 @@
 #
 }#######################################################################
 
+#' @name internal
+#' @title Internal Functions
+#' @param pd the parse data.
+#' @param id the ID of the expression
+#' @param line a line number
+#' @description These functions are for internal use but are documented 
+#' here for reference.
+NULL
+
+#' @describeIn internal Extract the token
 #@internal 
 token <- function(id=pd$id, pd=get('pd', parent.frame())){
     pd[match(id, pd$id), 'token']
@@ -39,6 +49,7 @@ if(FALSE){#!@testing
 
 #@internal
 text <- function(id=pd$id, pd=get('pd', parent.frame())){
+#' @describeIn internal Extract the text
     pd[match(id, pd$id), 'text']
 }
 if(FALSE){#!@testing 
@@ -54,10 +65,11 @@ if(FALSE){#!@testing
 
 #@internal
 nodes <- function(id, pd=get('pd', parent.frame())){
+#' @describeIn internal Extract only the specified node(s).
     pd[match(id, pd$id), ]
 }
 if(FALSE){#!@testing
-        pd <- get_parse_data(parse(text={"
+    pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
         y <- runif(10)
         plot(x, y)
@@ -70,43 +82,51 @@ if(FALSE){#!@testing
 
 #@internal
 start_line <- function(id, pd=get('pd', parent.frame())){
+#' @describeIn internal Get the line the expression starts on.
     pd[match(id, pd$id), 'line1']
 }
 
 #@internal
 start_col <- function(id, pd=get('pd', parent.frame())){
+#' @describeIn internal Get the column the expression starts on.
     pd[match(id, pd$id), 'col1']
 }
 
 #@internal
 end_line <- function(id, pd=get('pd', parent.frame())){
+#' @describeIn internal Get the line the expression ends on.
     pd[match(id, pd$id), 'line2']
 }
 
 #@internal
 end_col <- function(id, pd=get('pd', parent.frame())){
+#' @describeIn internal Get the column the expression ends on.
     pd[match(id, pd$id), 'col2']
 }
 
 #@internal
 filename <- function(pd){
+#' @describeIn internal Extract the filename if available, otherwise return "<UNKNOWN>".
     src            <- attr(pd, 'srcfile')
     if (!is.null(src)) src$filename else "<UNKNOWN>"
 }
 
 #@internal
 lines <- function(id, pd=get('pd', parent.frame())){
+#' @describeIn internal Extract the lines of text. 
     text <- utils::getParseText(pd, id)
     unlist(strsplit(text, '\n', fixed=TRUE))
 }
 
 #@internal 
 is_terminal <- function(id, pd=get('pd', parent.frame())){
+#' @describeIn internal does id represent a terminal node.
     pd[match(id, pd$id), 'terminal']
 }
 
 #@internal 
 is_first_on_line <- function(id, pd=get('pd', parent.frame())){
+#' @describeIn internal is an expression the first one on a line?
     c(T, utils::head(pd$line2, -1) != utils::tail(pd$line1, -1)) [match(id, pd$id)]
 }
 if(FALSE){#@tesrting
@@ -130,14 +150,23 @@ get_parse_data}
 
 #@internal 
 is_last_on_line <- function(id, pd=get('pd', parent.frame())){
-    c(diff(pd$line1)!=0, T)[match(id, pd$id)]
+#' @describeIn internal Is expression the last terminal node on the line?
+    if (!is_terminal(id, pd)) return(FALSE)
+    max(pd[pd$line2 == end_line(id, pd), 'col2']) == end_col(id, pd)
 }
 if(FALSE){#@testing
-#TODO
+"'
+
+' -> a.multiline.string" %>% parse(text=.) %>% get_parse_data() -> pd
+
+expect_false(is_last_on_line(1, pd))
+expect_true(is_last_on_line(4, pd))
+expect_false(is_last_on_line(6, pd))
 }
 
 #@internal 
 spans_multiple_lines <- function(id, pd=get('pd', parent.frame())){
+#' @describeIn internal does the expression span multiple lines?
     start_line(id) != end_line(id)
 }
 if(FALSE){#@testing
@@ -150,6 +179,7 @@ expect_true(spans_multiple_lines(all_root_ids(pd), pd))
 }
 
 terminal_ids_on_line <- function(line, pd=get('pd', parent.frame())){
+#' @describeIn internal Get the ids on a given line that are terminal nodes.
     pd$id[pd$line1 <= line & pd$line2 >= line & pd$terminal]
 }
 if(F){#@testing
@@ -171,9 +201,11 @@ expect_equal(terminal_ids_on_line(4, pd), integer(0))
 }
 
 ids_starting_on_line <- function(line, pd=get('pd', parent.frame())){
+#' @describeIn internal Get ids for nodes that start on the given line
     pd$id[pd$line1 == line]
 }
 ids_ending_on_line <- function(line, pd=get('pd', parent.frame())){
+#' @describeIn internal Get ids for nodes that end on the given line
     pd$id[pd$line2 == line]
 }
 if(FALSE){#@testing
@@ -191,6 +223,7 @@ expect_identical(ids_ending_on_line(4), c(26L, 23L, 24L))
 }
 
 get_prev_terminal_id <- function(pd, id=pd$id){
+#' @describeIn internal Get the id for the terminal expression that is immediately prior to the one given.
     if (length(id)>1) return (sapply(id, get_prev_terminal_id, pd=pd))
     ix <- which( pd$line1 <= start_line(id)
                & pd$col1  <  start_col(id) 

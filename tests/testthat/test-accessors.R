@@ -36,7 +36,13 @@ test_that("nodes", {#!@testing
 })
 #line 135 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
 test_that("is_last_on_line", {#@testing
-#TODO
+"'
+
+' -> a.multiline.string" %>% parse(text=.) %>% get_parse_data() -> pd
+
+expect_false(is_last_on_line(1, pd))
+expect_true(is_last_on_line(4, pd))
+expect_false(is_last_on_line(6, pd))
 })
 #line 143 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
 test_that("spans_multiple_lines", {#@testing
