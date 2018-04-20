@@ -2,6 +2,7 @@
 % Please edit documentation in R/get_parse_data.R
 \name{get_parse_data}
 \alias{get_parse_data}
+\alias{parse-data}
 \title{Get cleaned parse data}
 \usage{
 get_parse_data(x, ...)

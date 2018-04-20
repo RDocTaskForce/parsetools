@@ -7,7 +7,11 @@
 has_tag(pd, tag, id = pd$id, ...)
 }
 \arguments{
-\item{tag}{tag to test for}
+\item{pd}{The \code{\link{parse-data}} information}
+
+\item{tag}{tag(s) to test for}
+
+\item{id}{id of the expression of interest}
 
 \item{...}{options passed on}
 }
