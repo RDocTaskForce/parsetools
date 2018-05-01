@@ -158,6 +158,33 @@ if(FALSE){#!@testing
     expect_equal(rtn, c(T,T,T,T,T,T,F,F))
 }
 
+is_relative_comment <- function(x,...)UseMethod("is_relative_comment")
+is_relative_comment.character <- function(x,...)classify_comment(x) == 'RELATIVE_COMMENT'
+`is_relative_comment.parse-data` <- function(x, id=x$id, ...){
+    token(id, pd=pd) == "RELATIVE_COMMENT"
+}
+if(F){#@testing
+    expect_false(is_relative_comment("## normal comment       "))
+    expect_false(is_relative_comment("#' Roxygen comment      "))
+    expect_false(is_relative_comment("#! Documentation comment"))
+    expect_true (is_relative_comment("#< Relative comment     "))
+    expect_false(is_relative_comment("#^ Continuation comment "))
+    expect_false(is_relative_comment("#@ Tag comment          "))
+    expect_false(is_relative_comment("hello"))
+    pd <- get_parse_data(parse(text={"
+        ## normal comment           
+        #' Roxygen comment          
+        #! Documentation comment    
+        #< Relative comment         
+        #^ Continuation comment     
+        #@ Tag comment              
+        Hello
+    "}))
+    rtn <- is_relative_comment(pd)
+    expect_is(rtn, 'logical')
+    expect_equal(rtn, c(F,F,F,T,F,F,F,F))
+    
+}
 
 #' @export
 #' @rdname is_comment
