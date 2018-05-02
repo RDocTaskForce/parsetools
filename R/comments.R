@@ -269,6 +269,8 @@ get_roxygen_comments      <- make_get_comment.classes("ROXYGEN_COMMENT")
 #' @rdname get_comments
 #' @description \subsection{get_relative_comments}{Get relative \code{#<} comments only.}
 get_relative_comments     <- make_get_comment.classes("RELATIVE_COMMENT")
+get_relative_comment_ids <- function(pd){pd$id[pd$token == "RELATIVE_COMMENT"]}
+
 
 #' @export
 #' @rdname get_comments
