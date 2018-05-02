@@ -48,6 +48,7 @@ if(FALSE){#! @testing
 get_ancestor_ids <- 
 function( pd, id
         , nancestors   = Inf  #< Number of generations to go back
+        , last         = 0L   #< the last parent to consider
         , aggregate    = TRUE #< All (T) or only final (F).
         , include.self = TRUE #< should `id` be included in list of ancestors
                               #^ if `aggregate` is true.
@@ -74,6 +75,7 @@ function( pd, id
     if (length(id) > 1) {
             return(lapply( id, get_ancestor_ids, pd=pd
                          , nancestors   = nancestors
+                         , last         = last
                          , aggregate    = aggregate
                          , include.self = include.self
                          , only.present = only.present
@@ -96,7 +98,7 @@ function( pd, id
             break
         }
         if (aggregate) ancestors <- c(ancestors, parent)
-        if (parent==0) break
+        if (parent==last) break
         id <- parent
     }
     if (aggregate) ancestors else parent
@@ -125,4 +127,30 @@ if(FALSE){#! @testing
     expect_identical(get_ancestor_ids(pd, c(23, 11),  2L, F, F, F), list(c(     0L), c(          23L    )))
     expect_identical(get_ancestor_ids(pd, c(23, 11), Inf, T, T, T), list(c(23L    ), c(11L, 12L, 23L    )))
     expect_identical(get_ancestor_ids(pd, c(23, 11), Inf, F, T, T), list(c(23L    ), c(          23L    )))
+}
+if(FALSE){#! @testing last parameter
+'
+function(){
+setClass( "testClass"
+     , slots = c( x="numeric" #< the x field
+                , y="matrix"  #< the y field
+                )
+     )
+ }' %>% 
+    parse(text = .) %>%
+    get_parse_data() -> pd
+
+    root.id <- all_root_ids(pd)
+    body.id <- get_function_body_id(pd, root.id)
+    id <- pd[pd$text=="#< the x field", 'id']
+
+    expect_true(root.id %in% get_ancestor_ids(pd, id))
+    expect_false(root.id %in% get_ancestor_ids(pd, id, last=body.id))
+
+    id2 <- pd[pd$text=="#< the y field", 'id']
+
+    value <- get_ancestor_ids(pd, c(id, id2), last = body.id, include.self =FALSE)
+    expect_identical(value[[1]], value[[2]])
+    expect_false(root.id %in% value[[1]])
+    expect_false(root.id %in% value[[2]])
 }
