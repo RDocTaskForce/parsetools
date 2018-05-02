@@ -36,5 +36,7 @@ Collate:
     'iff_blocks.R'
     'pd_if.R'
     'testing_blocks.R'
+    'pd_classes.R'
+    'pd_comments.R'
     'zzz.R'
 RoxygenNote: 6.0.1

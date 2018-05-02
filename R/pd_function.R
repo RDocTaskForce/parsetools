@@ -24,29 +24,29 @@
 }#######################################################################
 
 #' @export
-is_pd_function <-
+pd_is_function <-
 function( pd #< a [parse-data] object
         , id = all_root_ids(pd)
         ){
     #' @title test if a function
-    #' @inheritParams is_pd_assignment
+    #' @inheritParams pd_is_assignment
     #' @description
     #'   Test if the \code{id} points to a function.
     #'   
-    if (length(id) > 1) sapply(id, is_pd_function, pd=pd)
+    if (length(id) > 1) sapply(id, pd_is_function, pd=pd)
     kids.pd <- get_child(id=id, pd, ngenerations=1, FALSE)
     kids.pd[1, 'token'] == 'FUNCTION'
     #' @return a logical vector, same length as \code{id}.
 }
-if(F){#! @testthat is_pd_function
+if(F){#! @testthat pd_is_function
     pd <- get_parse_data(parse(text="function(){}", keep.source=TRUE))
-    expect_true(is_pd_function(pd))
+    expect_true(pd_is_function(pd))
 
     pd <- get_parse_data(parse(text="fun <- function(){}", keep.source=TRUE))
-    expect_false(is_pd_function(pd))
+    expect_false(pd_is_function(pd))
 }
 
-#' @describeIn is_pd_function Obtain the body of a function
+#' @describeIn pd_is_function Obtain the body of a function
 #' @export
 get_function_body_id <- 
 function( pd, id = all_root_ids(pd)){
@@ -75,11 +75,11 @@ pd <- get_parse_data(parse(text='function(l,r)paste(l,r)', keep.source=TRUE))
     expect_identical(body.id, expected)
 }
 
-#' @describeIn is_pd_function Obtain the ids for the arguments of a function
+#' @describeIn pd_is_function Obtain the ids for the arguments of a function
 #' @export
 get_function_arg_ids <- 
 function(pd, id = all_root_ids(pd)){
-    tail(head(get_child_ids(pd, id), -1), -1)
+    utils::tail(utils::head(get_child_ids(pd, id), -1), -1)
 }
 if(F){#@testing
 'get_function_arg_ids <- 
@@ -118,7 +118,7 @@ function( pd                    #< parse data
     expect_identical(get_function_arg_variable_ids(pd, id), expected)
 }
 
-is_pd_function_arg <- 
+pd_is_function_arg <- 
 function(pd, id){}
 if(F){#@testing
 'get_function_arg_ids <- 

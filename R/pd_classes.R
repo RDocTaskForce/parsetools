@@ -1,13 +1,13 @@
 
 
 .class.defining.functions <- c('setClass', 'setRefClass', 'R6Class')
-is_pd_class_definition <- 
+pd_is_class_definition <- 
 function( id = pd$id
         , pd = get('pd', parent.frame())
         , funs = .class.defining.functions #< valid class defining functions 
         ){
-    if (length(id)>1) return(sapply(id, is_pd_class_definition, pd=pd, funs=funs))
-    is_pd_symbol_call(pd, id) &&
+    if (length(id)>1) return(sapply(id, pd_is_class_definition, pd=pd, funs=funs))
+    pd_is_symbol_call(pd, id) &&
     text(get_pd_call_symbol_id(pd, id)) %in% funs
 }
 if(FALSE){#@test
@@ -19,7 +19,7 @@ if(FALSE){#@test
     parse(text = .) %>%
     get_parse_data() -> pd
     
-    expect_true(is_pd_class_definition(pd, id = all_root_ids(pd)))
+    expect_true(pd_is_class_definition(pd, id = all_root_ids(pd)))
 }
 
 #' @internal
@@ -30,7 +30,7 @@ function( id = pd$id
         ){
     if (length(id) > 1) return(sapply(id, pd_is_in_class_definition, pd=pd, funs=funs))
     ancestors <- get_ancestor_ids(pd, id, only.present=TRUE)
-    any(is_pd_class_definition(ancestors, pd=pd, funs=funs))
+    any(pd_is_class_definition(ancestors, pd=pd, funs=funs))
 }
 if(FALSE){#@test object in setClass
 'setClass( "testClass"

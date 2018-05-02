@@ -308,19 +308,19 @@ function(pd, id){
         if (!is_iff_block(pd, prev.id)) break
         prev.id <- get_prev_sibling_id(pd, prev.id)
     }
-    if (is_pd_assignment(pd, prev.id)) {
+    if (pd_is_assignment(pd, prev.id)) {
         #' If the previous expression is an assignment, the asignee variable of 
         #' the assignment is chosen as the name.  
         value.id <- get_pd_assign_value_id(pd, prev.id)
         structure( utils::getParseText(pd, get_pd_assign_variable_id(pd, prev.id))
-                 , type = if (is_pd_function(pd, value.id)) "function_assignment"
+                 , type = if (pd_is_function(pd, value.id)) "function_assignment"
                           else "assignment"
                  )
         #' An attribute 'type' is also set on the return value.  
         #' For function assignments \code{type="function_assignment"}, 
         #' for all other assignments \code{type="assignment"}.
         #'
-    } else if(is_pd_symbol_call(pd, prev.id)) {
+    } else if(pd_is_symbol_call(pd, prev.id)) {
         switch( text(get_pd_call_symbol_id(pd, prev.id))
               , setClass = {
                     #' The names for \code{link{setClass}} calls will also be inferred.

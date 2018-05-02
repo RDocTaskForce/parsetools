@@ -161,7 +161,7 @@ if(FALSE){#!@testing
 is_relative_comment <- function(x,...)UseMethod("is_relative_comment")
 is_relative_comment.character <- function(x,...)classify_comment(x) == 'RELATIVE_COMMENT'
 `is_relative_comment.parse-data` <- function(x, id=x$id, ...){
-    token(id, pd=pd) == "RELATIVE_COMMENT"
+    token(id, pd=x) == "RELATIVE_COMMENT"
 }
 if(F){#@testing
     expect_false(is_relative_comment("## normal comment       "))
