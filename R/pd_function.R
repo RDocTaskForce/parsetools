@@ -134,16 +134,17 @@ function( pd                    #< parse data
 
 get_function_arg_associated_comment_ids <- 
 function(pd, id){
+    stopifnot(length(id)==1)
     sibling.args <- get_function_arg_variable_ids(pd, get_parent_id(pd, id))
     all.siblings  <- get_sibling_ids(pd, id)
-#~     sibling.comments <- 
-    
+    comments <- intersect(get_relative_comment_ids(pd), all.siblings)
+    comments[associate_relative_comments(pd, comments) == id]
 }
 if(F){#@testing
 'get_function_arg_ids <- 
 function( pd                    #< parse data
-                                #^ continuation comment
-        , id = all_root_ids(pd) #< id number
+                                #< continuation comment
+        , id = all_root_ids(pd)
         ){}' %>%
     parse(text = .) %>%
     get_parse_data() -> pd
@@ -152,11 +153,10 @@ function( pd                    #< parse data
     arg.ids <- get_function_arg_variable_ids(pd, function.id)
     id <- arg.ids[[1]]
     
-    expected <- pd[pd$parent==id & pd$text %in% c('pd', 'id'), 'id']
+    value <- get_function_arg_associated_comment_ids(pd, id)
+    expect_identical(text(value, pd=pd), c('#< parse data', '#< continuation comment'))
     
-    
-
-    
+    expect_length(get_function_arg_associated_comment_ids(pd, arg.ids[[2]]), 0)
 }
 
 
