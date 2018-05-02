@@ -8,7 +8,7 @@ function( id = pd$id
         ){
     if (length(id)>1) return(sapply(id, pd_is_class_definition, pd=pd, funs=funs))
     pd_is_symbol_call(pd, id) &&
-    text(get_pd_call_symbol_id(pd, id)) %in% funs
+    text(pd_get_call_symbol_id(pd, id)) %in% funs
 }
 if(FALSE){#@test
 'setClass( "testClass"

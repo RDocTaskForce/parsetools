@@ -87,7 +87,7 @@ if(FALSE){#!@testing
 
 
 #' @export
-get_pd_call_symbol_id <- 
+pd_get_call_symbol_id <- 
 function( pd            #< parse data of assignemnt
         , id = all_root_ids(pd)[1] #< id of interest.
         ){
@@ -109,11 +109,11 @@ if(FALSE){#!@testing
     "}))
     ids <- all_root_ids(pd)
     id <- ids[[3]]
-    expect_equal(get_pd_call_symbol_id(pd, id), 45L)
+    expect_equal(pd_get_call_symbol_id(pd, id), 45L)
 }
 
 #' @export
-get_pd_call_symbol <-
+pd_get_call_symbol <-
 function( pd            #< parse data of assignemnt
         , id = all_root_ids(pd)[1] #< id of interest.
         ){
@@ -134,11 +134,11 @@ if(FALSE){#!@testing
     "}))
     ids <- all_root_ids(pd)
     id <- ids[[3]]
-    expect_equal(get_pd_call_symbol(pd, id), pd['45',])
+    expect_equal(pd_get_call_symbol(pd, id), pd['45',])
 }
 
 #' @export
-get_pd_call_args <-
+pd_get_call_args <-
 function( pd            #< parse data of assignemnt
         , id = all_root_ids(pd)[1] #< id of interest.
         ){
@@ -165,7 +165,7 @@ function( pd            #< parse data of assignemnt
 }
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
-    args <- get_pd_call_args(pd)
+    args <- pd_get_call_args(pd)
 
     expect_is(args, 'list')
     expect_equal(names(args), c('', 'mean', 'sd'))

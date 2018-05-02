@@ -33,7 +33,7 @@ if(F){#! @testthat pd_is_assignment
 }
 
 #' @export
-get_pd_assign_value_id <-
+pd_get_assign_value_id <-
 function( pd
         , id = all_root_ids(pd)
         ){
@@ -43,7 +43,7 @@ function( pd
     #'    Gives the id of the value portion of the assignment, while correctly
     #'    accounting for the direction of the arrow.
     if(length(id) > 1)
-        sapply(id, get_pd_assign_value_id, pd=pd)
+        sapply(id, pd_get_assign_value_id, pd=pd)
     child.ids <- get_child_ids(pd, id, 1, FALSE)
     type <- pd[pd$id %in% child.ids & pd$token %in% assignment.opperators, 'token']
     switch( type
@@ -54,64 +54,64 @@ function( pd
 }
 if(FALSE){#!@testing
 pd <- get_parse_data(parse(text="x<-1"))
-val.id <- get_pd_assign_value_id(pd)
+val.id <- pd_get_assign_value_id(pd)
 expect_equal(val.id, 5L)
 
 pd <- get_parse_data(parse(text="x=1"))
-val.id <- get_pd_assign_value_id(pd)
+val.id <- pd_get_assign_value_id(pd)
 expect_equal(val.id, 5L)
 
 pd <- get_parse_data(parse(text="x<<-1"))
-val.id <- get_pd_assign_value_id(pd)
+val.id <- pd_get_assign_value_id(pd)
 expect_equal(val.id, 5L)
 
 pd <- get_parse_data(parse(text="1->x"))
-val.id <- get_pd_assign_value_id(pd)
+val.id <- pd_get_assign_value_id(pd)
 expect_equal(val.id, 2L)
 
 pd <- get_parse_data(parse(text="1->>x"))
-val.id <- get_pd_assign_value_id(pd)
+val.id <- pd_get_assign_value_id(pd)
 expect_equal(val.id, 2L)
 }
 
 #' @export
-get_pd_assign_value <-
+pd_get_assign_value <-
 function( pd #< The [parse-data] object, representing an assignment
         , id = all_root_ids(pd)
         ){
     #' @title get the value of an assignment operator expression.
-    #' @inheritParams get_pd_assign_value_id
+    #' @inheritParams pd_get_assign_value_id
     #' @description
     #'   A convenience wrapper for getting the subset parse-data for 
     #'   the value of an assignemtn expression.
-    get_family(pd, get_pd_assign_value_id(pd, id))
+    get_family(pd, pd_get_assign_value_id(pd, id))
     #' @return a \code{\link{parse-data}} object.
 }
-if(FALSE){#! @testthat get_pd_assign_value
+if(FALSE){#! @testthat pd_get_assign_value
 pd <- get_parse_data(parse(text="x<-1"))
 
-val.pd <- get_pd_assign_value(pd)
+val.pd <- pd_get_assign_value(pd)
 expect_true("NUM_CONST" %in% val.pd$token)
 
 pd <- get_parse_data(parse(text="x=1"))
-val.pd <- get_pd_assign_value(pd)
+val.pd <- pd_get_assign_value(pd)
 expect_true("NUM_CONST" %in% val.pd$token)
 
 pd <- get_parse_data(parse(text="x<<-1"))
-val.pd <- get_pd_assign_value(pd)
+val.pd <- pd_get_assign_value(pd)
 expect_true("NUM_CONST" %in% val.pd$token)
 
 pd <- get_parse_data(parse(text="1->x"))
-val.pd <- get_pd_assign_value(pd)
+val.pd <- pd_get_assign_value(pd)
 expect_true("NUM_CONST" %in% val.pd$token)
 
 pd <- get_parse_data(parse(text="1->>x"))
-val.pd <- get_pd_assign_value(pd)
+val.pd <- pd_get_assign_value(pd)
 expect_true("NUM_CONST" %in% val.pd$token)
 }
 
 #' @export
-get_pd_assign_variable <-
+pd_get_assign_variable <-
 function( pd #< The [parse-data] object, representing an assignment
         ){
     #' @title Get the variable of an assignment
@@ -136,13 +136,13 @@ if(F){#!@testthat
     "}))
 
     expect_true(pd_is_assignment(pd))
-    var.pd <- get_pd_assign_variable(pd)
+    var.pd <- pd_get_assign_variable(pd)
     expect_equal(getParseText(var.pd, all_root_ids(var.pd)), "hello_world")
 
 }
 
 #' @export
-get_pd_assign_variable_id <-
+pd_get_assign_variable_id <-
 function( pd #< The [parse-data] object, representing an assignment
         , id = all_root_ids(pd)
         ){
@@ -153,7 +153,7 @@ function( pd #< The [parse-data] object, representing an assignment
     #'   This accounts for the direction of the assignment arrow.
     #'   
     if(length(id) > 1)
-        sapply(id, get_pd_assign_variable_id, pd=pd)
+        sapply(id, pd_get_assign_variable_id, pd=pd)
     child.ids   <- get_child_ids(pd, id, 1, FALSE)
     assign.pd   <- pd[pd$id %in% child.ids & pd$token %in% assignment.opperators, ]
     switch( assign.pd$token
@@ -173,8 +173,8 @@ sort-> pd
 
     expect_true(pd_is_assignment(pd))
 
-    var.pd <- get_pd_assign_variable(pd)
-    var.id <- get_pd_assign_variable_id(pd)
+    var.pd <- pd_get_assign_variable(pd)
+    var.id <- pd_get_assign_variable_id(pd)
     expect_equal(var.id, all_root_ids(var.pd))
 }
 

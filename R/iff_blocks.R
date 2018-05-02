@@ -311,8 +311,8 @@ function(pd, id){
     if (pd_is_assignment(pd, prev.id)) {
         #' If the previous expression is an assignment, the asignee variable of 
         #' the assignment is chosen as the name.  
-        value.id <- get_pd_assign_value_id(pd, prev.id)
-        structure( utils::getParseText(pd, get_pd_assign_variable_id(pd, prev.id))
+        value.id <- pd_get_assign_value_id(pd, prev.id)
+        structure( utils::getParseText(pd, pd_get_assign_variable_id(pd, prev.id))
                  , type = if (pd_is_function(pd, value.id)) "function_assignment"
                           else "assignment"
                  )
@@ -321,7 +321,7 @@ function(pd, id){
         #' for all other assignments \code{type="assignment"}.
         #'
     } else if(pd_is_symbol_call(pd, prev.id)) {
-        switch( text(get_pd_call_symbol_id(pd, prev.id))
+        switch( text(pd_get_call_symbol_id(pd, prev.id))
               , setClass = {
                     #' The names for \code{link{setClass}} calls will also be inferred.
                     #' The name of the class is taken as the name, but the 
@@ -333,14 +333,14 @@ function(pd, id){
                     #' assignment operation takes priority and would have
                     #' \code{type="assignment"}.
                     #' 
-                    args <- get_pd_call_args(pd, prev.id)
+                    args <- pd_get_call_args(pd, prev.id)
                     name <- unquote(args[[if('Class' %in% names(args)) 'Class' else 1L]][1,'text'])
                     structure(name, type = "setClass")
                 }
               , setMethod = {
                     #' The names for \code{\link{setMethod}} will assume 
                     #' the S3 convention of \code{<method>.<class>}.
-                    args <- get_pd_call_args(pd, prev.id)
+                    args <- pd_get_call_args(pd, prev.id)
                     fname <- unquote(args[[ifelse('f' %in% names(args), 'f', 1L)]][1,'text'])
                     #' In the case the the signature is more than just the class,
                     #' the signature will be collapsed, separated by commas.
@@ -355,7 +355,7 @@ function(pd, id){
                     #' \code{\link{setGeneric}} can also be used with the name
                     #' of the generic function the inferred name and
                     #' \code{type="setGeneric"}.
-                    args <- get_pd_call_args(pd, prev.id)
+                    args <- pd_get_call_args(pd, prev.id)
                     fname <- unquote(args[[ifelse('f' %in% names(args), 'f', 1L)]][1,'text'])
                     structure(fname, type='setGeneric')
                 }

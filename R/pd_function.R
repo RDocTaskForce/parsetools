@@ -62,7 +62,7 @@ if(F){#@testing
     get_parse_data() %>%
     sort-> pd
 
-    id <- get_pd_assign_value_id(pd)
+    id <- pd_get_assign_value_id(pd)
     body.id <- get_function_body_id(pd, id)
     
     expected.body.id <- subset(pd, token == "'{'")$parent
@@ -89,7 +89,7 @@ function( pd                    #< parse data
     parse(text = .) %>%
     get_parse_data() -> pd
     
-    id <- get_pd_assign_value_id(pd)
+    id <- pd_get_assign_value_id(pd)
     arg.ids <- get_function_arg_ids(pd, id)
   
     expect_identical( text(arg.ids, pd=pd)
@@ -112,7 +112,7 @@ function( pd                    #< parse data
     parse(text = .) %>%
     get_parse_data() -> pd
     
-    id <- get_pd_assign_value_id(pd)
+    id <- pd_get_assign_value_id(pd)
     expected <- pd[pd$parent==id & pd$text %in% c('pd', 'id'), 'id']
     
     expect_identical(get_function_arg_variable_ids(pd, id), expected)
@@ -149,7 +149,7 @@ function( pd                    #< parse data
     parse(text = .) %>%
     get_parse_data() -> pd
     
-    function.id <- get_pd_assign_value_id(pd)
+    function.id <- pd_get_assign_value_id(pd)
     arg.ids <- get_function_arg_variable_ids(pd, function.id)
     id <- arg.ids[[1]]
     
