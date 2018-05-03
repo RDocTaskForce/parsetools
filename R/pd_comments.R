@@ -53,16 +53,16 @@ if(F){#@test function relative comments
 
 # while one argument documented and another not should be discouraged, 
 # it is allowed.
-'function( pd, id = all_root_ids(pd) #< id number
+'function( id, pd = get("pd", parent.frame()) #< parse data
         ){}' %>%
     parse(text = .) %>%
     get_parse_data() -> pd
     id <- get_relative_comments(pd)$id
 
-    expect_identical(text(associate_relative_comments(id, pd), pd=pd), 'id')
+    expect_identical(text(associate_relative_comments(id, pd), pd=pd), 'pd')
 
-'function( pd, #< traditional comma placement.
-           id = all_root_ids(pd) #< id number
+'function( id, #< traditional comma placement.
+           pd = get("pd", parent.frame()) #< parse data
          ){}' %>%
     parse(text = .) %>%
     get_parse_data() -> pd

@@ -6,11 +6,11 @@ test_that('is_grouping', {#! @testing
     pd <- get_parse_data(parse(text='{
         this(is+a-grouping)
     }'))
-    expect_true (is_grouping(pd, 25))
-    expect_false(is_grouping(pd,  1))
+    expect_true (is_grouping(25, pd))
+    expect_false(is_grouping( 1, pd))
     
-    expect_is(is_grouping(pd), 'logical')
-    expect_equal(sum(is_grouping(pd)), 1)
+    expect_is(is_grouping(pd=pd), 'logical')
+    expect_equal(sum(is_grouping(pd=pd)), 1)
 })
 #line 66 "/home/aredd/projects/rdtf/parsetools/R/grouping.R"
 test_that('get_groupings', {#! @testing

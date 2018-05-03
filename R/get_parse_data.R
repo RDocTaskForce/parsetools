@@ -197,7 +197,7 @@ function( x
             & pd$col1  == utils::getSrcLocation(x, 'col' , FALSE)
             & pd$col2  == utils::getSrcLocation(x, 'col' , FALSE)
             , 'id' ]
-    root <- ascend_to_root(pd, id, ignore.groups=ignore.groups)
+    root <- ascend_to_root(id, pd, ignore.groups=ignore.groups)
     if  (!length(root)) return(NULL)
     structure(id = id, root=root,
     get_family( pd, root

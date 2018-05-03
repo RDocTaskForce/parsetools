@@ -13,7 +13,7 @@ test_that('get_family', {#!@testing
         }# end of section 2
         e <- 5
     "}))
-    id <- ascend_to_root(pd, pd[pd$text == 'c','id'])
+    id <- ascend_to_root(pd[pd$text == 'c','id'], pd)
     expect_identical(get_family(pd, id), pd[19:24,])
     
     pd <- get_parse_data(parse(text={"
@@ -44,7 +44,7 @@ test_that('get_family', {#!@testing
         }
     }"}))
     group.id <- all_root_ids(pd)
-    expect_true(is_grouping(pd, group.id))
+    expect_true(is_grouping(group.id, pd))
     id <- expr.id <- all_root_ids(pd, FALSE)
     
     fam <- get_family(pd, expr.id, include.doc.comments=FALSE, include.regular.comments=FALSE)

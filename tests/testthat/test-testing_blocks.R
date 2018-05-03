@@ -1,7 +1,7 @@
 #! This file was automatically produced by documentation::extract_tests on  2018-05-03 10:17:17
 #! changes will be overwritten.
 context('tests extracted from file `/home/aredd/projects/rdtf/parsetools/R/testing_blocks.R`')
-#line 98 "/home/aredd/projects/rdtf/parsetools/R/testing_blocks.R"
+#line 101 "/home/aredd/projects/rdtf/parsetools/R/testing_blocks.R"
 test_that('extract_test_block', {#!@testing
     pd <- get_parse_data(parse(text={'
     if(F){#!@testing
@@ -50,57 +50,57 @@ test_that('extract_test_block', {#!@testing
     '}))
     iff.ids <- all_tagged_iff_ids(pd, c('testing', 'testthat', 'test'))
     
-    expect_error( extract_test_block(pd, iff.ids[[1L]])
+    expect_error( extract_test_block(iff.ids[[1L]], pd)
                 , "illformed block at <text>:2:5"
                 , info = "cannot find name for block"
                 )
 
-    expect_equal( extract_test_block(pd, iff.ids[[2L]])
+    expect_equal( extract_test_block(iff.ids[[2L]], pd)
                 , structure(c( '#line 9 "<text>"'
                              , 'test_that(\'hello_world\', {#!@testthat'
                              , '        expect_output(hello_world(), "hello world")'
                              , '    })'
                              ), name=structure("hello_world", type = "function_assignment"))
                 , info="testing after function assignment")
-    expect_equal( extract_test_block(pd, iff.ids[[3L]])
+    expect_equal( extract_test_block(iff.ids[[3L]], pd)
                 , structure(c( '#line 14 "<text>"'
                              , 'test_that(\'ldf\', {#!@testing'
                              , '        # not a function assignment'
                              , '    })'
                              ), name = structure("ldf", type = "assignment"))
                 , info="testing after other assignment")
-    expect_equal( extract_test_block(pd, iff.ids[[4L]])
+    expect_equal( extract_test_block(iff.ids[[4L]], pd)
                 , structure(c( '#line 22 "<text>"'
                              , 'test_that(\'f2\', {#! @test'
                              , '        expect_error(f2())'
                              , '    })'
                              ), name=structure("f2", type = "function_assignment"))
                 , info="testing after other iff")
-    expect_equal( extract_test_block(pd, iff.ids[[5L]])
+    expect_equal( extract_test_block(iff.ids[[5L]], pd)
                 , structure(c( '#line 27 "<text>"'
                              , 'test_that("setClass(\'A\', ...)", {#!@testing '
                              , '        #testing a setClass'
                              , '    })'
                              ), name="setClass(\'A\', ...)")
                 , info="testing after setClass")
-    expect_equal( extract_test_block(pd, iff.ids[[6L]])
+    expect_equal( extract_test_block(iff.ids[[6L]], pd)
                 , structure(c( '#line 32 "<text>"'
                              , 'test_that(\'print.A\', {#!@testing '
                              , '        #testing a setMethod'
                              , '    })'
                              ), name=structure("print.A", type = "setMethod"))
                 , info="testing after setMethod")
-    expect_equal( extract_test_block(pd, iff.ids[[7L]])
+    expect_equal( extract_test_block(iff.ids[[7L]], pd)
                 , structure(c( '#line 37 "<text>"'
                              , 'test_that("setGeneric(\'my_generic\', ...)", {#!@testing '
                              , '        #testing a setClass'
                              , '    })'
                              ), name="setGeneric('my_generic', ...)")
                 , info="testing after setGeneric")
-    expect_error( extract_test_block(pd, iff.ids[[8L]])
+    expect_error( extract_test_block(iff.ids[[8L]], pd)
                 , info="following call")
                 
-    expect_equal( extract_test_block(pd, iff.ids[2:3])
+    expect_equal( extract_test_block(iff.ids[2:3], pd)
                 , structure(c( '#line 9 "<text>"'
                              , 'test_that(\'hello_world\', {#!@testthat'
                              , '        expect_output(hello_world(), "hello world")'
@@ -120,7 +120,7 @@ test_that('extract_test_block', {#!@testing
             expect_true(T)
         }
     "}))
-    expect_equal( extract_test_block(pd, all_root_ids(pd))
+    expect_equal( extract_test_block(all_root_ids(pd), pd)
                 , structure(c( "#line 2 \"<text>\""
                              , "test_that('An info string', {#@testing An info string"
                              , "            expect_true(T)"
@@ -129,7 +129,7 @@ test_that('extract_test_block', {#!@testing
                            , name = "An info string")
                 , info = "using text string")
 })
-#line 251 "/home/aredd/projects/rdtf/parsetools/R/testing_blocks.R"
+#line 254 "/home/aredd/projects/rdtf/parsetools/R/testing_blocks.R"
 test_that('extract_test_blocks', {#! @testthat
 text <- {'hello_world <- function(){
     print("hello world")
