@@ -77,7 +77,7 @@ function( pd, tag, id = pd$id, ...){
     #' is both a comment and contains a documentation tag itentifed by
     #' the `@` symbol.
     tag.rx <- make_tag_regex(tag, ...)
-    is_comment(pd, id) & grepl(tag.rx, text(id, pd), perl=TRUE, ignore.case=TRUE)
+    is_comment(id, pd) & grepl(tag.rx, text(id, pd), perl=TRUE, ignore.case=TRUE)
 }
 if(FALSE){#!@testing
     # Note that testthat:::test_code will strip comments from code

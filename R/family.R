@@ -45,7 +45,7 @@ function( id, pd
     cids <- 
         if (include.doc.comments || include.regular.comments){
             if (is_grouping(parent <- get_parent_id(id, pd), pd)) {
-                pd <- fix_grouping_comment_association(pd, parent)
+                pd <- fix_grouping_comment_association(parent, pd)
             }
             pd[ pd$token %in% c( if (include.doc.comments    ) comment.classes$class
                                , if (include.regular.comments) 'NORMAL_COMMENT'

@@ -74,7 +74,9 @@ if(FALSE){#! @testing
 }
 
 fix_grouping_comment_association <- 
-function(pd, id=get_groupings(pd)){
+function( id = get_groupings(pd)
+        , pd = get('pd', parent.frame())
+        ){
     id <- ._check_id(id)
     stopifnot(is_grouping(id, pd))
     for (i in id) {
@@ -106,7 +108,7 @@ if(FALSE){#!@testing
     # Comment 3
     4+5
     "}))
-    fixed <- fix_grouping_comment_association(pd)
+    fixed <- fix_grouping_comment_association(pd=pd)
     
     expect_identical(fixed[-6], pd[-6])
     expect_equal(get_comments(fixed)$parent, c(-38, -38, -38, 34, -56, -74))

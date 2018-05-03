@@ -53,7 +53,7 @@ test_that('classify_comment', {#! @testing
                    )
                 )
 })
-#line 139 "/home/aredd/projects/rdtf/parsetools/R/comments.R"
+#line 145 "/home/aredd/projects/rdtf/parsetools/R/comments.R"
 test_that('is_comment.data.frame', {#!@testing 
     expect_true(is_comment("## normal comment       "))
     expect_true(is_comment("#' Roxygen comment      "))
@@ -75,7 +75,7 @@ test_that('is_comment.data.frame', {#!@testing
     expect_is(rtn, 'logical')
     expect_equal(rtn, c(T,T,T,T,T,T,F,F))
 })
-#line 166 "/home/aredd/projects/rdtf/parsetools/R/comments.R"
+#line 172 "/home/aredd/projects/rdtf/parsetools/R/comments.R"
 test_that('`is_relative_comment.parse-data`', {#@testing
     expect_false(is_relative_comment("## normal comment       "))
     expect_false(is_relative_comment("#' Roxygen comment      "))
@@ -98,7 +98,7 @@ test_that('`is_relative_comment.parse-data`', {#@testing
     expect_equal(rtn, c(F,F,F,T,F,F,F,F))
     
 })
-#line 207 "/home/aredd/projects/rdtf/parsetools/R/comments.R"
+#line 213 "/home/aredd/projects/rdtf/parsetools/R/comments.R"
 test_that('is_doc_comment.data.frame', {#! @testing
     expect_false(is_doc_comment("## normal comment       "))
     expect_true (is_doc_comment("#' Roxygen comment      "))
@@ -131,7 +131,7 @@ test_that('is_doc_comment.data.frame', {#! @testing
     expect_is(rtn, 'logical')
     expect_equal(rtn, c(F,F,F,T,T,T,T,T,F))
 })
-#line 347 "/home/aredd/projects/rdtf/parsetools/R/comments.R"
+#line 353 "/home/aredd/projects/rdtf/parsetools/R/comments.R"
 test_that('strip_doc_comment_leads.character', {#! @testing
     expect_equal(strip_doc_comment_leads.character("#  normal comment       "), "#  normal comment")
     expect_equal(strip_doc_comment_leads.character("#' Roxygen comment      "), "Roxygen comment")
@@ -140,7 +140,7 @@ test_that('strip_doc_comment_leads.character', {#! @testing
     expect_equal(strip_doc_comment_leads.character("#^ Continuation comment "), "Continuation comment")
     expect_equal(strip_doc_comment_leads.character("#@ Tag comment          "), "Tag comment")
 })
-#line 363 "/home/aredd/projects/rdtf/parsetools/R/comments.R"
+#line 369 "/home/aredd/projects/rdtf/parsetools/R/comments.R"
 test_that('strip_doc_comment_leads.data.frame', {#! @testing
     pd <- utils::getParseData(parse(text="{
         ## normal comment           
@@ -161,7 +161,7 @@ test_that('strip_doc_comment_leads.data.frame', {#! @testing
                    )
                 )
 })
-#line 395 "/home/aredd/projects/rdtf/parsetools/R/comments.R"
+#line 401 "/home/aredd/projects/rdtf/parsetools/R/comments.R"
 test_that('strip_doc_comment_leads', {#! @testing
     expect_equal(strip_doc_comment_leads("#  normal comment       "), "#  normal comment")
     expect_equal(strip_doc_comment_leads("#' Roxygen comment      "), "Roxygen comment")

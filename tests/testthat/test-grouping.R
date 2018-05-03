@@ -22,7 +22,7 @@ test_that('get_groupings', {#! @testing
     expect_equal(length(get_groupings(pd)), 1)
     expect_equal(get_groupings(pd), 25)
 })
-#line 93 "/home/aredd/projects/rdtf/parsetools/R/grouping.R"
+#line 95 "/home/aredd/projects/rdtf/parsetools/R/grouping.R"
 test_that('fix_grouping_comment_association', {#!@testing
     pd <- get_parse_data(parse(text={"
     {# grouped code
@@ -39,7 +39,7 @@ test_that('fix_grouping_comment_association', {#!@testing
     # Comment 3
     4+5
     "}))
-    fixed <- fix_grouping_comment_association(pd)
+    fixed <- fix_grouping_comment_association(pd=pd)
     
     expect_identical(fixed[-6], pd[-6])
     expect_equal(get_comments(fixed)$parent, c(-38, -38, -38, 34, -56, -74))

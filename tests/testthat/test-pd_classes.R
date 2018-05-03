@@ -11,7 +11,7 @@ test_that('pd_is_class_definition', {#@test
     parse(text = .) %>%
     get_parse_data() -> pd
     
-    expect_true(pd_is_class_definition(pd, id = all_root_ids(pd)))
+    expect_true(pd_is_class_definition(id = all_root_ids(pd), pd))
 })
 #line 35 "/home/aredd/projects/rdtf/parsetools/R/pd_classes.R"
 test_that('object in setClass', {#@test object in setClass

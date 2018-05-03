@@ -123,6 +123,12 @@ is_comment.character <- function(x, ...){
                               )
 }
 
+#' @export 
+is_comment.integer <- function(x, pd = get('pd', parent.frame()), ...){
+    stopifnot(inherits(pd, 'parse-data'))
+    token(id=x, pd) %in% c(comment.classes$class, "NORMAL_COMMENT")
+}
+
 #' @export
 `is_comment.parse-data` <- function(x, id=x$id, ...){
     x[ x$id %in% id, 'token'] %in% c( comment.classes$class
@@ -324,7 +330,7 @@ if(FALSE){# Deprecated testing code.
     "))
     id <- get_relative_comments(pd)$id[[2]]
     
-    x <- get_associated_continuation(pd, id)
+    x <- get_associated_continuation(id, pd)
     expect_equal( x$line1, c(4,5))
     expect_equal( x$id, c(20,22))
     expect_equal( x$text, c( "#< yet another"
@@ -332,9 +338,9 @@ if(FALSE){# Deprecated testing code.
                            ))
     
     roxy <- get_roxygen_comments(pd)
-    expect_identical(roxy, get_associated_continuation(pd, id = roxy$id))
+    expect_identical(roxy, get_associated_continuation(id = roxy$id, pd))
 
-    expect_error(get_associated_continuation(pd, id = get_normal_comments(pd)$id))
+    expect_error(get_associated_continuation(id = get_normal_comments(pd)$id, pd))
 }
 
 #' @export

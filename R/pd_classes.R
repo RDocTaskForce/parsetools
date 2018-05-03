@@ -19,7 +19,7 @@ if(FALSE){#@test
     parse(text = .) %>%
     get_parse_data() -> pd
     
-    expect_true(pd_is_class_definition(pd, id = all_root_ids(pd)))
+    expect_true(pd_is_class_definition(id = all_root_ids(pd), pd))
 }
 
 #' @internal
