@@ -1,8 +1,8 @@
-#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
+#! This file was automatically produced by documentation::extract_tests on  2018-05-03 10:17:17
 #! changes will be overwritten.
-context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/family.R`')
-#line 59 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/family.R"
-test_that("get_family", {#!@testing
+context('tests extracted from file `/home/aredd/projects/rdtf/parsetools/R/family.R`')
+#line 59 "/home/aredd/projects/rdtf/parsetools/R/family.R"
+test_that('get_family', {#!@testing
     pd <- get_parse_data(parse(text={"a <- 1
         {# section 1
         b <- 2
@@ -56,8 +56,8 @@ test_that("get_family", {#!@testing
     
     
 })
-#line 174 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/family.R"
-test_that("get_firstborn", {#!@testing
+#line 174 "/home/aredd/projects/rdtf/parsetools/R/family.R"
+test_that('get_firstborn', {#!@testing
     pd <- get_parse_data(parse(text={"a <- 1
         {# section 1
         b <- 2

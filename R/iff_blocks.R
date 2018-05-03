@@ -32,8 +32,8 @@ unquote <- function(x){
 
 #@internal
 is_iff_block <-
-function( pd
-        , id=all_root_ids(pd)
+function( id = all_root_ids(pd)
+        , pd = get('pd', parent.frame())
         , allow.short=TRUE      #< Should `F` be interpreted as FALSE.
         ){
     #' @title test if an expresion ID points to a `if(FALSE)` statement.
@@ -77,12 +77,12 @@ if(FALSE){#!@testing
     "}))
     id <- all_root_ids(pd)
     
-    expect_true(is_iff_block(pd, id[[1]]))
-    expect_true(is_iff_block(pd, id[[2]]))
-    expect_false(is_iff_block(pd, id[[2]], FALSE))
-    expect_false(is_iff_block(pd, id[[3]]))
-    expect_equal(is_iff_block(pd, id), c(TRUE, TRUE, FALSE))
-    expect_equal(is_iff_block(pd), c(TRUE, TRUE, FALSE))
+    expect_true (is_iff_block(id[[1]], pd))
+    expect_true (is_iff_block(id[[2]], pd))
+    expect_false(is_iff_block(id[[2]], pd, FALSE))
+    expect_false(is_iff_block(id[[3]], pd))
+    expect_equal(is_iff_block(id, pd), c(TRUE, TRUE, FALSE))
+    expect_equal(is_iff_block(pd=pd), c(TRUE, TRUE, FALSE))
 }
 
 #' @export
@@ -110,7 +110,7 @@ function( pd
     pd <- ._check_parse_data(pd)
     id <- if (root.only) all_root_ids(pd, !ignore.groups) else pd$id
     if (!length(id)) return(integer(0))
-    is.iff <- is_iff_block(pd, id, ...)
+    is.iff <- is_iff_block(id, pd, ...)
     id[is.iff]
 }
 if(FALSE){#!@testing
@@ -161,9 +161,9 @@ function( pd, tag, id
     if (length(id) > 1) 
         return(sapply(id, iff_is_tagged, pd=pd, tag=tag, doc.only=doc.only))
     #'   \item an \code{if(FALSE)} block.
-    if (!is_iff_block(pd, id)) return(FALSE)
+    if (!is_iff_block(id, pd)) return(FALSE)
     #'   \item is a curly braced group of code.
-    if (token(. <- get_if_branch_id(pd, id)) != 'expr')   return(FALSE)
+    if (token(. <- pd_get_if_branch_id(id)) != 'expr')   return(FALSE)
     if (token(. <- get_firstborn_id(pd, . )) != "'{'" )   return(FALSE)
     #'   \item has a comment as the first parsed element.
     if (!is_comment(pd, . <- get_next_sibling_id(pd, .))) return(FALSE)
@@ -305,15 +305,15 @@ function(pd, id){
         #' declaration.
         #' 
         if (is.na(prev.id)) return(NULL)
-        if (!is_iff_block(pd, prev.id)) break
+        if (!is_iff_block(prev.id, pd)) break
         prev.id <- get_prev_sibling_id(pd, prev.id)
     }
     if (pd_is_assignment(pd, prev.id)) {
         #' If the previous expression is an assignment, the asignee variable of 
         #' the assignment is chosen as the name.  
-        value.id <- pd_get_assign_value_id(pd, prev.id)
+        value.id <- pd_get_assign_value_id(prev.id)
         structure( utils::getParseText(pd, pd_get_assign_variable_id(pd, prev.id))
-                 , type = if (pd_is_function(pd, value.id)) "function_assignment"
+                 , type = if (pd_is_function(value.id)) "function_assignment"
                           else "assignment"
                  )
         #' An attribute 'type' is also set on the return value.  

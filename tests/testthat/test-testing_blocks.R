@@ -1,8 +1,8 @@
-#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
+#! This file was automatically produced by documentation::extract_tests on  2018-05-03 10:17:17
 #! changes will be overwritten.
-context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/testing_blocks.R`')
-#line 98 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/testing_blocks.R"
-test_that("extract_test_block", {#!@testing
+context('tests extracted from file `/home/aredd/projects/rdtf/parsetools/R/testing_blocks.R`')
+#line 98 "/home/aredd/projects/rdtf/parsetools/R/testing_blocks.R"
+test_that('extract_test_block', {#!@testing
     pd <- get_parse_data(parse(text={'
     if(F){#!@testing
         # a malplaced testing block
@@ -129,8 +129,8 @@ test_that("extract_test_block", {#!@testing
                            , name = "An info string")
                 , info = "using text string")
 })
-#line 251 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/testing_blocks.R"
-test_that("extract_test_blocks", {#! @testthat
+#line 251 "/home/aredd/projects/rdtf/parsetools/R/testing_blocks.R"
+test_that('extract_test_blocks', {#! @testthat
 text <- {'hello_world <- function(){
     print("hello world")
 }

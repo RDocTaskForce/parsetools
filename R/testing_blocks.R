@@ -47,8 +47,8 @@ extract_test_block <- function(pd, id=all_tagged_iff_ids(pd, .testing.tags)){
     #'   The name, which is attached as an attribute is taken from the info
     #'   string or inferred by location, see Details.
     #'   
-    stopifnot(is_iff_block(pd,id))
-    content.id  <- get_if_branch_id(pd, id)
+    stopifnot(is_iff_block(id,pd))
+    content.id  <- pd_get_if_branch_id(id, pd)
     
     tag.comment <- get_child_ids(pd, content.id)[[2]]
     info.string <- trimws(strip_doc_comment_leads(strip_tag(text(tag.comment), .testing.tags)))

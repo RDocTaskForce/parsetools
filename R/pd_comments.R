@@ -21,7 +21,9 @@
 #'        either the id of the associated object or NA if it cannot be 
 #'        associated.
 associate_relative_comments <- 
-function(pd, id = get_relative_comments(pd)$id){
+function( id = get_relative_comments(pd)$id
+        , pd = get('pd', parent.frame())
+        ){
     if (length(id)>1L) return(sapply(id, associate_relative_comments, pd=pd))
 
     sibs <- get_sibling_ids(pd, id)
@@ -45,7 +47,7 @@ if(F){#@test function relative comments
     
     id <- get_relative_comments(pd)$id
 
-    value <- associate_relative_comments(pd)
+    value <- associate_relative_comments(pd=pd)
     expect_identical(value[[1]], value[[2]])
     expect_identical(text(value, pd=pd), c('pd', 'pd', 'id'))
 
@@ -57,7 +59,7 @@ if(F){#@test function relative comments
     get_parse_data() -> pd
     id <- get_relative_comments(pd)$id
 
-    expect_identical(text(associate_relative_comments(pd,id), pd=pd), 'id')
+    expect_identical(text(associate_relative_comments(id, pd), pd=pd), 'id')
 
 'function( pd, #< traditional comma placement.
            id = all_root_ids(pd) #< id number
@@ -66,7 +68,7 @@ if(F){#@test function relative comments
     get_parse_data() -> pd
     id <- get_relative_comments(pd)$id
 
-    value <- associate_relative_comments(pd,id)
+    value <- associate_relative_comments(id, pd)
     expected <- pd[ token(pd=pd)  ==  "SYMBOL_FORMALS"
                   & text(pd=pd)  %in% c("pd", "id")
                   , 'id']

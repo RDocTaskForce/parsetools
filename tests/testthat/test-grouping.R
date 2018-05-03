@@ -1,8 +1,8 @@
-#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
+#! This file was automatically produced by documentation::extract_tests on  2018-05-03 10:17:17
 #! changes will be overwritten.
-context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/grouping.R`')
-#line 49 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/grouping.R"
-test_that("is_grouping", {#! @testing
+context('tests extracted from file `/home/aredd/projects/rdtf/parsetools/R/grouping.R`')
+#line 49 "/home/aredd/projects/rdtf/parsetools/R/grouping.R"
+test_that('is_grouping', {#! @testing
     pd <- get_parse_data(parse(text='{
         this(is+a-grouping)
     }'))
@@ -12,8 +12,8 @@ test_that("is_grouping", {#! @testing
     expect_is(is_grouping(pd), 'logical')
     expect_equal(sum(is_grouping(pd)), 1)
 })
-#line 66 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/grouping.R"
-test_that("get_groupings", {#! @testing
+#line 66 "/home/aredd/projects/rdtf/parsetools/R/grouping.R"
+test_that('get_groupings', {#! @testing
     pd <- get_parse_data(parse(text='{
         this(is+a-grouping)
     }'))
@@ -22,8 +22,8 @@ test_that("get_groupings", {#! @testing
     expect_equal(length(get_groupings(pd)), 1)
     expect_equal(get_groupings(pd), 25)
 })
-#line 93 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/grouping.R"
-test_that("fix_grouping_comment_association", {#!@testing
+#line 93 "/home/aredd/projects/rdtf/parsetools/R/grouping.R"
+test_that('fix_grouping_comment_association', {#!@testing
     pd <- get_parse_data(parse(text={"
     {# grouped code
         # normal comment

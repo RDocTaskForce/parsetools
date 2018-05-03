@@ -1,8 +1,8 @@
-#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
+#! This file was automatically produced by documentation::extract_tests on  2018-05-03 10:17:17
 #! changes will be overwritten.
-context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_call.R`')
-#line 40 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_call.R"
-test_that("is_pd_call", {#!@testing
+context('tests extracted from file `/home/aredd/projects/rdtf/parsetools/R/pd_call.R`')
+#line 40 "/home/aredd/projects/rdtf/parsetools/R/pd_call.R"
+test_that('pd_is_call', {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
         y <- runif(10)
@@ -10,13 +10,13 @@ test_that("is_pd_call", {#!@testing
     "}))
     ids <- all_root_ids(pd)
     id <- ids[[3]]
-    expect_true (is_pd_call(pd, ids[[3]]))
-    expect_false(is_pd_call(pd, ids[[1]]))
-    expect_equal(is_pd_call(pd, ids), c(F, F, T))
+    expect_true (pd_is_call(pd, ids[[3]]))
+    expect_false(pd_is_call(pd, ids[[1]]))
+    expect_equal(pd_is_call(pd, ids), c(F, F, T))
     
 })
-#line 75 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_call.R"
-test_that("is_pd_symbol_call", {#!@testing
+#line 75 "/home/aredd/projects/rdtf/parsetools/R/pd_call.R"
+test_that('pd_is_symbol_call', {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
         y <- runif(10)
@@ -24,12 +24,12 @@ test_that("is_pd_symbol_call", {#!@testing
     "}))
     ids <- all_root_ids(pd)
     id <- ids[[3]]
-    expect_true (is_pd_symbol_call(pd, id))
-    expect_false(is_pd_symbol_call(pd, ids[[1]]))
-    expect_equal(is_pd_symbol_call(pd, ids), c(F, F, T))
+    expect_true (pd_is_symbol_call(pd, id))
+    expect_false(pd_is_symbol_call(pd, ids[[1]]))
+    expect_equal(pd_is_symbol_call(pd, ids), c(F, F, T))
 })
-#line 104 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_call.R"
-test_that("get_pd_call_symbol_id", {#!@testing
+#line 104 "/home/aredd/projects/rdtf/parsetools/R/pd_call.R"
+test_that('pd_get_call_symbol_id', {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
         y <- runif(10)
@@ -37,10 +37,10 @@ test_that("get_pd_call_symbol_id", {#!@testing
     "}))
     ids <- all_root_ids(pd)
     id <- ids[[3]]
-    expect_equal(get_pd_call_symbol_id(pd, id), 45L)
+    expect_equal(pd_get_call_symbol_id(pd, id), 45L)
 })
-#line 129 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_call.R"
-test_that("get_pd_call_symbol", {#!@testing
+#line 129 "/home/aredd/projects/rdtf/parsetools/R/pd_call.R"
+test_that('pd_get_call_symbol', {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
         y <- runif(10)
@@ -48,12 +48,12 @@ test_that("get_pd_call_symbol", {#!@testing
     "}))
     ids <- all_root_ids(pd)
     id <- ids[[3]]
-    expect_equal(get_pd_call_symbol(pd, id), pd['45',])
+    expect_equal(pd_get_call_symbol(pd, id), pd['45',])
 })
-#line 166 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_call.R"
-test_that("get_pd_call_args", {#! @testing
+#line 166 "/home/aredd/projects/rdtf/parsetools/R/pd_call.R"
+test_that('pd_get_call_args', {#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
-    args <- get_pd_call_args(pd)
+    args <- pd_get_call_args(pd)
 
     expect_is(args, 'list')
     expect_equal(names(args), c('', 'mean', 'sd'))

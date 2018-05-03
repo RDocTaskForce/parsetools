@@ -25,8 +25,8 @@
 
 #' @export
 pd_is_function <-
-function( pd #< a [parse-data] object
-        , id = all_root_ids(pd)
+function( id = all_root_ids(pd)
+        , pd = get('pd', parent.frame()) 
         ){
     #' @title test if a function
     #' @inheritParams pd_is_assignment
@@ -40,16 +40,18 @@ function( pd #< a [parse-data] object
 }
 if(F){#! @testthat pd_is_function
     pd <- get_parse_data(parse(text="function(){}", keep.source=TRUE))
-    expect_true(pd_is_function(pd))
+    expect_true(pd_is_function(pd=pd))
 
     pd <- get_parse_data(parse(text="fun <- function(){}", keep.source=TRUE))
-    expect_false(pd_is_function(pd))
+    expect_false(pd_is_function(pd=pd))
 }
 
 #' @describeIn pd_is_function Obtain the body of a function
 #' @export
 get_function_body_id <- 
-function( pd, id = all_root_ids(pd)){
+function( id = all_root_ids(pd)
+        , pd=get('pd', parent.frame()) 
+        ){
     if (length(id)>1L) return(sapply(id, get_function_body_id, pd=pd))
     max(get_child_ids(pd, id))
 }
@@ -62,24 +64,26 @@ if(F){#@testing
     get_parse_data() %>%
     sort-> pd
 
-    id <- pd_get_assign_value_id(pd)
-    body.id <- get_function_body_id(pd, id)
+    id <- pd_get_assign_value_id(pd=pd)
+    body.id <- get_function_body_id(id, pd)
     
     expected.body.id <- subset(pd, token == "'{'")$parent
     expect_equal(body.id, expected.body.id)
-    
+
 pd <- get_parse_data(parse(text='function(l,r)paste(l,r)', keep.source=TRUE))
     base.id <- subset(pd, text=='paste')$parent
     expected <- get_parent_id(pd, base.id)
-    body.id <- get_function_body_id(pd)
+    body.id <- get_function_body_id(pd=pd)
     expect_identical(body.id, expected)
 }
 
 #' @describeIn pd_is_function Obtain the ids for the arguments of a function
 #' @export
 get_function_arg_ids <- 
-function(pd, id = all_root_ids(pd)){
-    utils::tail(utils::head(get_child_ids(pd, id), -1), -1)
+function( id = pd$id
+        , pd = get('pd', parent.frame())
+        ){
+    utils::tail(utils::head(get_child_ids(pd=pd, id=id), -1), -1)
 }
 if(F){#@testing
 'get_function_arg_ids <- 
@@ -89,8 +93,8 @@ function( pd                    #< parse data
     parse(text = .) %>%
     get_parse_data() -> pd
     
-    id <- pd_get_assign_value_id(pd)
-    arg.ids <- get_function_arg_ids(pd, id)
+    id <- pd_get_assign_value_id(pd=pd)
+    arg.ids <- get_function_arg_ids(id, pd)
   
     expect_identical( text(arg.ids, pd=pd)
                     , c('(', 'pd', '#< parse data', ','
@@ -100,8 +104,10 @@ function( pd                    #< parse data
 }
 
 get_function_arg_variable_ids <- 
-function(pd, id = all_root_ids(pd)){
-    arg.ids <- get_function_arg_ids(pd, id)
+function( id = pd$id
+        , pd = get('pd', parent.frame())
+        ){
+    arg.ids <- get_function_arg_ids(id, pd)
     arg.ids[token(arg.ids, pd=pd) == 'SYMBOL_FORMALS']
 }
 if(F){#@testing
@@ -112,10 +118,10 @@ function( pd                    #< parse data
     parse(text = .) %>%
     get_parse_data() -> pd
     
-    id <- pd_get_assign_value_id(pd)
+    id <- pd_get_assign_value_id(pd=pd)
     expected <- pd[pd$parent==id & pd$text %in% c('pd', 'id'), 'id']
     
-    expect_identical(get_function_arg_variable_ids(pd, id), expected)
+    expect_identical(get_function_arg_variable_ids(id, pd), expected)
 }
 
 pd_is_function_arg <- 
@@ -133,12 +139,14 @@ function( pd                    #< parse data
 }
 
 get_function_arg_associated_comment_ids <- 
-function(pd, id){
+function( id = pd$id
+        , pd = get('pd', parent.frame())
+        ){
     stopifnot(length(id)==1)
-    sibling.args <- get_function_arg_variable_ids(pd, get_parent_id(pd, id))
+    sibling.args <- get_function_arg_variable_ids(get_parent_id(pd, id), pd)
     all.siblings  <- get_sibling_ids(pd, id)
     comments <- intersect(get_relative_comment_ids(pd), all.siblings)
-    comments[associate_relative_comments(pd, comments) == id]
+    comments[associate_relative_comments(comments) == id]
 }
 if(F){#@testing
 'get_function_arg_ids <- 
@@ -149,14 +157,14 @@ function( pd                    #< parse data
     parse(text = .) %>%
     get_parse_data() -> pd
     
-    function.id <- pd_get_assign_value_id(pd)
-    arg.ids <- get_function_arg_variable_ids(pd, function.id)
+    function.id <- pd_get_assign_value_id(pd=pd)
+    arg.ids <- get_function_arg_variable_ids(function.id, pd)
     id <- arg.ids[[1]]
     
-    value <- get_function_arg_associated_comment_ids(pd, id)
+    value <- get_function_arg_associated_comment_ids(id, pd)
     expect_identical(text(value, pd=pd), c('#< parse data', '#< continuation comment'))
     
-    expect_length(get_function_arg_associated_comment_ids(pd, arg.ids[[2]]), 0)
+    expect_length(get_function_arg_associated_comment_ids(arg.ids[[2]], pd), 0)
 }
 
 

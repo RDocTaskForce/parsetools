@@ -48,13 +48,13 @@ if(FALSE){#! @testing
 get_ancestor_ids <- 
 function( pd, id
         , nancestors   = Inf  #< Number of generations to go back
-        , last         = 0L   #< the last parent to consider
         , aggregate    = TRUE #< All (T) or only final (F).
         , include.self = TRUE #< should `id` be included in list of ancestors
                               #^ if `aggregate` is true.
         , only.present = FALSE#< should the list be restricted to only those 
                               #^ node that are present?  Most revelvent for 
                               #^ when parent is zero.
+        , last         = 0L   #< the last parent to consider
         ){
     #' @title Get the ancestors of id in pd.
     #' 
@@ -141,7 +141,7 @@ setClass( "testClass"
     get_parse_data() -> pd
 
     root.id <- all_root_ids(pd)
-    body.id <- get_function_body_id(pd, root.id)
+    body.id <- get_function_body_id(root.id, pd)
     id <- pd[pd$text=="#< the x field", 'id']
 
     expect_true(root.id %in% get_ancestor_ids(pd, id))

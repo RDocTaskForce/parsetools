@@ -21,21 +21,21 @@ function( pd            #< parse data of assignemnt
 }
 if(F){#! @testthat pd_is_assignment
     pd <- get_parse_data(parse(text="x <-  1"))
-    expect_true(pd_is_assignment(pd))
+    expect_true(pd_is_assignment(pd=pd))
     pd <- get_parse_data(parse(text="x <<- 1"))
-    expect_true(pd_is_assignment(pd))
+    expect_true(pd_is_assignment(pd=pd))
     pd <- get_parse_data(parse(text="1 ->  x"))
-    expect_true(pd_is_assignment(pd))
+    expect_true(pd_is_assignment(pd=pd))
     pd <- get_parse_data(parse(text="1 ->> x"))
-    expect_true(pd_is_assignment(pd))
+    expect_true(pd_is_assignment(pd=pd))
     pd <- get_parse_data(parse(text="x = 1"))
-    expect_true(pd_is_assignment(pd))
+    expect_true(pd_is_assignment(pd=pd))
 }
 
 #' @export
 pd_get_assign_value_id <-
-function( pd
-        , id = all_root_ids(pd)
+function( id = all_root_ids(pd)
+        , pd = get('pd', parent.frame())
         ){
     #' @title Get the id for the value portion of an assignment
     #' @inheritParams pd_is_assignment
@@ -54,23 +54,23 @@ function( pd
 }
 if(FALSE){#!@testing
 pd <- get_parse_data(parse(text="x<-1"))
-val.id <- pd_get_assign_value_id(pd)
+val.id <- pd_get_assign_value_id(pd=pd)
 expect_equal(val.id, 5L)
 
 pd <- get_parse_data(parse(text="x=1"))
-val.id <- pd_get_assign_value_id(pd)
+val.id <- pd_get_assign_value_id(pd=pd)
 expect_equal(val.id, 5L)
 
 pd <- get_parse_data(parse(text="x<<-1"))
-val.id <- pd_get_assign_value_id(pd)
+val.id <- pd_get_assign_value_id(pd=pd)
 expect_equal(val.id, 5L)
 
 pd <- get_parse_data(parse(text="1->x"))
-val.id <- pd_get_assign_value_id(pd)
+val.id <- pd_get_assign_value_id(pd=pd)
 expect_equal(val.id, 2L)
 
 pd <- get_parse_data(parse(text="1->>x"))
-val.id <- pd_get_assign_value_id(pd)
+val.id <- pd_get_assign_value_id(pd=pd)
 expect_equal(val.id, 2L)
 }
 
@@ -84,7 +84,7 @@ function( pd #< The [parse-data] object, representing an assignment
     #' @description
     #'   A convenience wrapper for getting the subset parse-data for 
     #'   the value of an assignemtn expression.
-    get_family(pd, pd_get_assign_value_id(pd, id))
+    get_family(pd, pd_get_assign_value_id(id))
     #' @return a \code{\link{parse-data}} object.
 }
 if(FALSE){#! @testthat pd_get_assign_value
@@ -135,10 +135,9 @@ if(F){#!@testthat
     }
     "}))
 
-    expect_true(pd_is_assignment(pd))
-    var.pd <- pd_get_assign_variable(pd)
+    expect_true(pd_is_assignment(pd=pd))
+    var.pd <- pd_get_assign_variable(pd=pd)
     expect_equal(getParseText(var.pd, all_root_ids(var.pd)), "hello_world")
-
 }
 
 #' @export
@@ -171,10 +170,10 @@ parse(text = .) %>%
 get_parse_data() %>%
 sort-> pd
 
-    expect_true(pd_is_assignment(pd))
+    expect_true(pd_is_assignment(pd=pd))
 
-    var.pd <- pd_get_assign_variable(pd)
-    var.id <- pd_get_assign_variable_id(pd)
+    var.pd <- pd_get_assign_variable(pd=pd)
+    var.id <- pd_get_assign_variable_id(pd=pd)
     expect_equal(var.id, all_root_ids(var.pd))
 }
 
