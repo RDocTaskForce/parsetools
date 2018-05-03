@@ -89,9 +89,9 @@ expect_identical(ids_ending_on_line(4), c(26L, 23L, 24L))
 test_that('get_prev_terminal_id', {#@testing
     pd <- "   rnorm( 10,  0,   3)" %>% parse(text=.) %>% get_parse_data()
     id <- 4
-    expect_equal(get_prev_terminal_id(pd, id), 2L)
+    expect_equal(get_prev_terminal_id(id, pd), 2L)
 
-    expect_equal( get_prev_terminal_id(pd, pd$id)
+    expect_equal( get_prev_terminal_id(pd=pd)
                 , c(NA, NA, NA, 1, rep(2, 2), 4, 6, 6, 9, 11, 11, 14)
                 )
 })

@@ -68,7 +68,7 @@ extract_test_block <- function(pd, id=all_tagged_iff_ids(pd, .testing.tags)){
         #! which will be prefixed by "test-" and placed in the `dir`
         #! directory.
         #!
-        name <- get_iff_associated_name(pd, id)
+        name <- get_iff_associated_name(id, pd)
         if(is.null(name))
             stop( "illformed block at "
                 , paste( filename(pd), start_line(id), start_col(id), sep=':')

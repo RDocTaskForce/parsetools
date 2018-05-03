@@ -144,7 +144,7 @@ if(FALSE){#!@testing
 
 #' @export
 iff_is_tagged <- 
-function( pd, tag, id
+function( id, tag, pd = get('pd', parent.frame())
         , doc.only = TRUE
         , ...
         ){
@@ -196,29 +196,29 @@ if(FALSE){#!@testing
     tag <- 'tag'
     id  <- all_root_ids(pd)
     expect_equal(length(id), 6)
-    expect_true (iff_is_tagged(pd, tag, id[[1]]))
-    expect_true (iff_is_tagged(pd, tag, id[[3]], FALSE))
-    expect_false(iff_is_tagged(pd, tag, id[[3]], TRUE ))
-    expect_false(iff_is_tagged(pd, tag, id[[6]]))
-    expect_equal(iff_is_tagged(pd, tag, id)
+    expect_true (iff_is_tagged(id[[1]], tag, pd))
+    expect_true (iff_is_tagged(id[[3]], tag, pd, FALSE))
+    expect_false(iff_is_tagged(id[[3]], tag, pd, TRUE ))
+    expect_false(iff_is_tagged(id[[6]], tag, pd))
+    expect_equal(iff_is_tagged(id, tag, pd)
                 , c(T,T,F,F,F,F))
-    expect_equal(iff_is_tagged(pd, tag, id, FALSE)
+    expect_equal(iff_is_tagged(id, tag, pd, FALSE)
                 , c(T,T,T,F,F,F))
                 
     pd <- get_parse_data(parse(text='rnorm(1)'))
-    expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
+    expect_false(iff_is_tagged(all_root_ids(pd), tag, pd))            
     
     pd <- get_parse_data(parse(text='if(F)#!@tag not in block\nF'))
-    expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
+    expect_false(iff_is_tagged(all_root_ids(pd), tag, pd))            
     
     pd <- get_parse_data(parse(text='if(F){FALSE}'))
-    expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
+    expect_false(iff_is_tagged(all_root_ids(pd), tag, pd))            
     
     pd <- get_parse_data(parse(text='if(F){# @tag\nF\n}'))
-    expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
+    expect_false(iff_is_tagged(all_root_ids(pd), tag, pd))            
     
     pd <- get_parse_data(parse(text='if(F){#@tag\nF\n}'))
-    expect_true(iff_is_tagged(pd, tag, all_root_ids(pd)))    
+    expect_true(iff_is_tagged(all_root_ids(pd), tag, pd))    
 }
 
 #' @export
@@ -238,7 +238,7 @@ function(pd, tag, doc.only=TRUE){
     #'      that are also tagged with \code{tag}.
     id <- all_iff_ids(pd)
     if (!length(id)) return(id)
-    is.tagged <- iff_is_tagged(pd, tag, id, doc.only=doc.only)
+    is.tagged <- iff_is_tagged(id=id, tag=tag, pd=pd, doc.only=doc.only)
     id[is.tagged]
 }
 if(FALSE){#!@testing
@@ -276,7 +276,7 @@ if(FALSE){#!@testing
 
 #@ internal
 get_iff_associated_name <-
-function(pd, id){ 
+function(id, pd = get('pd', parent.frame())){ 
     #' @title find the name that should be assocciated with an \code{if(FALSE)} block.
     #' @inheritParams is_iff_block
     #' 
@@ -320,8 +320,8 @@ function(pd, id){
         #' For function assignments \code{type="function_assignment"}, 
         #' for all other assignments \code{type="assignment"}.
         #'
-    } else if(pd_is_symbol_call(pd, prev.id)) {
-        switch( text(pd_get_call_symbol_id(pd, prev.id))
+    } else if(pd_is_symbol_call(prev.id)) {
+        switch( text(pd_get_call_symbol_id(prev.id, pd))
               , setClass = {
                     #' The names for \code{link{setClass}} calls will also be inferred.
                     #' The name of the class is taken as the name, but the 
@@ -333,14 +333,14 @@ function(pd, id){
                     #' assignment operation takes priority and would have
                     #' \code{type="assignment"}.
                     #' 
-                    args <- pd_get_call_args(pd, prev.id)
+                    args <- pd_get_call_args(prev.id)
                     name <- unquote(args[[if('Class' %in% names(args)) 'Class' else 1L]][1,'text'])
                     structure(name, type = "setClass")
                 }
               , setMethod = {
                     #' The names for \code{\link{setMethod}} will assume 
                     #' the S3 convention of \code{<method>.<class>}.
-                    args <- pd_get_call_args(pd, prev.id)
+                    args <- pd_get_call_args(prev.id)
                     fname <- unquote(args[[ifelse('f' %in% names(args), 'f', 1L)]][1,'text'])
                     #' In the case the the signature is more than just the class,
                     #' the signature will be collapsed, separated by commas.
@@ -355,7 +355,7 @@ function(pd, id){
                     #' \code{\link{setGeneric}} can also be used with the name
                     #' of the generic function the inferred name and
                     #' \code{type="setGeneric"}.
-                    args <- pd_get_call_args(pd, prev.id)
+                    args <- pd_get_call_args(prev.id)
                     fname <- unquote(args[[ifelse('f' %in% names(args), 'f', 1L)]][1,'text'])
                     structure(fname, type='setGeneric')
                 }
@@ -411,26 +411,26 @@ if(FALSE){#!@testing
     '}))
     iff.ids <- all_tagged_iff_ids(pd, c('testing', 'testthat', 'test'))
     
-    expect_null( get_iff_associated_name(pd, iff.ids[[1L]]), info="iff at beginning")
-    expect_equal( get_iff_associated_name(pd, iff.ids[[2L]])
+    expect_null( get_iff_associated_name(iff.ids[[1L]], pd), info="iff at beginning")
+    expect_equal( get_iff_associated_name(iff.ids[[2L]], pd)
                 , structure("hello_world", type = "function_assignment")
                 , info="iff after function assignment")
-    expect_equal( get_iff_associated_name(pd, iff.ids[[3L]])
+    expect_equal( get_iff_associated_name(iff.ids[[3L]], pd)
                 , structure("ldf", type = "assignment")
                 , info="iff after other assignment")
-    expect_equal( get_iff_associated_name(pd, iff.ids[[4L]])
+    expect_equal( get_iff_associated_name(iff.ids[[4L]], pd)
                 , structure("f2", type = "function_assignment")
                 , info="iff after other iff")
-    expect_equal( get_iff_associated_name(pd, iff.ids[[5L]])
+    expect_equal( get_iff_associated_name(iff.ids[[5L]], pd)
                 , structure("A", type = "setClass")
                 , info="iff after other iff")
-    expect_equal( get_iff_associated_name(pd, iff.ids[[6L]])
+    expect_equal( get_iff_associated_name(iff.ids[[6L]], pd)
                 , structure("print.A", type = "setMethod")
                 , info="iff after other iff")
-    expect_equal( get_iff_associated_name(pd, iff.ids[[7L]])
+    expect_equal( get_iff_associated_name(iff.ids[[7L]], pd)
                 , structure("my_generic", type = "setGeneric")
                 , info="iff after other iff")
-    expect_null ( get_iff_associated_name(pd, iff.ids[[8L]])
+    expect_null ( get_iff_associated_name(iff.ids[[8L]], pd)
                 , info="following call")
 }
 

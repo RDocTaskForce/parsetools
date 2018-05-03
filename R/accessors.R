@@ -222,7 +222,7 @@ expect_identical(ids_ending_on_line(4), c(26L, 23L, 24L))
 
 }
 
-get_prev_terminal_id <- function(pd, id=pd$id){
+get_prev_terminal_id <- function(id=pd$id, pd=get('pd', parent.frame())){
 #' @describeIn internal Get the id for the terminal expression that is immediately prior to the one given.
     if (length(id)>1) return (sapply(id, get_prev_terminal_id, pd=pd))
     ix <- which( pd$line1 <= start_line(id)
@@ -235,9 +235,9 @@ get_prev_terminal_id <- function(pd, id=pd$id){
 if(FALSE){#@testing
     pd <- "   rnorm( 10,  0,   3)" %>% parse(text=.) %>% get_parse_data()
     id <- 4
-    expect_equal(get_prev_terminal_id(pd, id), 2L)
+    expect_equal(get_prev_terminal_id(id, pd), 2L)
 
-    expect_equal( get_prev_terminal_id(pd, pd$id)
+    expect_equal( get_prev_terminal_id(pd=pd)
                 , c(NA, NA, NA, 1, rep(2, 2), 4, 6, 6, 9, 11, 11, 14)
                 )
 }

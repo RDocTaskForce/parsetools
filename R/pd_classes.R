@@ -7,8 +7,8 @@ function( id = pd$id
         , funs = .class.defining.functions #< valid class defining functions 
         ){
     if (length(id)>1) return(sapply(id, pd_is_class_definition, pd=pd, funs=funs))
-    pd_is_symbol_call(pd, id) &&
-    text(pd_get_call_symbol_id(pd, id)) %in% funs
+    pd_is_symbol_call(id) &&
+    text(pd_get_call_symbol_id(id, pd)) %in% funs
 }
 if(FALSE){#@test
 'setClass( "testClass"
