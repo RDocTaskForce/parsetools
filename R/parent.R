@@ -24,7 +24,7 @@
 }#######################################################################
 
 #' @export
-get_parent_id <- function(pd, id=pd$id) {
+get_parent_id <- function(id=pd$id, pd=get('pd', parent.frame())) {
     #' @title Get the parent of the expression identified by `id` in `pd`.
     #' @inheritParams get_child_ids
     #' 
@@ -34,19 +34,19 @@ get_parent_id <- function(pd, id=pd$id) {
 }
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
-    expect_identical(get_parent_id(pd, 1), 3L)
-    expect_is(get_parent_id(pd, 1), "integer")
+    expect_identical(get_parent_id(1, pd), 3L)
+    expect_is(get_parent_id(1, pd), "integer")
     
-    expect_is(get_parent_id(pd, 10000), "integer", info="missing parent")
-    expect_identical(get_parent_id(pd, 10000), NA_integer_, info="missing parent")
+    expect_is(get_parent_id(10000, pd), "integer", info="missing parent")
+    expect_identical(get_parent_id(10000, pd), NA_integer_, info="missing parent")
     
     expect_identical(get_parent_id(pd, pd), pd$parent)
-    expect_identical(get_parent_id(pd, 0L), NA_integer_)
+    expect_identical(get_parent_id(0L, pd), NA_integer_)
 }
 
 #' @export
 get_ancestor_ids <- 
-function( pd, id
+function( id, pd = get('pd', parent.frame()) #< parse data
         , nancestors   = Inf  #< Number of generations to go back
         , aggregate    = TRUE #< All (T) or only final (F).
         , include.self = TRUE #< should `id` be included in list of ancestors
@@ -91,7 +91,7 @@ function( pd, id
     if (aggregate) ancestors <- if (include.self) id else integer(0)
     while(nancestors > 0L){
         nancestors <- nancestors - 1
-        parent <- get_parent_id(pd, id)
+        parent <- get_parent_id(id, pd)
         if (is.na(parent)) break
         if (only.present && !parent %in% pd$id){
             parent <- id
@@ -105,28 +105,28 @@ function( pd, id
 }
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
-    expect_identical(get_ancestor_ids(pd, 1, nancestors=Inf, aggregate=TRUE , include.self=TRUE , only.present = FALSE), c(1L, 3L, 23L,0L), info = "defaults, but fully specified.")
-    expect_identical(get_ancestor_ids(pd, 1, nancestors=Inf, aggregate=TRUE , include.self=FALSE, only.present = FALSE), c(    3L, 23L,0L), info = "include.self=FALSE")
-    expect_identical(get_ancestor_ids(pd, 1, nancestors= 2 , aggregate=TRUE , include.self=FALSE, only.present = FALSE), c(    3L, 23L   ), info = "nancestors=2, include.self=FALSE")
-    expect_identical(get_ancestor_ids(pd, 1, nancestors= 2 , aggregate=TRUE , include.self=TRUE , only.present = FALSE), c(1L, 3L, 23L   ), info = "nancestors=2, include.self=TRUE")
-    expect_identical(get_ancestor_ids(pd, 1, nancestors= 2 , aggregate=FALSE, include.self=FALSE, only.present = FALSE),           23L    , info = "nancestors= 2, aggregate=FALSE")
-    expect_identical(get_ancestor_ids(pd, 1, nancestors= 0 , aggregate=FALSE, include.self=TRUE , only.present = FALSE),    1L             , info = "nancestors=0, include.self=TRUE")
+    expect_identical(get_ancestor_ids( 1, pd,nancestors=Inf, aggregate=TRUE , include.self=TRUE , only.present = FALSE), c(1L, 3L, 23L,0L), info = "defaults, but fully specified.")
+    expect_identical(get_ancestor_ids( 1, pd,nancestors=Inf, aggregate=TRUE , include.self=FALSE, only.present = FALSE), c(    3L, 23L,0L), info = "include.self=FALSE")
+    expect_identical(get_ancestor_ids( 1, pd,nancestors= 2 , aggregate=TRUE , include.self=FALSE, only.present = FALSE), c(    3L, 23L   ), info = "nancestors=2, include.self=FALSE")
+    expect_identical(get_ancestor_ids( 1, pd,nancestors= 2 , aggregate=TRUE , include.self=TRUE , only.present = FALSE), c(1L, 3L, 23L   ), info = "nancestors=2, include.self=TRUE")
+    expect_identical(get_ancestor_ids( 1, pd,nancestors= 2 , aggregate=FALSE, include.self=FALSE, only.present = FALSE),           23L    , info = "nancestors= 2, aggregate=FALSE")
+    expect_identical(get_ancestor_ids( 1, pd,nancestors= 0 , aggregate=FALSE, include.self=TRUE , only.present = FALSE),    1L             , info = "nancestors=0, include.self=TRUE")
+                                          
+    expect_identical(get_ancestor_ids( 1, pd,nancestors=Inf, aggregate=FALSE, include.self=FALSE, only.present = FALSE),               0L , info = "nancestors= 2, aggregate=FALSE")
+    expect_identical(get_ancestor_ids( 1, pd,nancestors=Inf, aggregate=FALSE, include.self=FALSE, only.present = TRUE ),           23L    , info = "nancestors= 2, aggregate=FALSE")
+    expect_identical(get_ancestor_ids(23, pd,nancestors=Inf, aggregate=FALSE, include.self=FALSE, only.present = TRUE ),           23L    , info = "nancestors= 2, aggregate=FALSE")
+    expect_identical(get_ancestor_ids(23, pd,nancestors=Inf, aggregate=TRUE , include.self=FALSE, only.present = TRUE ), integer(0)       , info = "nancestors= 2, aggregate=FALSE")
     
-    expect_identical(get_ancestor_ids(pd, 1, nancestors=Inf, aggregate=FALSE, include.self=FALSE, only.present = FALSE),               0L , info = "nancestors= 2, aggregate=FALSE")
-    expect_identical(get_ancestor_ids(pd, 1, nancestors=Inf, aggregate=FALSE, include.self=FALSE, only.present = TRUE ),           23L    , info = "nancestors= 2, aggregate=FALSE")
-    expect_identical(get_ancestor_ids(pd,23, nancestors=Inf, aggregate=FALSE, include.self=FALSE, only.present = TRUE ),           23L    , info = "nancestors= 2, aggregate=FALSE")
-    expect_identical(get_ancestor_ids(pd,23, nancestors=Inf, aggregate=TRUE , include.self=FALSE, only.present = TRUE ), integer(0)       , info = "nancestors= 2, aggregate=FALSE")
+    expect_error(get_ancestor_ids(1, pd, nancestors=  0, include.self=FALSE))
+    expect_error(get_ancestor_ids(1, pd, nancestors= -1))
     
-    expect_error(get_ancestor_ids(pd, 1, nancestors=  0, include.self=FALSE))
-    expect_error(get_ancestor_ids(pd, 1, nancestors= -1))
-    
-    expect_is(get_ancestor_ids(pd, c(11, 18)), 'list')
-    expect_identical(get_ancestor_ids(pd, c(23, 11), Inf, T, T, F), list(c(23L, 0L), c(11L, 12L, 23L, 0L)))
-    expect_identical(get_ancestor_ids(pd, c(23, 11),  2L, T, T, F), list(c(23L, 0L), c(11L, 12L, 23L    )))
-    expect_identical(get_ancestor_ids(pd, c(23, 11),  2L, T, F, F), list(c(     0L), c(     12L, 23L    )))
-    expect_identical(get_ancestor_ids(pd, c(23, 11),  2L, F, F, F), list(c(     0L), c(          23L    )))
-    expect_identical(get_ancestor_ids(pd, c(23, 11), Inf, T, T, T), list(c(23L    ), c(11L, 12L, 23L    )))
-    expect_identical(get_ancestor_ids(pd, c(23, 11), Inf, F, T, T), list(c(23L    ), c(          23L    )))
+    expect_is(get_ancestor_ids(c(11, 18), pd), 'list')
+    expect_identical(get_ancestor_ids(c(23, 11), pd, Inf, T, T, F), list(c(23L, 0L), c(11L, 12L, 23L, 0L)))
+    expect_identical(get_ancestor_ids(c(23, 11), pd,  2L, T, T, F), list(c(23L, 0L), c(11L, 12L, 23L    )))
+    expect_identical(get_ancestor_ids(c(23, 11), pd,  2L, T, F, F), list(c(     0L), c(     12L, 23L    )))
+    expect_identical(get_ancestor_ids(c(23, 11), pd,  2L, F, F, F), list(c(     0L), c(          23L    )))
+    expect_identical(get_ancestor_ids(c(23, 11), pd, Inf, T, T, T), list(c(23L    ), c(11L, 12L, 23L    )))
+    expect_identical(get_ancestor_ids(c(23, 11), pd, Inf, F, T, T), list(c(23L    ), c(          23L    )))
 }
 if(FALSE){#! @testing last parameter
 '
@@ -144,12 +144,12 @@ setClass( "testClass"
     body.id <- get_function_body_id(root.id, pd)
     id <- pd[pd$text=="#< the x field", 'id']
 
-    expect_true(root.id %in% get_ancestor_ids(pd, id))
-    expect_false(root.id %in% get_ancestor_ids(pd, id, last=body.id))
+    expect_true(root.id %in% get_ancestor_ids(id, pd))
+    expect_false(root.id %in% get_ancestor_ids(id, pd, last=body.id))
 
     id2 <- pd[pd$text=="#< the y field", 'id']
 
-    value <- get_ancestor_ids(pd, c(id, id2), last = body.id, include.self =FALSE)
+    value <- get_ancestor_ids(c(id, id2), pd, last = body.id, include.self =FALSE)
     expect_identical(value[[1]], value[[2]])
     expect_false(root.id %in% value[[1]])
     expect_false(root.id %in% value[[2]])

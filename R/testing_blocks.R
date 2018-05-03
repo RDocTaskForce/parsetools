@@ -53,7 +53,7 @@ function( id = all_tagged_iff_ids(pd, .testing.tags)
     stopifnot(is_iff_block(id,pd))
     content.id  <- pd_get_if_branch_id(id, pd)
     
-    tag.comment <- get_child_ids(pd, content.id)[[2]]
+    tag.comment <- get_child_ids(content.id, pd)[[2]]
     info.string <- trimws(strip_doc_comment_leads(strip_tag(text(tag.comment), .testing.tags)))
     
     content     <- lines(content.id, pd)

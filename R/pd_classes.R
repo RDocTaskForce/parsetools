@@ -29,7 +29,7 @@ function( id = pd$id
         , funs = .class.defining.functions #< valid class defining functions 
         ){
     if (length(id) > 1) return(sapply(id, pd_is_in_class_definition, pd=pd, funs=funs))
-    ancestors <- get_ancestor_ids(pd, id, only.present=TRUE)
+    ancestors <- get_ancestor_ids(id, pd, only.present=TRUE)
     any(pd_is_class_definition(ancestors, pd=pd, funs=funs))
 }
 if(FALSE){#@test object in setClass

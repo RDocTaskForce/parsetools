@@ -53,10 +53,10 @@ function( id = all_root_ids(pd)
     if (length(id) > 1) return(sapply(id, is_iff_block, pd=pd, allow.short=allow.short))
     
     if (token(id) != 'expr') return(FALSE)
-    kids <- get_child_ids(pd, id)
+    kids <- get_child_ids(id, pd)
     if (length(kids) < 2) return(FALSE)
     if (!identical(pd[match(utils::head(kids, 2), pd$id), 'token'], c("IF", "'('"))) return(FALSE)
-    grandkids <- parsetools::get_child_ids( pd, kids[[3]])
+    grandkids <- get_child_ids( kids[[3]], pd)
     if (length(grandkids) != 1) return(FALSE)
     row <- pd[match(grandkids, pd$id),]
     return( ( row[['token']] == "NUM_CONST" && row[['text']] == "FALSE")

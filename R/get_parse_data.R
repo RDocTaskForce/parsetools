@@ -345,8 +345,8 @@ function( pd  #< The [parse-data] to fix
     ids <- pd[pd[['token']] == "EQ_ASSIGN", 'id']
 
     for(id in rev(ids)){
-        parent <- get_parent_id(pd, id)
-        fam.pd <- get_child(pd, get_parent_id(pd, id))
+        parent <- get_parent_id(id, pd)
+        fam.pd <- get_child(get_parent_id(id, pd), pd)
         fam.pd <- fam.pd[order(fam.pd$id), ]
         fam.pd <- utils::head(fam.pd[fam.pd$id >= id, ], 3)
 

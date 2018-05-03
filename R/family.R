@@ -41,10 +41,10 @@ function( id, pd
     #' @description
     #'   Subset the \code{pd} to the family of \code{id}.
     id <- ._check_id(id)
-    kids <- get_child_ids(pd, id, include.self=include.self, ngenerations=ngenerations, ...)
+    kids <- get_child_ids(id, pd, include.self=include.self, ngenerations=ngenerations, ...)
     cids <- 
         if (include.doc.comments || include.regular.comments){
-            if (is_grouping(parent <- get_parent_id(pd, id), pd)) {
+            if (is_grouping(parent <- get_parent_id(id, pd), pd)) {
                 pd <- fix_grouping_comment_association(pd, parent)
             }
             pd[ pd$token %in% c( if (include.doc.comments    ) comment.classes$class
@@ -119,7 +119,7 @@ get_sibling_ids <- function(id, pd){
     #'   A convenience function for identifying siblings of the given id.
     #'   Siblings are nodes with the same parent.
     #' }
-    get_child_ids(pd, get_parent_id(pd, id))
+    get_child_ids(get_parent_id(id, pd), pd)
 }
 
 #' @export
@@ -149,7 +149,7 @@ is_firstborn <- function(id, pd=get('pd', parent.frame())){
     #' @inheritParams get_child_ids
     #' @description
     #'   Test if an expression is the firstborn, ie. oldest or lowest id.
-    id == get_firstborn_id(get_parent_id(pd,id), pd)
+    id == get_firstborn_id(get_parent_id(id, pd), pd)
 }
 
 #' @export

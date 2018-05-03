@@ -53,7 +53,7 @@ function( id = all_root_ids(pd)
         , pd=get('pd', parent.frame()) 
         ){
     if (length(id)>1L) return(sapply(id, get_function_body_id, pd=pd))
-    max(get_child_ids(pd, id))
+    max(get_child_ids(id, pd))
 }
 if(F){#@testing
 "hello_world <- function(){
@@ -72,7 +72,7 @@ if(F){#@testing
 
 pd <- get_parse_data(parse(text='function(l,r)paste(l,r)', keep.source=TRUE))
     base.id <- subset(pd, text=='paste')$parent
-    expected <- get_parent_id(pd, base.id)
+    expected <- get_parent_id(base.id, pd)
     body.id <- get_function_body_id(pd=pd)
     expect_identical(body.id, expected)
 }
@@ -83,7 +83,7 @@ get_function_arg_ids <-
 function( id = pd$id
         , pd = get('pd', parent.frame())
         ){
-    utils::tail(utils::head(get_child_ids(pd=pd, id=id), -1), -1)
+    utils::tail(utils::head(get_child_ids(id=id, pd=pd), -1), -1)
 }
 if(F){#@testing
 'get_function_arg_ids <- 
@@ -143,7 +143,7 @@ function( id = pd$id
         , pd = get('pd', parent.frame())
         ){
     stopifnot(length(id)==1)
-    sibling.args <- get_function_arg_variable_ids(get_parent_id(pd, id), pd)
+    sibling.args <- get_function_arg_variable_ids(get_parent_id(id, pd), pd)
     all.siblings  <- get_sibling_ids(id, pd)
     comments <- intersect(get_relative_comment_ids(pd), all.siblings)
     comments[associate_relative_comments(comments) == id]

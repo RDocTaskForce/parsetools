@@ -35,8 +35,8 @@ function( id = pd$id
   id <- ._check_id(id)
   if(length(id) > 1) return(sapply(id, is_grouping, pd=pd))
 
-  child  <- get_child(pd, id, 1)
-  parent <- get_parent_id(pd, id)
+  child  <- get_child(id, pd, 1)
+  parent <- get_parent_id(id, pd)
   #' @description
   #' a grouping is defined as a non empty set 
   return(  nrow(child)
@@ -78,7 +78,7 @@ function(pd, id=get_groupings(pd)){
     id <- ._check_id(id)
     stopifnot(is_grouping(id, pd))
     for (i in id) {
-        cids <- get_child_ids(pd, i)
+        cids <- get_child_ids(i, pd)
         for (cid in cids) 
             if (is_comment(pd, cid)) {
                 n <- get_next_sibling_id(cid, pd)

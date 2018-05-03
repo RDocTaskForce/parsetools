@@ -97,9 +97,9 @@ function( id = all_root_ids(pd)[1]       #< id of interest
     #'    Gets the id of the symbol of the call.  
     #'    That is the name of the function being called.
     stopifnot(pd_is_symbol_call(id, pd))
-    get_child_ids(pd, 
+    get_child_ids( 
         get_next_sibling_id( 
-            get_firstborn_id(id, pd), pd))
+            get_firstborn_id(id, pd), pd), pd)
 }
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"
@@ -122,9 +122,9 @@ function( id = all_root_ids(pd)[1]       #< id of interest
     #' @description a wrapper to \code{\link{pd_is_symbol_call}} to subset
     #'     the \code{\link{parse-data}}.
     stopifnot(pd_is_symbol_call(id, pd))
-    get_child(pd, 
+    get_child( 
         get_next_sibling_id( 
-            get_firstborn_id(id, pd), pd))
+            get_firstborn_id(id, pd), pd), pd)
 }
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"
@@ -146,7 +146,7 @@ function( id = all_root_ids(pd)[1]       #< id of interest
     #' @inheritParams pd_is_symbol_call
     #' @description
     #'   Retrieves the arguments of a call as a list.
-    kids <- get_child(pd=pd, id=id, ngenerations=1L, include.self=FALSE)
+    kids <- get_child(id=id, pd=pd, ngenerations=1L, include.self=FALSE)
     groups <- cumsum(kids$token %in% c("'('", "','", "')'"))
     args <- split( kids[groups > 0 & groups < max(groups),][-1,]
                  , groups[groups > 0 & groups < max(groups)][-1]

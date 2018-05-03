@@ -231,7 +231,7 @@ function( id = pd$id
         if (is.na(parent) || parent == 0) return(0L)
         if (parent < 0) parent <- -parent
         if (is_root(parent, pd, ignore.groups=ignore.groups)) return(parent)
-        parent <- get_parent_id(pd, parent)
+        parent <- get_parent_id(parent, pd)
     }
     #! @return integer vector of root ids.
 }

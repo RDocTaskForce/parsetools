@@ -27,7 +27,7 @@ test_that('get_function_body_id', {#@testing
 
 pd <- get_parse_data(parse(text='function(l,r)paste(l,r)', keep.source=TRUE))
     base.id <- subset(pd, text=='paste')$parent
-    expected <- get_parent_id(pd, base.id)
+    expected <- get_parent_id(base.id, pd)
     body.id <- get_function_body_id(pd=pd)
     expect_identical(body.id, expected)
 })

@@ -14,7 +14,7 @@ function( pd            #< parse data of assignemnt
     id <- ._check_id(id)
     if(pd[pd$id == id, 'token'] != 'expr')
         FALSE
-    kids.pd <- get_children(pd, id, ngenerations=1)[[1]]
+    kids.pd <- get_children(id, pd, ngenerations=1)[[1]]
     kids.pd <- kids.pd[kids.pd[['token']] != 'expr', ]
 
     any(kids.pd[['token']] %in% assignment.opperators)
@@ -44,7 +44,7 @@ function( id = all_root_ids(pd)
     #'    accounting for the direction of the arrow.
     if(length(id) > 1)
         sapply(id, pd_get_assign_value_id, pd=pd)
-    child.ids <- get_child_ids(pd, id, 1, FALSE)
+    child.ids <- get_child_ids(id, pd, 1, FALSE)
     type <- pd[pd$id %in% child.ids & pd$token %in% assignment.opperators, 'token']
     switch( type
           , RIGHT_ASSIGN = min(child.ids)
@@ -153,7 +153,7 @@ function( pd #< The [parse-data] object, representing an assignment
     #'   
     if(length(id) > 1)
         sapply(id, pd_get_assign_variable_id, pd=pd)
-    child.ids   <- get_child_ids(pd, id, 1, FALSE)
+    child.ids   <- get_child_ids(id, pd, 1, FALSE)
     assign.pd   <- pd[pd$id %in% child.ids & pd$token %in% assignment.opperators, ]
     switch( assign.pd$token
           , RIGHT_ASSIGN = max(child.ids)
