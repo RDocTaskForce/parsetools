@@ -14,7 +14,7 @@ test_that('get_family', {#!@testing
         e <- 5
     "}))
     id <- ascend_to_root(pd[pd$text == 'c','id'], pd)
-    expect_identical(get_family(pd, id), pd[19:24,])
+    expect_identical(get_family(id, pd), pd[19:24,])
     
     pd <- get_parse_data(parse(text={"
         # normal comment
@@ -24,13 +24,13 @@ test_that('get_family', {#!@testing
             print('hello world')
         }
     "}))
-    fam <- get_family(pd, 37, include.doc.comments=TRUE, include.regular.comments=TRUE)
+    fam <- get_family(37, pd, include.doc.comments=TRUE, include.regular.comments=TRUE)
     expect_equal(fam[1,'text'], "# normal comment")
-    fam <- get_family(pd, 37, include.doc.comments=TRUE, include.regular.comments=FALSE)
+    fam <- get_family(37, pd, include.doc.comments=TRUE, include.regular.comments=FALSE)
     expect_equal(fam[1,'text'], "#' Documenation before")
-    fam <- get_family(pd, 37, include.doc.comments=FALSE, include.regular.comments=TRUE)
+    fam <- get_family(37, pd, include.doc.comments=FALSE, include.regular.comments=TRUE)
     expect_equal(fam[1,'text'], "# normal comment")
-    fam <- get_family(pd, 37, include.doc.comments=FALSE, include.regular.comments=FALSE)
+    fam <- get_family(37, pd, include.doc.comments=FALSE, include.regular.comments=FALSE)
     expect_equal(fam[1,'text'], "hw")
     
     pd <- get_parse_data(parse(text={"
@@ -47,11 +47,11 @@ test_that('get_family', {#!@testing
     expect_true(is_grouping(group.id, pd))
     id <- expr.id <- all_root_ids(pd, FALSE)
     
-    fam <- get_family(pd, expr.id, include.doc.comments=FALSE, include.regular.comments=FALSE)
+    fam <- get_family(expr.id, pd, include.doc.comments=FALSE, include.regular.comments=FALSE)
     expect_equal(fam[1,'text'], 'hw')
-    fam <- get_family(pd, expr.id, include.doc.comments=TRUE, include.regular.comments=FALSE)
+    fam <- get_family(expr.id, pd, include.doc.comments=TRUE, include.regular.comments=FALSE)
     expect_equal(fam[1,'text'], "#' Documenation before")
-    fam <- get_family(pd, expr.id, include.doc.comments=TRUE, include.regular.comments=TRUE)
+    fam <- get_family(expr.id, pd, include.doc.comments=TRUE, include.regular.comments=TRUE)
     expect_equal(fam[1,'text'], "# normal comment")
     
     
@@ -68,11 +68,11 @@ test_that('get_firstborn', {#!@testing
         }# end of section 2
         e <- 5
     "}))
-    expect_equal(get_firstborn(pd, 52)$token, "'{'")
-    expect_equal(get_firstborn(pd, 7)$text, "<-")
+    expect_equal(get_firstborn(52, pd)$token, "'{'")
+    expect_equal(get_firstborn(7 , pd)$text, "<-")
     
-    expect_warning(get_firstborn_id(pd, c(7, 52, .Machine$integer.max)))
-    expect_identical( suppressWarnings(get_firstborn_id(pd, c(7, 52, .Machine$integer.max)))
+    expect_warning(get_firstborn_id(c(7, 52, .Machine$integer.max), pd))
+    expect_identical( suppressWarnings(get_firstborn_id(c(7, 52, .Machine$integer.max), pd))
                     , c(2L, 10L, NA_integer_))
     
     expect_true(is_firstborn(2, pd=pd))

@@ -200,7 +200,7 @@ function( x
     root <- ascend_to_root(id, pd, ignore.groups=ignore.groups)
     if  (!length(root)) return(NULL)
     structure(id = id, root=root,
-    get_family( pd, root
+    get_family( root, pd
               , include.doc.comments     = include.doc.comments
               , include.regular.comments = include.regular.comments
               ))

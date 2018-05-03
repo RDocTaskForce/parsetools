@@ -144,7 +144,7 @@ function( id = pd$id
         ){
     stopifnot(length(id)==1)
     sibling.args <- get_function_arg_variable_ids(get_parent_id(pd, id), pd)
-    all.siblings  <- get_sibling_ids(pd, id)
+    all.siblings  <- get_sibling_ids(id, pd)
     comments <- intersect(get_relative_comment_ids(pd), all.siblings)
     comments[associate_relative_comments(comments) == id]
 }

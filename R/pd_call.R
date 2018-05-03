@@ -35,7 +35,7 @@ function( id = all_root_ids(pd)[1]       #< id of interest
     #'   Checks if the \code{id} identifies in \code{pd} a call expression.
     if (length(id)>1) return(sapply(id, pd_is_call, pd=pd))
     if (token(id) != 'expr') return(FALSE)
-    token(get_firstborn_id(pd, id)) == "'('"
+    token(get_firstborn_id(id, pd)) == "'('"
 }
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"
@@ -64,11 +64,11 @@ function( id = all_root_ids(pd)[1]       #< id of interest
     #'   symbol call expression, That is a call from a symbol.
     if (length(id) > 1) return(sapply(id, pd_is_symbol_call, pd=pd))
     if (!pd_is_call(id, pd)) return(FALSE)
-    eldest <- get_firstborn_id(pd, id)
+    eldest <- get_firstborn_id(id, pd)
     if (token(eldest) != "'('") return(FALSE)
-    second <- get_next_sibling_id(pd, eldest)
+    second <- get_next_sibling_id(eldest, pd)
     if (token(second) != "expr") return(FALSE)
-    grandchild <- get_firstborn_id(pd, second)
+    grandchild <- get_firstborn_id(second, pd)
     token(grandchild) == 'SYMBOL_FUNCTION_CALL'
     #' @return a logical of the same length as \code{id}
 }
@@ -98,8 +98,8 @@ function( id = all_root_ids(pd)[1]       #< id of interest
     #'    That is the name of the function being called.
     stopifnot(pd_is_symbol_call(id, pd))
     get_child_ids(pd, 
-        get_next_sibling_id(pd, 
-            get_firstborn_id(pd, id)))
+        get_next_sibling_id( 
+            get_firstborn_id(id, pd), pd))
 }
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"
@@ -123,8 +123,8 @@ function( id = all_root_ids(pd)[1]       #< id of interest
     #'     the \code{\link{parse-data}}.
     stopifnot(pd_is_symbol_call(id, pd))
     get_child(pd, 
-        get_next_sibling_id(pd, 
-            get_firstborn_id(pd, id)))
+        get_next_sibling_id( 
+            get_firstborn_id(id, pd), pd))
 }
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"

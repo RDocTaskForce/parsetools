@@ -81,9 +81,9 @@ function(pd, id=get_groupings(pd)){
         cids <- get_child_ids(pd, i)
         for (cid in cids) 
             if (is_comment(pd, cid)) {
-                n <- get_next_sibling_id(pd, cid)
+                n <- get_next_sibling_id(cid, pd)
                 while (!is.na(n) && is_comment(pd, n))
-                    n <- get_next_sibling_id(pd, n)
+                    n <- get_next_sibling_id(n, pd)
                 if (!is.na(n)) 
                     pd[ pd$id == cid, 'parent'] <- -ascend_to_root(n, pd)
             }

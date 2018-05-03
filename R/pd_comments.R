@@ -26,7 +26,7 @@ function( id = get_relative_comments(pd)$id
         ){
     if (length(id)>1L) return(sapply(id, associate_relative_comments, pd=pd))
 
-    sibs <- get_sibling_ids(pd, id)
+    sibs <- get_sibling_ids(id, pd)
     possible <- sibs[token(sibs, pd) == 'SYMBOL_FORMALS']
     if (length(possible) == 0L) return(NA)
     possible <- possible[end_line(possible) <= start_line(id)]

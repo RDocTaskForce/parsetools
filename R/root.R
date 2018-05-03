@@ -94,7 +94,7 @@ if(FALSE){#! @testing
     id <- max(pd[pd$token =="'{'", 'parent'])
     expect_true(is_root(id, pd, ignore.groups = TRUE))
     id <- min(pd[pd$token =="'{'", 'parent'])
-    expect_equal(get_family(pd, id)[3,'text'], "# Another Grouping")
+    expect_equal(get_family(id, pd)[3,'text'], "# Another Grouping")
     
     ids <- pd[pd$token =="'{'", 'parent']
     expect_equal(is_root(ids, pd, ignore.groups = TRUE ), c(TRUE, FALSE, FALSE))
@@ -249,7 +249,7 @@ if(FALSE){#@testing
         }
         #' comment after
     "}))
-    expect_equal(ascend_to_root(pd, 3), 34)
+    expect_equal(ascend_to_root(3, pd), 34)
     
-    expect_equal(ascend_to_root(pd), c(rep(34, 20), 0))
+    expect_equal(ascend_to_root(pd=pd), c(rep(34, 20), 0))
 }

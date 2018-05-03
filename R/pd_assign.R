@@ -84,7 +84,7 @@ function( pd #< The [parse-data] object, representing an assignment
     #' @description
     #'   A convenience wrapper for getting the subset parse-data for 
     #'   the value of an assignemtn expression.
-    get_family(pd, pd_get_assign_value_id(id))
+    get_family(pd_get_assign_value_id(id), pd)
     #' @return a \code{\link{parse-data}} object.
 }
 if(FALSE){#! @testthat pd_get_assign_value
@@ -122,9 +122,9 @@ function( pd #< The [parse-data] object, representing an assignment
     #'   like assigning to an indexed element of a vector.
     kids.pd <- sort(get_child(id=all_root_ids(pd), pd, 1, FALSE))
     switch( kids.pd[2, 'token']
-          , RIGHT_ASSIGN = get_family(pd, id = utils::tail(kids.pd$id,1))
-          , LEFT_ASSIGN  = get_family(pd, id = utils::head(kids.pd$id,1))
-          , EQ_ASSIGN    = get_family(pd, id = utils::head(kids.pd$id,1))
+          , RIGHT_ASSIGN = get_family(id = utils::tail(kids.pd$id,1), pd)
+          , LEFT_ASSIGN  = get_family(id = utils::head(kids.pd$id,1), pd)
+          , EQ_ASSIGN    = get_family(id = utils::head(kids.pd$id,1), pd)
           )
     #' @return will return the \code{\link{parse-data}}, 
     #'         which is typically rooted by an 'expr' token.
