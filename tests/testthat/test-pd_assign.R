@@ -1,6 +1,6 @@
-#! This file was automatically produced by documentation::extract_tests on  2018-05-03 10:17:17
+#! This file was automatically produced by documentation::extract_tests on  2018-05-04 11:22:55
 #! changes will be overwritten.
-context('tests extracted from file `/home/aredd/projects/rdtf/parsetools/R/pd_assign.R`')
+context('tests extracted from file `pd_assign.R`')
 #line 22 "/home/aredd/projects/rdtf/parsetools/R/pd_assign.R"
 test_that('pd_is_assignment', {#! @testthat pd_is_assignment
     pd <- get_parse_data(parse(text="x <-  1"))

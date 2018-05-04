@@ -1,6 +1,6 @@
-#! This file was automatically produced by documentation::extract_tests on  2018-05-03 10:17:17
+#! This file was automatically produced by documentation::extract_tests on  2018-05-04 11:22:55
 #! changes will be overwritten.
-context('tests extracted from file `/home/aredd/projects/rdtf/parsetools/R/grouping.R`')
+context('tests extracted from file `grouping.R`')
 #line 49 "/home/aredd/projects/rdtf/parsetools/R/grouping.R"
 test_that('is_grouping', {#! @testing
     pd <- get_parse_data(parse(text='{

@@ -1,7 +1,7 @@
-#! This file was automatically produced by documentation::extract_tests on  2018-05-03 10:17:17
+#! This file was automatically produced by documentation::extract_tests on  2018-05-04 11:22:55
 #! changes will be overwritten.
-context('tests extracted from file `/home/aredd/projects/rdtf/parsetools/R/pd_call.R`')
-#line 40 "/home/aredd/projects/rdtf/parsetools/R/pd_call.R"
+context('tests extracted from file `pd_call.R`')
+#line 41 "/home/aredd/projects/rdtf/parsetools/R/pd_call.R"
 test_that('pd_is_call', {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
@@ -15,7 +15,7 @@ test_that('pd_is_call', {#!@testing
     expect_equal(pd_is_call(ids, pd), c(F, F, T))
     
 })
-#line 75 "/home/aredd/projects/rdtf/parsetools/R/pd_call.R"
+#line 76 "/home/aredd/projects/rdtf/parsetools/R/pd_call.R"
 test_that('pd_is_symbol_call', {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
@@ -28,7 +28,7 @@ test_that('pd_is_symbol_call', {#!@testing
     expect_false(pd_is_symbol_call(ids[[1]], pd))
     expect_equal(pd_is_symbol_call(ids, pd), c(F, F, T))
 })
-#line 104 "/home/aredd/projects/rdtf/parsetools/R/pd_call.R"
+#line 106 "/home/aredd/projects/rdtf/parsetools/R/pd_call.R"
 test_that('pd_get_call_symbol_id', {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
@@ -39,7 +39,7 @@ test_that('pd_get_call_symbol_id', {#!@testing
     id <- ids[[3]]
     expect_equal(pd_get_call_symbol_id(id, pd), 45L)
 })
-#line 129 "/home/aredd/projects/rdtf/parsetools/R/pd_call.R"
+#line 131 "/home/aredd/projects/rdtf/parsetools/R/pd_call.R"
 test_that('pd_get_call_symbol', {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
@@ -50,7 +50,7 @@ test_that('pd_get_call_symbol', {#!@testing
     id <- ids[[3]]
     expect_equal(pd_get_call_symbol(id, pd), pd['45',])
 })
-#line 166 "/home/aredd/projects/rdtf/parsetools/R/pd_call.R"
+#line 168 "/home/aredd/projects/rdtf/parsetools/R/pd_call.R"
 test_that('pd_get_call_args', {#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
     args <- pd_get_call_args(pd=pd)

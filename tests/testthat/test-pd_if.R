@@ -1,6 +1,6 @@
-#! This file was automatically produced by documentation::extract_tests on  2018-05-03 10:17:17
+#! This file was automatically produced by documentation::extract_tests on  2018-05-04 11:22:55
 #! changes will be overwritten.
-context('tests extracted from file `/home/aredd/projects/rdtf/parsetools/R/pd_if.R`')
+context('tests extracted from file `pd_if.R`')
 #line 80 "/home/aredd/projects/rdtf/parsetools/R/pd_if.R"
 test_that('if structures', {#!@testing if structures
     pd <- get_parse_data(parse(text={"

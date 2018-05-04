@@ -1,6 +1,6 @@
-#! This file was automatically produced by documentation::extract_tests on  2018-05-03 10:17:17
+#! This file was automatically produced by documentation::extract_tests on  2018-05-04 11:22:55
 #! changes will be overwritten.
-context('tests extracted from file `/home/aredd/projects/rdtf/parsetools/R/root.R`')
+context('tests extracted from file `root.R`')
 #line 54 "/home/aredd/projects/rdtf/parsetools/R/root.R"
 test_that('is_root', {#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))

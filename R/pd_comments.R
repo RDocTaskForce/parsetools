@@ -83,5 +83,8 @@ if(F){#@test class members
     parse(text = .) %>%
     get_parse_data() -> pd
 
+    ids <- get_relative_comment_ids(pd)
+    id <- ids[[1]]
     
+    pd_is_in_class_definition(id)
 }

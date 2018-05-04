@@ -28,6 +28,7 @@
 pd_is_call <-
 function( id = all_root_ids(pd)[1]       #< id of interest
         , pd = get('pd', parent.frame()) #< parse data of assignemnt
+        , calls = NULL
         ){
     #' @title Is a call?
     #' @inheritParams get_child_ids
@@ -96,7 +97,8 @@ function( id = all_root_ids(pd)[1]       #< id of interest
     #' @description
     #'    Gets the id of the symbol of the call.  
     #'    That is the name of the function being called.
-    stopifnot(pd_is_symbol_call(id, pd))
+    if (length(id)>1) return(sapply(id, pd_get_call_symbol_id, pd=pd))
+    if (!pd_is_symbol_call(id, pd)) return(NA_integer_)
     get_child_ids( 
         get_next_sibling_id( 
             get_firstborn_id(id, pd), pd), pd)

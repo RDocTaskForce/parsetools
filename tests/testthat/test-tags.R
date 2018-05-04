@@ -1,6 +1,6 @@
-#! This file was automatically produced by documentation::extract_tests on  2018-05-03 10:17:17
+#! This file was automatically produced by documentation::extract_tests on  2018-05-04 11:22:55
 #! changes will be overwritten.
-context('tests extracted from file `/home/aredd/projects/rdtf/parsetools/R/tags.R`')
+context('tests extracted from file `tags.R`')
 #line 82 "/home/aredd/projects/rdtf/parsetools/R/tags.R"
 test_that('has_tag', {#!@testing
     # Note that testthat:::test_code will strip comments from code

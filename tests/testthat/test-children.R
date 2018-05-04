@@ -1,6 +1,6 @@
-#! This file was automatically produced by documentation::extract_tests on  2018-05-03 10:17:17
+#! This file was automatically produced by documentation::extract_tests on  2018-05-04 11:22:55
 #! changes will be overwritten.
-context('tests extracted from file `/home/aredd/projects/rdtf/parsetools/R/children.R`')
+context('tests extracted from file `children.R`')
 #line 59 "/home/aredd/projects/rdtf/parsetools/R/children.R"
 test_that('get_child_ids', {#! @test
     pd       <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))

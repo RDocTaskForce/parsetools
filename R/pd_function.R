@@ -46,6 +46,14 @@ if(F){#! @testthat pd_is_function
     expect_false(pd_is_function(pd=pd))
 }
 
+pd_is_in_function <- 
+function( id = all_root_ids(pd)
+        , pd = get('pd', parent.frame()) 
+        ){
+    
+}
+
+
 #' @describeIn pd_is_function Obtain the body of a function
 #' @export
 get_function_body_id <- 

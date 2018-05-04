@@ -1,6 +1,6 @@
-#! This file was automatically produced by documentation::extract_tests on  2018-05-03 10:17:17
+#! This file was automatically produced by documentation::extract_tests on  2018-05-04 11:22:55
 #! changes will be overwritten.
-context('tests extracted from file `/home/aredd/projects/rdtf/parsetools/R/iff_blocks.R`')
+context('tests extracted from file `iff_blocks.R`')
 #line 68 "/home/aredd/projects/rdtf/parsetools/R/iff_blocks.R"
 test_that('is_iff_block', {#!@testing
     pd <- get_parse_data(parse(text={"

@@ -1,6 +1,6 @@
-#! This file was automatically produced by documentation::extract_tests on  2018-05-03 10:17:17
+#! This file was automatically produced by documentation::extract_tests on  2018-05-04 11:22:55
 #! changes will be overwritten.
-context('tests extracted from file `/home/aredd/projects/rdtf/parsetools/R/pd_comments.R`')
+context('tests extracted from file `pd_comments.R`')
 #line 40 "/home/aredd/projects/rdtf/parsetools/R/pd_comments.R"
 test_that('function relative comments', {#@test function relative comments
 'function( pd                    #< parse data
@@ -49,5 +49,8 @@ test_that('class members', {#@test class members
     parse(text = .) %>%
     get_parse_data() -> pd
 
+    ids <- get_relative_comment_ids(pd)
+    id <- ids[[1]]
     
+    pd_is_in_class_definition(id)
 })
