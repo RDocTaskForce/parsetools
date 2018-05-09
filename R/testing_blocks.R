@@ -29,7 +29,10 @@
 .testing.tags <- c("test", "tests", "testing", "testthat")
 
 #' @export 
-extract_test_block <- function(pd, id=all_tagged_iff_ids(pd, .testing.tags)){
+extract_test_block <- 
+function( id = all_tagged_iff_ids(pd, .testing.tags)
+        , pd = get('pd', parent.frame())
+        ){
     #' @title Extract testing blocks from the parse-data.
     #' @param pd a \link{parse-data} object.
     pd <- ._check_parse_data(pd)
@@ -47,10 +50,10 @@ extract_test_block <- function(pd, id=all_tagged_iff_ids(pd, .testing.tags)){
     #'   The name, which is attached as an attribute is taken from the info
     #'   string or inferred by location, see Details.
     #'   
-    stopifnot(is_iff_block(pd,id))
-    content.id  <- get_if_branch_id(pd, id)
+    stopifnot(is_iff_block(id,pd))
+    content.id  <- pd_get_if_branch_id(id, pd)
     
-    tag.comment <- get_child_ids(pd, content.id)[[2]]
+    tag.comment <- get_child_ids(content.id, pd)[[2]]
     info.string <- trimws(strip_doc_comment_leads(strip_tag(text(tag.comment), .testing.tags)))
     
     content     <- lines(content.id, pd)
@@ -68,7 +71,7 @@ extract_test_block <- function(pd, id=all_tagged_iff_ids(pd, .testing.tags)){
         #! which will be prefixed by "test-" and placed in the `dir`
         #! directory.
         #!
-        name <- get_iff_associated_name(pd, id)
+        name <- get_iff_associated_name(id, pd)
         if(is.null(name))
             stop( "illformed block at "
                 , paste( filename(pd), start_line(id), start_col(id), sep=':')
@@ -143,57 +146,57 @@ if(FALSE){#!@testing
     '}, keep.source=TRUE))
     iff.ids <- all_tagged_iff_ids(pd, c('testing', 'testthat', 'test'))
     
-    expect_error( extract_test_block(pd, iff.ids[[1L]])
+    expect_error( extract_test_block(iff.ids[[1L]], pd)
                 , "illformed block at <text>:2:5"
                 , info = "cannot find name for block"
                 )
 
-    expect_equal( extract_test_block(pd, iff.ids[[2L]])
+    expect_equal( extract_test_block(iff.ids[[2L]], pd)
                 , structure(c( '#line 9 "<text>"'
                              , 'test_that(\'hello_world\', {#!@testthat'
                              , '        expect_output(hello_world(), "hello world")'
                              , '    })'
                              ), name=structure("hello_world", type = "function_assignment"))
                 , info="testing after function assignment")
-    expect_equal( extract_test_block(pd, iff.ids[[3L]])
+    expect_equal( extract_test_block(iff.ids[[3L]], pd)
                 , structure(c( '#line 14 "<text>"'
                              , 'test_that(\'ldf\', {#!@testing'
                              , '        # not a function assignment'
                              , '    })'
                              ), name = structure("ldf", type = "assignment"))
                 , info="testing after other assignment")
-    expect_equal( extract_test_block(pd, iff.ids[[4L]])
+    expect_equal( extract_test_block(iff.ids[[4L]], pd)
                 , structure(c( '#line 22 "<text>"'
                              , 'test_that(\'f2\', {#! @test'
                              , '        expect_error(f2())'
                              , '    })'
                              ), name=structure("f2", type = "function_assignment"))
                 , info="testing after other iff")
-    expect_equal( extract_test_block(pd, iff.ids[[5L]])
+    expect_equal( extract_test_block(iff.ids[[5L]], pd)
                 , structure(c( '#line 27 "<text>"'
                              , 'test_that(\'setClass("A", ...)\', {#!@testing '
                              , '        #testing a setClass'
                              , '    })'
                              ), name="setClass(\"A\", ...)")
                 , info="testing after setClass")
-    expect_equal( extract_test_block(pd, iff.ids[[6L]])
+    expect_equal( extract_test_block(iff.ids[[6L]], pd)
                 , structure(c( '#line 32 "<text>"'
                              , 'test_that(\'print.A\', {#!@testing '
                              , '        #testing a setMethod'
                              , '    })'
                              ), name=structure("print.A", type = "setMethod"))
                 , info="testing after setMethod")
-    expect_equal( extract_test_block(pd, iff.ids[[7L]])
+    expect_equal( extract_test_block(iff.ids[[7L]], pd)
                 , structure(c( '#line 37 "<text>"'
                              , 'test_that(\'setGeneric("my_generic", ...)\', {#!@testing '
                              , '        #testing a setClass'
                              , '    })'
                              ), name="setGeneric(\"my_generic\", ...)")
                 , info="testing after setGeneric")
-    expect_error( extract_test_block(pd, iff.ids[[8L]])
+    expect_error( extract_test_block(iff.ids[[8L]], pd)
                 , info="following call")
                 
-    expect_equal( extract_test_block(pd, iff.ids[2:3])
+    expect_equal( extract_test_block(iff.ids[2:3], pd)
                 , structure(c( '#line 9 "<text>"'
                              , 'test_that(\'hello_world\', {#!@testthat'
                              , '        expect_output(hello_world(), "hello world")'
@@ -213,7 +216,7 @@ if(FALSE){#!@testing
             expect_true(T)
         }
     "}))
-    expect_equal( extract_test_block(pd, all_root_ids(pd))
+    expect_equal( extract_test_block(all_root_ids(pd), pd)
                 , structure(c( "#line 2 \"<text>\""
                              , "test_that('An info string', {#@testing An info string"
                              , "            expect_true(T)"

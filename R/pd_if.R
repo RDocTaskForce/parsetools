@@ -23,55 +23,55 @@
 #
 }#######################################################################
 
-#' @export
-is_if_expr <- 
-function( pd, id){
+pd_is_if <- 
+function(id = pd$id, pd = get('pd', parent.frame())){
     #' @title Is if expression?
     #' @inheritParams get_child_ids
     #' @description
     #'   Tests if the id(s) represent if expressions.
-    if (length(id)>1) sapply(id, is_if_expr, pd=pd)
+    if (length(id)>1) sapply(id, pd_is_if, pd=pd)
     (token(id) == 'expr') &&
-    (token(get_firstborn_id(pd, id)) == 'IF')
+    (token(get_firstborn_id(id, pd)) == 'IF')
     #' @return a logical vector of same length as id.
 }
+
 #' @export
-get_if_predicate_id <- 
-function( pd, id ){
+pd_get_if_predicate_id <- 
+function(id = pd$id, pd = get('pd', parent.frame())){
     #' @title Get if predicate id
-    #' @inheritParams is_if_expr
+    #' @inheritParams pd_is_if
     #' @description
     #'   Returns the id of the predicate of the if statemment, 
     #'   i.e. the conditional statement.
-    stopifnot(is_if_expr(pd, id))
-    kids <- get_child_ids(pd, id)
+    stopifnot(pd_is_if(id))
+    kids <- get_child_ids(id, pd)
     if (length(kids)<5) stop("inproper if statement")
     kids[[3L]]
 }
 #' @export
-get_if_branch_id <- 
-function( pd, id){
+pd_get_if_branch_id <- 
+function(id = pd$id, pd = get('pd', parent.frame())){
     #' @title Get branch of if statment.
-    #' @inheritParams is_if_expr
+    #' @inheritParams pd_is_if
     #' @description
     #'   Returns the id of the body of the branch executed if the predicate 
     #'   evaluates to true.
-    stopifnot(is_if_expr(pd, id))
-    kids <- get_child_ids(pd, id)
+    stopifnot(pd_is_if(id))
+    kids <- get_child_ids(id, pd)
     if (length(kids)<5) stop("inproper if statement")
     branch.id <- kids[[5L]]
     #TODO fix when a comment is in the way.
     #' @return an id integer.
 }
 #' @export
-get_if_alternate_id <- 
-function( pd, id){
+pd_get_if_alternate_id <- 
+function(id = pd$id, pd = get('pd', parent.frame())){
     #' @title Get the alternate branch of if statement
-    #' @inheritParams is_if_expr
+    #' @inheritParams pd_is_if
     #' @description
     #'   Gets the id of the alternate branch, i.e. the else branch.
-    stopifnot(is_if_expr(pd, id))
-    kids <- get_child_ids(pd, id)
+    stopifnot(pd_is_if(id))
+    kids <- get_child_ids(id, pd)
     if (length(kids)<7 || token(kids[[6]]) != 'ELSE') 
         stop("inproper if-else statement")
     kids[[7L]]
@@ -87,9 +87,9 @@ if(FALSE){#!@testing if structures
     "}, keep.source=TRUE))
     id <- all_root_ids(pd) # 33
     
-    expect_true(is_if_expr(pd, id))
-    expect_equal(get_if_predicate_id(pd, id),  7L)
-    expect_equal(get_if_branch_id   (pd, id), 18L)
-    expect_equal(get_if_alternate_id(pd, id), 30L)
+    expect_true(pd_is_if(id))
+    expect_equal(pd_get_if_predicate_id(id, pd),  7L)
+    expect_equal(pd_get_if_branch_id   (id, pd), 18L)
+    expect_equal(pd_get_if_alternate_id(id, pd), 30L)
 }
 

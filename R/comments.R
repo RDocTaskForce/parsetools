@@ -123,6 +123,12 @@ is_comment.character <- function(x, ...){
                               )
 }
 
+#' @export 
+is_comment.integer <- function(x, pd = get('pd', parent.frame()), ...){
+    stopifnot(inherits(pd, 'parse-data'))
+    token(id=x, pd) %in% c(comment.classes$class, "NORMAL_COMMENT")
+}
+
 #' @export
 `is_comment.parse-data` <- function(x, id=x$id, ...){
     x[ x$id %in% id, 'token'] %in% c( comment.classes$class
@@ -158,6 +164,33 @@ if(FALSE){#!@testing
     expect_equal(rtn, c(T,T,T,T,T,T,F,F))
 }
 
+is_relative_comment <- function(x,...)UseMethod("is_relative_comment")
+is_relative_comment.character <- function(x,...)classify_comment(x) == 'RELATIVE_COMMENT'
+`is_relative_comment.parse-data` <- function(x, id=x$id, ...){
+    token(id, pd=x) == "RELATIVE_COMMENT"
+}
+if(F){#@testing
+    expect_false(is_relative_comment("## normal comment       "))
+    expect_false(is_relative_comment("#' Roxygen comment      "))
+    expect_false(is_relative_comment("#! Documentation comment"))
+    expect_true (is_relative_comment("#< Relative comment     "))
+    expect_false(is_relative_comment("#^ Continuation comment "))
+    expect_false(is_relative_comment("#@ Tag comment          "))
+    expect_false(is_relative_comment("hello"))
+    pd <- get_parse_data(parse(text={"
+        ## normal comment           
+        #' Roxygen comment          
+        #! Documentation comment    
+        #< Relative comment         
+        #^ Continuation comment     
+        #@ Tag comment              
+        Hello
+    "}))
+    rtn <- is_relative_comment(pd)
+    expect_is(rtn, 'logical')
+    expect_equal(rtn, c(F,F,F,T,F,F,F,F))
+    
+}
 
 #' @export
 #' @rdname is_comment
@@ -242,6 +275,8 @@ get_roxygen_comments      <- make_get_comment.classes("ROXYGEN_COMMENT")
 #' @rdname get_comments
 #' @description \subsection{get_relative_comments}{Get relative \code{#<} comments only.}
 get_relative_comments     <- make_get_comment.classes("RELATIVE_COMMENT")
+get_relative_comment_ids <- function(pd){pd$id[pd$token == "RELATIVE_COMMENT"]}
+
 
 #' @export
 #' @rdname get_comments
@@ -297,7 +332,7 @@ if(FALSE){# Deprecated testing code.
     ", keep.source=TRUE))
     id <- get_relative_comments(pd)$id[[2]]
     
-    x <- get_associated_continuation(pd, id)
+    x <- get_associated_continuation(id, pd)
     expect_equal( x$line1, c(4,5))
     expect_equal( x$id, c(20,22))
     expect_equal( x$text, c( "#< yet another"
@@ -305,9 +340,9 @@ if(FALSE){# Deprecated testing code.
                            ))
     
     roxy <- get_roxygen_comments(pd)
-    expect_identical(roxy, get_associated_continuation(pd, id = roxy$id))
+    expect_identical(roxy, get_associated_continuation(id = roxy$id, pd))
 
-    expect_error(get_associated_continuation(pd, id = get_normal_comments(pd)$id))
+    expect_error(get_associated_continuation(id = get_normal_comments(pd)$id, pd))
 }
 
 #' @export

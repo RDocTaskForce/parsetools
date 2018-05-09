@@ -25,8 +25,8 @@
 
 #' @export
 is_grouping <- 
-function( pd
-        , id = pd$id
+function( id = pd$id
+        , pd = get('pd', parent.frame())
         ){
   #' @title test if an id is a grouping element
   #' @param id id number in \code{pd}
@@ -35,26 +35,26 @@ function( pd
   id <- ._check_id(id)
   if(length(id) > 1) return(sapply(id, is_grouping, pd=pd))
 
-  child  <- get_child(pd, id, 1)
-  parent <- get_parent_id(pd, id)
+  child  <- get_child(id, pd, 1)
+  parent <- get_parent_id(id, pd)
   #' @description
   #' a grouping is defined as a non empty set 
   return(  nrow(child)
         #! started with a '{' token and 
         && child$token[1] == "'{'"
         #! and there is no parent or the parent is also a grouping.
-        && (parent == 0 || is_grouping(pd, parent)))
+        && (parent == 0 || is_grouping(parent, pd)))
   #! @return a logical indicating if the root node(s) is a grouping node or not
 }
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='{
         this(is+a-grouping)
     }', keep.source=TRUE))
-    expect_true (is_grouping(pd, 25))
-    expect_false(is_grouping(pd,  1))
+    expect_true (is_grouping(25, pd))
+    expect_false(is_grouping( 1, pd))
     
-    expect_is(is_grouping(pd), 'logical')
-    expect_equal(sum(is_grouping(pd)), 1)
+    expect_is(is_grouping(pd=pd), 'logical')
+    expect_equal(sum(is_grouping(pd=pd)), 1)
 }
 
 #' @export
@@ -74,18 +74,20 @@ if(FALSE){#! @testing
 }
 
 fix_grouping_comment_association <- 
-function(pd, id=get_groupings(pd)){
+function( id = get_groupings(pd)
+        , pd = get('pd', parent.frame())
+        ){
     id <- ._check_id(id)
-    stopifnot(is_grouping(pd, id))
+    stopifnot(is_grouping(id, pd))
     for (i in id) {
-        cids <- get_child_ids(pd, i)
+        cids <- get_child_ids(i, pd)
         for (cid in cids) 
             if (is_comment(pd, cid)) {
-                n <- get_next_sibling_id(pd, cid)
+                n <- get_next_sibling_id(cid, pd)
                 while (!is.na(n) && is_comment(pd, n))
-                    n <- get_next_sibling_id(pd, n)
+                    n <- get_next_sibling_id(n, pd)
                 if (!is.na(n)) 
-                    pd[ pd$id == cid, 'parent'] <- -ascend_to_root(pd, n)
+                    pd[ pd$id == cid, 'parent'] <- -ascend_to_root(n, pd)
             }
     }
     return(pd)
@@ -106,7 +108,7 @@ if(FALSE){#!@testing
     # Comment 3
     4+5
     "}, keep.source=TRUE))
-    fixed <- fix_grouping_comment_association(pd)
+    fixed <- fix_grouping_comment_association(pd=pd)
     
     expect_identical(fixed[-6], pd[-6])
     expect_equal(get_comments(fixed)$parent, c(-38, -38, -38, 34, -56, -74))

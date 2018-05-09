@@ -25,17 +25,18 @@
 
 
 #' @export
-is_pd_call <-
-function( pd            #< parse data of assignemnt
-        , id = all_root_ids(pd)[1] #< id of interest.
+pd_is_call <-
+function( id = all_root_ids(pd)[1]       #< id of interest
+        , pd = get('pd', parent.frame()) #< parse data of assignemnt
+        , calls = NULL
         ){
     #' @title Is a call?
     #' @inheritParams get_child_ids
     #' @description
     #'   Checks if the \code{id} identifies in \code{pd} a call expression.
-    if (length(id)>1) return(sapply(id, is_pd_call, pd=pd))
+    if (length(id)>1) return(sapply(id, pd_is_call, pd=pd))
     if (token(id) != 'expr') return(FALSE)
-    token(get_firstborn_id(pd, id)) == "'('"
+    token(get_firstborn_id(id, pd)) == "'('"
 }
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"
@@ -45,30 +46,30 @@ if(FALSE){#!@testing
     "}, keep.source=TRUE))
     ids <- all_root_ids(pd)
     id <- ids[[3]]
-    expect_true (is_pd_call(pd, ids[[3]]))
-    expect_false(is_pd_call(pd, ids[[1]]))
-    expect_equal(is_pd_call(pd, ids), c(F, F, T))
+    expect_true (pd_is_call(ids[[3]]), pd)
+    expect_false(pd_is_call(ids[[1]]), pd)
+    expect_equal(pd_is_call(ids, pd), c(F, F, T))
     
 }
 
 
 #' @export
-is_pd_symbol_call <-
-function( pd            #< parse data of assignemnt
-        , id = all_root_ids(pd)[1] #< id of interest.
+pd_is_symbol_call <-
+function( id = all_root_ids(pd)[1]       #< id of interest
+        , pd = get('pd', parent.frame()) #< parse data of assignemnt
         ){
     #' @title Check if the call is specifically a symbol call
-    #' @inheritParams is_pd_call
+    #' @inheritParams pd_is_call
     #' @description
     #'   Checks if the \code{id} identifies in \code{pd} specifically a 
     #'   symbol call expression, That is a call from a symbol.
-    if (length(id) > 1) return(sapply(id, is_pd_call, pd=pd))
-    if (!is_pd_call(pd, id)) return(FALSE)
-    eldest <- get_firstborn_id(pd, id)
+    if (length(id) > 1) return(sapply(id, pd_is_symbol_call, pd=pd))
+    if (!pd_is_call(id, pd)) return(FALSE)
+    eldest <- get_firstborn_id(id, pd)
     if (token(eldest) != "'('") return(FALSE)
-    second <- get_next_sibling_id(pd, eldest)
+    second <- get_next_sibling_id(eldest, pd)
     if (token(second) != "expr") return(FALSE)
-    grandchild <- get_firstborn_id(pd, second)
+    grandchild <- get_firstborn_id(second, pd)
     token(grandchild) == 'SYMBOL_FUNCTION_CALL'
     #' @return a logical of the same length as \code{id}
 }
@@ -80,26 +81,27 @@ if(FALSE){#!@testing
     "}, keep.source=TRUE))
     ids <- all_root_ids(pd)
     id <- ids[[3]]
-    expect_true (is_pd_symbol_call(pd, id))
-    expect_false(is_pd_symbol_call(pd, ids[[1]]))
-    expect_equal(is_pd_symbol_call(pd, ids), c(F, F, T))
+    expect_true (pd_is_symbol_call(id, pd))
+    expect_false(pd_is_symbol_call(ids[[1]], pd))
+    expect_equal(pd_is_symbol_call(ids, pd), c(F, F, T))
 }
 
 
 #' @export
-get_pd_call_symbol_id <- 
-function( pd            #< parse data of assignemnt
-        , id = all_root_ids(pd)[1] #< id of interest.
+pd_get_call_symbol_id <- 
+function( id = all_root_ids(pd)[1]       #< id of interest
+        , pd = get('pd', parent.frame()) #< parse data of assignemnt
         ){
     #' @title Get the symbol of the function being called.
-    #' @inheritParams is_pd_symbol_call
+    #' @inheritParams pd_is_symbol_call
     #' @description
     #'    Gets the id of the symbol of the call.  
     #'    That is the name of the function being called.
-    stopifnot(is_pd_symbol_call(pd,id))
-    get_child_ids(pd, 
-        get_next_sibling_id(pd, 
-            get_firstborn_id(pd, id)))
+    if (length(id)>1) return(sapply(id, pd_get_call_symbol_id, pd=pd))
+    if (!pd_is_symbol_call(id, pd)) return(NA_integer_)
+    get_child_ids( 
+        get_next_sibling_id( 
+            get_firstborn_id(id, pd), pd), pd)
 }
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"
@@ -109,22 +111,22 @@ if(FALSE){#!@testing
     "}, keep.source=TRUE))
     ids <- all_root_ids(pd)
     id <- ids[[3]]
-    expect_equal(get_pd_call_symbol_id(pd, id), 45L)
+    expect_equal(pd_get_call_symbol_id(id, pd), 45L)
 }
 
 #' @export
-get_pd_call_symbol <-
-function( pd            #< parse data of assignemnt
-        , id = all_root_ids(pd)[1] #< id of interest.
+pd_get_call_symbol <-
+function( id = all_root_ids(pd)[1]       #< id of interest
+        , pd = get('pd', parent.frame()) #< parse data of assignemnt
         ){
     #' @title Get the symbol of the function being called.
-    #' @inheritParams is_pd_symbol_call
-    #' @description a wrapper to \code{\link{is_pd_symbol_call}} to subset
+    #' @inheritParams pd_is_symbol_call
+    #' @description a wrapper to \code{\link{pd_is_symbol_call}} to subset
     #'     the \code{\link{parse-data}}.
-    stopifnot(is_pd_symbol_call(pd,id))
-    get_child(pd, 
-        get_next_sibling_id(pd, 
-            get_firstborn_id(pd, id)))
+    stopifnot(pd_is_symbol_call(id, pd))
+    get_child( 
+        get_next_sibling_id( 
+            get_firstborn_id(id, pd), pd), pd)
 }
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"
@@ -134,19 +136,19 @@ if(FALSE){#!@testing
     "}, keep.source=TRUE))
     ids <- all_root_ids(pd)
     id <- ids[[3]]
-    expect_equal(get_pd_call_symbol(pd, id), pd['45',])
+    expect_equal(pd_get_call_symbol(id, pd), pd['45',])
 }
 
 #' @export
-get_pd_call_args <-
-function( pd            #< parse data of assignemnt
-        , id = all_root_ids(pd)[1] #< id of interest.
+pd_get_call_args <-
+function( id = all_root_ids(pd)[1]       #< id of interest
+        , pd = get('pd', parent.frame()) #< parse data of assignemnt
         ){
     #' @title get the arguments of a call.
-    #' @inheritParams is_pd_symbol_call
+    #' @inheritParams pd_is_symbol_call
     #' @description
     #'   Retrieves the arguments of a call as a list.
-    kids <- get_child(pd=pd, id=id, ngenerations=1L, include.self=FALSE)
+    kids <- get_child(id=id, pd=pd, ngenerations=1L, include.self=FALSE)
     groups <- cumsum(kids$token %in% c("'('", "','", "')'"))
     args <- split( kids[groups > 0 & groups < max(groups),][-1,]
                  , groups[groups > 0 & groups < max(groups)][-1]
@@ -165,7 +167,7 @@ function( pd            #< parse data of assignemnt
 }
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
-    args <- get_pd_call_args(pd)
+    args <- pd_get_call_args(pd=pd)
 
     expect_is(args, 'list')
     expect_equal(names(args), c('', 'mean', 'sd'))
