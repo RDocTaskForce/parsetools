@@ -1,8 +1,8 @@
-#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
+#! This file was automatically produced by documentation::extract_tests on  2018-04-30 10:01:16
 #! changes will be overwritten.
 context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/iff_blocks.R`')
 #line 68 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/iff_blocks.R"
-test_that("is_iff_block", {#!@testing
+test_that('is_iff_block', {#!@testing
     pd <- get_parse_data(parse(text={"
         if(FALSE){# an if(FALSE) block
         
@@ -11,7 +11,7 @@ test_that("is_iff_block", {#!@testing
         }
         {# not an if(F)block
         }
-    "}))
+    "}, keep.source=TRUE))
     id <- all_root_ids(pd)
     
     expect_true(is_iff_block(pd, id[[1]]))
@@ -22,7 +22,7 @@ test_that("is_iff_block", {#!@testing
     expect_equal(is_iff_block(pd), c(TRUE, TRUE, FALSE))
 })
 #line 116 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/iff_blocks.R"
-test_that("all_iff_ids", {#!@testing
+test_that('all_iff_ids', {#!@testing
     pd <- get_parse_data(parse(text={"
         if(FALSE){# an if(FALSE) block
         
@@ -40,7 +40,7 @@ test_that("all_iff_ids", {#!@testing
             }
             print('hello world')
         }
-    "}))
+    "}, keep.source=TRUE))
     iff.ids <- all_iff_ids(pd, root.only=TRUE, ignore.groups = FALSE)
     expect_equal(length(iff.ids), 2)
     
@@ -51,7 +51,7 @@ test_that("all_iff_ids", {#!@testing
     expect_equal(length(iff.ids), 4)
 })
 #line 180 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/iff_blocks.R"
-test_that("iff_is_tagged", {#!@testing
+test_that('iff_is_tagged', {#!@testing
     pd  <- get_parse_data(parse(text={"
         if(FALSE){#!@tag
         }
@@ -66,7 +66,7 @@ test_that("iff_is_tagged", {#!@testing
         }
         {# @tag
         }
-        "}))
+        "}, keep.source=TRUE))
     tag <- 'tag'
     id  <- all_root_ids(pd)
     expect_equal(length(id), 6)
@@ -79,23 +79,23 @@ test_that("iff_is_tagged", {#!@testing
     expect_equal(iff_is_tagged(pd, tag, id, FALSE)
                 , c(T,T,T,F,F,F))
                 
-    pd <- get_parse_data(parse(text='rnorm(1)'))
+    pd <- get_parse_data(parse(text='rnorm(1)', keep.source=TRUE))
     expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
     
-    pd <- get_parse_data(parse(text='if(F)#!@tag not in block\nF'))
+    pd <- get_parse_data(parse(text='if(F)#!@tag not in block\nF', keep.source=TRUE))
     expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
     
-    pd <- get_parse_data(parse(text='if(F){FALSE}'))
+    pd <- get_parse_data(parse(text='if(F){FALSE}', keep.source=TRUE))
     expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
     
-    pd <- get_parse_data(parse(text='if(F){# @tag\nF\n}'))
+    pd <- get_parse_data(parse(text='if(F){# @tag\nF\n}', keep.source=TRUE))
     expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
     
-    pd <- get_parse_data(parse(text='if(F){#@tag\nF\n}'))
+    pd <- get_parse_data(parse(text='if(F){#@tag\nF\n}', keep.source=TRUE))
     expect_true(iff_is_tagged(pd, tag, all_root_ids(pd)))    
 })
 #line 244 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/iff_blocks.R"
-test_that("all_tagged_iff_ids", {#!@testing
+test_that('all_tagged_iff_ids', {#!@testing
     pd  <- get_parse_data(parse(text={"
         if(FALSE){#!@tag
             # yes
@@ -115,20 +115,20 @@ test_that("all_tagged_iff_ids", {#!@testing
         {# @tag
             # no
         }
-        "}))
+        "}, keep.source=TRUE))
     tag <- 'tag'
     id  <- all_root_ids(pd)
     tagged.iff.ids <- all_tagged_iff_ids(pd, tag)
 
     pd  <- get_parse_data(parse(text={"
         # this has no iff blocks
-        "}))
+        "}, keep.source=TRUE))
     tag <- 'tag'
     tagged.iff.ids <- all_tagged_iff_ids(pd, tag)
     expect_identical(tagged.iff.ids, integer(0))
 })
 #line 366 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/iff_blocks.R"
-test_that("get_iff_associated_name", {#!@testing
+test_that('get_iff_associated_name', {#!@testing
     pd <- get_parse_data(parse(text={'
     if(F){#!@testing
         # a malplaced testing block
@@ -173,7 +173,7 @@ test_that("get_iff_associated_name", {#!@testing
     if(F){#!@testing
         # no previous name
     }
-    '}))
+    '}, keep.source=TRUE))
     iff.ids <- all_tagged_iff_ids(pd, c('testing', 'testthat', 'test'))
     
     expect_null( get_iff_associated_name(pd, iff.ids[[1L]]), info="iff at beginning")

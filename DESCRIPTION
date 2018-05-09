@@ -14,7 +14,7 @@ Imports:
     utils, 
     tools
 Suggests:
-    testthat
+    testthat, covr
 Description: Tools and utilities for dealing with parse data. 
     parse data represents the parse tree as a data frame with location and type
     information.  This package provides functions for navigating the parse 

@@ -39,9 +39,9 @@ function( pd #< a [parse-data] object
     #' @return a logical vector, same length as \code{id}.
 }
 if(F){#! @testthat is_pd_function
-    pd <- get_parse_data(parse(text="function(){}"))
+    pd <- get_parse_data(parse(text="function(){}", keep.source=TRUE))
     expect_true(is_pd_function(pd))
 
-    pd <- get_parse_data(parse(text="fun <- function(){}"))
+    pd <- get_parse_data(parse(text="fun <- function(){}", keep.source=TRUE))
     expect_false(is_pd_function(pd))
 }

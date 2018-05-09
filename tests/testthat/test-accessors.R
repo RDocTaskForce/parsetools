@@ -1,82 +1,82 @@
-#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
+#! This file was automatically produced by documentation::extract_tests on  2018-04-30 10:01:13
 #! changes will be overwritten.
 context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R`')
-#line 30 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
-test_that("token", {#!@testing
+#line 40 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
+test_that('token', {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
         y <- runif(10)
         plot(x, y)
-    "}))
+    "}, keep.source=TRUE))
     expect_equal(token(), pd$token)
     expect_equal(token(c(45,3, 58), pd), c("SYMBOL_FUNCTION_CALL", "SYMBOL", "expr"))
 })
-#line 44 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
-test_that("text", {#!@testing 
+#line 55 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
+test_that('text', {#!@testing 
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
         y <- runif(10)
         plot(x, y)
-    "}))
+    "}, keep.source=TRUE))
     expect_equal(text(pd$id, pd), pd$text)
     expect_equal(text(), pd$text)
     expect_equal(text(c(45,3, 58), pd), c("plot", "x", ""))
 })
-#line 59 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
-test_that("nodes", {#!@testing
-        pd <- get_parse_data(parse(text={"
+#line 71 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
+test_that('nodes', {#!@testing
+    pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
         y <- runif(10)
         plot(x, y)
-    "}))
+    "}, keep.source=TRUE))
     expect_equal(nodes(pd$id, pd), pd)
     expect_equal(nodes(pd$id), pd)
     expect_equal(nodes(c(45,3, 58), pd), pd[c('45', '3', '58'), ])
     
 })
-#line 135 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
-test_that("is_last_on_line", {#@testing
+#line 157 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
+test_that('is_last_on_line', {#@testing
 "'
 
-' -> a.multiline.string" %>% parse(text=.) %>% get_parse_data() -> pd
+' -> a.multiline.string" %>% parse(text=., keep.source=TRUE) %>% get_parse_data() -> pd
 
 expect_false(is_last_on_line(1, pd))
 expect_true(is_last_on_line(4, pd))
 expect_false(is_last_on_line(6, pd))
 })
-#line 143 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
-test_that("spans_multiple_lines", {#@testing
+#line 172 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
+test_that('spans_multiple_lines', {#@testing
 "'
 
-' -> a.multiline.string" %>% parse(text=.) %>% get_parse_data() -> pd
+' -> a.multiline.string" %>% parse(text=., keep.source=TRUE) %>% get_parse_data() -> pd
 expect_true(spans_multiple_lines(1, pd))
 expect_false(spans_multiple_lines(4, pd))
 expect_true(spans_multiple_lines(all_root_ids(pd), pd))
 })
-#line 155 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
-test_that("terminal_ids_on_line", {#@testing
+#line 185 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
+test_that('terminal_ids_on_line', {#@testing
 "      {
          {1 + 3}
 {2 + sin(pi)}
       }
-" %>% parse(text=.) %>%
+" %>% parse(text=., keep.source=TRUE) %>%
 get_parse_data -> pd
 expect_equal(terminal_ids_on_line(1), 1)
 expect_equal(text(terminal_ids_on_line(2)), c('{', '1', '+', '3', '}'))
 
 "'
 
-' -> a.multiline.string" %>% parse(text=.) %>% get_parse_data() -> pd
+' -> a.multiline.string" %>% parse(text=., keep.source=TRUE) %>% get_parse_data() -> pd
 expect_equal(text(terminal_ids_on_line(1, pd)), "'\n\n'")
 expect_equal(terminal_ids_on_line(2, pd), 1)
 expect_equal(terminal_ids_on_line(4, pd), integer(0))
 })
-#line 179 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
-test_that("ids_ending_on_line", {#@testing
+#line 211 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
+test_that('ids_ending_on_line', {#@testing
 pd <- {"((1+
 2)+
 3)+
-4" %>% parse(text=.) %>%
+4" %>% parse(text=., keep.source=TRUE) %>%
 get_parse_data}
 
 expect_identical(ids_starting_on_line(1), head(pd$id, 10))
@@ -85,9 +85,9 @@ expect_identical(ids_ending_on_line(1), 1:5)
 expect_identical(ids_ending_on_line(4), c(26L, 23L, 24L))
 
 })
-#line 202 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
-test_that("get_prev_terminal_id", {#@testing
-    pd <- "   rnorm( 10,  0,   3)" %>% parse(text=.) %>% get_parse_data()
+#line 235 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/accessors.R"
+test_that('get_prev_terminal_id', {#@testing
+    pd <- "   rnorm( 10,  0,   3)" %>% parse(text=., keep.source=TRUE) %>% get_parse_data()
     id <- 4
     expect_equal(get_prev_terminal_id(pd, id), 2L)
 

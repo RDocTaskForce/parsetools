@@ -70,7 +70,7 @@ if(FALSE){#! @testing
         #< Relative comment         
         #^ Continuation comment     
         #@ Tag comment              
-    }"))
+    }", keep.source=TRUE))
     pd <- classify_comment.data.frame(df)
     expect_is(pd, 'data.frame')
     expect_is(pd, 'parse-data')
@@ -90,7 +90,7 @@ if(FALSE){#! @testing
         #< Relative comment         
         #^ Continuation comment     
         #@ Tag comment              
-    }"))
+    }", keep.source=TRUE))
     pd <- classify_comment(df)
     comments <- get_comments(pd)
     expect_is(comments, 'data.frame')
@@ -152,7 +152,7 @@ if(FALSE){#!@testing
         #^ Continuation comment     
         #@ Tag comment              
         Hello
-    "}))
+    "}, keep.source=TRUE))
     rtn <- is_comment(pd)
     expect_is(rtn, 'logical')
     expect_equal(rtn, c(T,T,T,T,T,T,F,F))
@@ -192,7 +192,7 @@ if(FALSE){#! @testing
         #< Relative comment         
         #^ Continuation comment     
         #@ Tag comment              
-    }"))
+    }", keep.source=TRUE))
     rtn <- is_doc_comment(pd)
     expect_is(rtn, 'logical')
     expect_equal(rtn, c(F,F,F,T,T,T,T,T,F))
@@ -204,7 +204,7 @@ if(FALSE){#! @testing
         #< Relative comment         
         #^ Continuation comment     
         #@ Tag comment              
-    }"))
+    }", keep.source=TRUE))
     rtn <- is_doc_comment(pd)
     expect_is(rtn, 'logical')
     expect_equal(rtn, c(F,F,F,T,T,T,T,T,F))
@@ -267,6 +267,7 @@ get_associated_continuation <-
 function( pd            #< parse data.
         , id=pd$id[1]   #< id of the comment of interest
         ){
+    #no covr start
     .Deprecated(msg="Support for continuations comments is in flux and support may be removed.")
     #! retrieve the continuation comments associated with the comment of interest.
     #TODO check if this works better with next sibling formulation.
@@ -283,6 +284,7 @@ function( pd            #< parse data.
     } else stop("not a valid starting comment.")
     #! @return filtered parse data with the comments, will be empty if the id 
     #! does not denote a documentation comment.
+    #no covr end
 }
 if(FALSE){# Deprecated testing code.
     pd <- get_parse_data(parse(text="
@@ -292,7 +294,7 @@ if(FALSE){# Deprecated testing code.
                     #^ argument.
             ){x**y}
     # Regular Comment
-    "))
+    ", keep.source=TRUE))
     id <- get_relative_comments(pd)$id[[2]]
     
     x <- get_associated_continuation(pd, id)
@@ -339,7 +341,7 @@ if(FALSE){#! @testing
         #< Relative comment         
         #^ Continuation comment     
         #@ Tag comment              
-    }"))
+    }", keep.source=TRUE))
     comments <- get_comments(pd)
     pd2 <- strip_doc_comment_leads.data.frame(comments)
     expect_is(pd2, 'data.frame')
@@ -378,7 +380,7 @@ if(FALSE){#! @testing
         #< Relative comment         
         #^ Continuation comment     
         #@ Tag comment              
-    }"))
+    }", keep.source=TRUE))
     comments <- get_comments(pd)
     pd2 <- strip_doc_comment_leads(comments)
     expect_is(pd2, 'data.frame')

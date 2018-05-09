@@ -59,7 +59,7 @@ function( pd
     ids
 }
 if(FALSE){#! @test
-    pd       <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
+    pd       <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     id       <- pd[pd$parent==0, 'id']
     kids.ids <- get_child_ids(pd, id, 1, include.self = FALSE)
     expect_equal( kids.ids, c(3,2,5,6,9,10,12,13,16,17,19,20)
@@ -112,7 +112,7 @@ function( pd, id
 }
 if(FALSE){#!@test
     'rnorm(10, mean=0, sd=1)' -> text
-    pd       <- get_parse_data(parse(text=text))
+    pd       <- get_parse_data(parse(text=text, keep.source=TRUE))
     id       <- 3
     expect_identical( get_child(pd, 3), utils::head(pd, 1), info='defaults')
     expect_identical( get_child(pd, 3, include.self=TRUE), utils::head(pd, 2), info='include.self=TRUE')
@@ -154,7 +154,7 @@ function( pd, id
 }
 if(FALSE){#! @test
     'rnorm(10, mean=0, sd=1)' -> text
-    pd  <- get_parse_data(parse(text=text))
+    pd  <- get_parse_data(parse(text=text, keep.source=TRUE))
     res <- get_children(pd, id=23)
     expect_is(res, 'list')
     expect_equal(length(res), 1)

@@ -1,8 +1,8 @@
-#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
+#! This file was automatically produced by documentation::extract_tests on  2018-04-30 10:01:17
 #! changes will be overwritten.
 context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/testing_blocks.R`')
 #line 98 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/testing_blocks.R"
-test_that("extract_test_block", {#!@testing
+test_that('extract_test_block', {#!@testing
     pd <- get_parse_data(parse(text={'
     if(F){#!@testing
         # a malplaced testing block
@@ -47,7 +47,7 @@ test_that("extract_test_block", {#!@testing
     if(F){#!@testing
         # no previous name
     }
-    '}))
+    '}, keep.source=TRUE))
     iff.ids <- all_tagged_iff_ids(pd, c('testing', 'testthat', 'test'))
     
     expect_error( extract_test_block(pd, iff.ids[[1L]])
@@ -78,10 +78,10 @@ test_that("extract_test_block", {#!@testing
                 , info="testing after other iff")
     expect_equal( extract_test_block(pd, iff.ids[[5L]])
                 , structure(c( '#line 27 "<text>"'
-                             , 'test_that("setClass(\'A\', ...)", {#!@testing '
+                             , 'test_that(\'setClass("A", ...)\', {#!@testing '
                              , '        #testing a setClass'
                              , '    })'
-                             ), name="setClass(\'A\', ...)")
+                             ), name="setClass(\"A\", ...)")
                 , info="testing after setClass")
     expect_equal( extract_test_block(pd, iff.ids[[6L]])
                 , structure(c( '#line 32 "<text>"'
@@ -92,10 +92,10 @@ test_that("extract_test_block", {#!@testing
                 , info="testing after setMethod")
     expect_equal( extract_test_block(pd, iff.ids[[7L]])
                 , structure(c( '#line 37 "<text>"'
-                             , 'test_that("setGeneric(\'my_generic\', ...)", {#!@testing '
+                             , 'test_that(\'setGeneric("my_generic", ...)\', {#!@testing '
                              , '        #testing a setClass'
                              , '    })'
-                             ), name="setGeneric('my_generic', ...)")
+                             ), name="setGeneric(\"my_generic\", ...)")
                 , info="testing after setGeneric")
     expect_error( extract_test_block(pd, iff.ids[[8L]])
                 , info="following call")
@@ -129,8 +129,8 @@ test_that("extract_test_block", {#!@testing
                            , name = "An info string")
                 , info = "using text string")
 })
-#line 251 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/testing_blocks.R"
-test_that("extract_test_blocks", {#! @testthat
+#line 252 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/testing_blocks.R"
+test_that('extract_test_blocks', {#! @testthat
 text <- {'hello_world <- function(){
     print("hello world")
 }

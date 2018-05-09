@@ -49,7 +49,7 @@ function( pd
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='{
         this(is+a-grouping)
-    }'))
+    }', keep.source=TRUE))
     expect_true (is_grouping(pd, 25))
     expect_false(is_grouping(pd,  1))
     
@@ -66,7 +66,7 @@ get_groupings <- function(pd) {pd[is_grouping(pd=pd), 'id']}
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='{
         this(is+a-grouping)
-    }'))
+    }', keep.source=TRUE))
     
     expect_is(get_groupings(pd), 'integer')
     expect_equal(length(get_groupings(pd)), 1)
@@ -105,7 +105,7 @@ if(FALSE){#!@testing
     }
     # Comment 3
     4+5
-    "}))
+    "}, keep.source=TRUE))
     fixed <- fix_grouping_comment_association(pd)
     
     expect_identical(fixed[-6], pd[-6])

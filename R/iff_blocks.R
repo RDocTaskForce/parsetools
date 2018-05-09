@@ -74,7 +74,7 @@ if(FALSE){#!@testing
         }
         {# not an if(F)block
         }
-    "}))
+    "}, keep.source=TRUE))
     id <- all_root_ids(pd)
     
     expect_true(is_iff_block(pd, id[[1]]))
@@ -131,7 +131,7 @@ if(FALSE){#!@testing
             }
             print('hello world')
         }
-    "}))
+    "}, keep.source=TRUE))
     iff.ids <- all_iff_ids(pd, root.only=TRUE, ignore.groups = FALSE)
     expect_equal(length(iff.ids), 2)
     
@@ -192,7 +192,7 @@ if(FALSE){#!@testing
         }
         {# @tag
         }
-        "}))
+        "}, keep.source=TRUE))
     tag <- 'tag'
     id  <- all_root_ids(pd)
     expect_equal(length(id), 6)
@@ -205,19 +205,19 @@ if(FALSE){#!@testing
     expect_equal(iff_is_tagged(pd, tag, id, FALSE)
                 , c(T,T,T,F,F,F))
                 
-    pd <- get_parse_data(parse(text='rnorm(1)'))
+    pd <- get_parse_data(parse(text='rnorm(1)', keep.source=TRUE))
     expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
     
-    pd <- get_parse_data(parse(text='if(F)#!@tag not in block\nF'))
+    pd <- get_parse_data(parse(text='if(F)#!@tag not in block\nF', keep.source=TRUE))
     expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
     
-    pd <- get_parse_data(parse(text='if(F){FALSE}'))
+    pd <- get_parse_data(parse(text='if(F){FALSE}', keep.source=TRUE))
     expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
     
-    pd <- get_parse_data(parse(text='if(F){# @tag\nF\n}'))
+    pd <- get_parse_data(parse(text='if(F){# @tag\nF\n}', keep.source=TRUE))
     expect_false(iff_is_tagged(pd, tag, all_root_ids(pd)))            
     
-    pd <- get_parse_data(parse(text='if(F){#@tag\nF\n}'))
+    pd <- get_parse_data(parse(text='if(F){#@tag\nF\n}', keep.source=TRUE))
     expect_true(iff_is_tagged(pd, tag, all_root_ids(pd)))    
 }
 
@@ -261,14 +261,14 @@ if(FALSE){#!@testing
         {# @tag
             # no
         }
-        "}))
+        "}, keep.source=TRUE))
     tag <- 'tag'
     id  <- all_root_ids(pd)
     tagged.iff.ids <- all_tagged_iff_ids(pd, tag)
 
     pd  <- get_parse_data(parse(text={"
         # this has no iff blocks
-        "}))
+        "}, keep.source=TRUE))
     tag <- 'tag'
     tagged.iff.ids <- all_tagged_iff_ids(pd, tag)
     expect_identical(tagged.iff.ids, integer(0))
@@ -408,7 +408,7 @@ if(FALSE){#!@testing
     if(F){#!@testing
         # no previous name
     }
-    '}))
+    '}, keep.source=TRUE))
     iff.ids <- all_tagged_iff_ids(pd, c('testing', 'testthat', 'test'))
     
     expect_null( get_iff_associated_name(pd, iff.ids[[1L]]), info="iff at beginning")

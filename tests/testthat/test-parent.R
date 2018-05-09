@@ -1,9 +1,9 @@
-#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
+#! This file was automatically produced by documentation::extract_tests on  2018-04-30 10:01:16
 #! changes will be overwritten.
 context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/parent.R`')
 #line 35 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/parent.R"
-test_that("get_parent_id", {#! @testing
-    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
+test_that('get_parent_id', {#! @testing
+    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     expect_identical(get_parent_id(pd, 1), 3L)
     expect_is(get_parent_id(pd, 1), "integer")
     
@@ -14,8 +14,8 @@ test_that("get_parent_id", {#! @testing
     expect_identical(get_parent_id(pd, 0L), NA_integer_)
 })
 #line 104 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/parent.R"
-test_that("get_ancestor_ids", {#! @testing
-    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
+test_that('get_ancestor_ids', {#! @testing
+    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     expect_identical(get_ancestor_ids(pd, 1, nancestors=Inf, aggregate=TRUE , include.self=TRUE , only.present = FALSE), c(1L, 3L, 23L,0L), info = "defaults, but fully specified.")
     expect_identical(get_ancestor_ids(pd, 1, nancestors=Inf, aggregate=TRUE , include.self=FALSE, only.present = FALSE), c(    3L, 23L,0L), info = "include.self=FALSE")
     expect_identical(get_ancestor_ids(pd, 1, nancestors= 2 , aggregate=TRUE , include.self=FALSE, only.present = FALSE), c(    3L, 23L   ), info = "nancestors=2, include.self=FALSE")

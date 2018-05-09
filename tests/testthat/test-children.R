@@ -1,9 +1,9 @@
-#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
+#! This file was automatically produced by documentation::extract_tests on  2018-04-30 10:01:14
 #! changes will be overwritten.
 context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/children.R`')
 #line 61 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/children.R"
-test_that("get_child_ids", {#! @test
-    pd       <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
+test_that('get_child_ids', {#! @test
+    pd       <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     id       <- pd[pd$parent==0, 'id']
     kids.ids <- get_child_ids(pd, id, 1, include.self = FALSE)
     expect_equal( kids.ids, c(3,2,5,6,9,10,12,13,16,17,19,20)
@@ -45,9 +45,9 @@ test_that("get_child_ids", {#! @test
     
 })
 #line 113 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/children.R"
-test_that("get_child", {#!@test
+test_that('get_child', {#!@test
     'rnorm(10, mean=0, sd=1)' -> text
-    pd       <- get_parse_data(parse(text=text))
+    pd       <- get_parse_data(parse(text=text, keep.source=TRUE))
     id       <- 3
     expect_identical( get_child(pd, 3), utils::head(pd, 1), info='defaults')
     expect_identical( get_child(pd, 3, include.self=TRUE), utils::head(pd, 2), info='include.self=TRUE')
@@ -69,9 +69,9 @@ test_that("get_child", {#!@test
                     , info='defaults')
 })
 #line 155 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/children.R"
-test_that("get_children", {#! @test
+test_that('get_children', {#! @test
     'rnorm(10, mean=0, sd=1)' -> text
-    pd  <- get_parse_data(parse(text=text))
+    pd  <- get_parse_data(parse(text=text, keep.source=TRUE))
     res <- get_children(pd, id=23)
     expect_is(res, 'list')
     expect_equal(length(res), 1)

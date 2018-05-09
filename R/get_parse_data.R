@@ -40,7 +40,7 @@ function( df ){
     return(TRUE)
 }
 if(F){#!@test
-    df <- utils::getParseData(parse(text="rnorm(10,0,1)"))
+    df <- utils::getParseData(parse(text="rnorm(10,0,1)", keep.source=TRUE))
     expect_true (valid_parse_data(df), 'parse-data')
     expect_equal(valid_parse_data(datasets::iris      ), "names of data do not conform.")
     expect_equal(valid_parse_data(stats::rnorm(10,0,1)), "Not a data.frame object")
@@ -55,7 +55,7 @@ as_parse_data <- function(df){
                   ))
 }
 if(FALSE){#!@testing
-    df <- utils::getParseData(parse(text="rnorm(10,0,1)"))
+    df <- utils::getParseData(parse(text="rnorm(10,0,1)", keep.source=TRUE))
     expect_is   (as_parse_data(df), 'parse-data')
     expect_error(as_parse_data(datasets::iris), "Cannot convert to parse-data: names of data do not conform.")
     expect_error(as_parse_data(stats::rnorm(10,0,1)), "Cannot convert to parse-data: Not a data.frame object")
@@ -90,7 +90,7 @@ if(FALSE){#!@testing
         #' A Description
         print(\"It Works!\")
         #< A return value.
-    }"})
+    }"}, keep.source=TRUE)
     srcfile <- attr(p, 'srcfile')
     x <- srcfile$parseData
     
@@ -136,8 +136,8 @@ function( x
         ){
     stopifnot(inherits(x, 'srcfile'))
     df <-    if (!is.null(x$parseData)) as.data.frame.parseData(x$parseData, x, ...)
-        else if (!is.null(x$lines    ) && length(x$lines) ) utils::getParseData(parse(text=x$lines), ...)
-        else if (!is.null(x$filename ) && x$filename != "") utils::getParseData(parse(x$filename  ), ...)
+        else if (!is.null(x$lines    ) && length(x$lines) ) utils::getParseData(parse(text=x$lines, keep.source=TRUE), ...)
+        else if (!is.null(x$filename ) && x$filename != "") utils::getParseData(parse(x$filename  , keep.source=TRUE), ...)
         else stop("could not retrieve parse-data for ", deparse(substitute(x)))
     structure(as_parse_data(df), srcfile = x)
 }
@@ -154,7 +154,7 @@ if(FALSE){#!@testing
     writeLines(text, tmp)
     
     readLines(tmp)
-    source(tmp)
+    source(tmp, keep.source = TRUE)
     
     srcref  <- utils::getSrcref(my_function) 
     srcfile <- attr(srcref, 'srcfile')
@@ -218,7 +218,7 @@ if(FALSE){#!@testing
         another_f <- function(){}
         if(F){}
     "}
-    p <- parse(text=text)
+    p <- parse(text=text, keep.source=TRUE)
     e <- new.env()
     eval(p, envir=e)
     srcref <- utils::getSrcref(e$my_function)
@@ -253,7 +253,7 @@ function(x){
 }
 another_fun <- function(){TRUE}
 "
-eval(parse(text=test.text))
+eval(parse(text=test.text, keep.source=TRUE))
 x <- fun <- hw
 pd.regular <- get_parse_data(hw)
 expect_that(pd.regular, is_a("data.frame"))
@@ -267,7 +267,7 @@ function(x){
     #' line inside
     cat(\"hello world\")
 }}"
-eval(parse(text=grouped.text))
+eval(parse(text=grouped.text, keep.source=TRUE))
 fun <- hw
 pd <- get_parse_data(hw)
 expect_is(pd, "parse-data")
@@ -284,7 +284,7 @@ function(x){
 }
 }
 "}
-eval(parse(text=nested.text))
+eval(parse(text=nested.text, keep.source=TRUE))
 x <- fun <- nested
 pd <- get_parse_data(nested)
 expect_is(pd, "data.frame")
@@ -333,7 +333,7 @@ if(FALSE){#!@testing
     x <- 
     exprs <- parse(text=c('x <- rnorm(10, mean=0, sd=1)'
                          ,'y <- mean(x)'
-                         ))
+                         ), keep.source=TRUE)
     pd <- get_parse_data(exprs, keep.source=TRUE)
     expect_is(pd, 'parse-data', info = "get_parse_datwa.default with srcfile")
 }
@@ -374,17 +374,17 @@ function( pd  #< The [parse-data] to fix
     pd[do.call(order, pd), ]
 }
 if(F){#! @testthat
-pd <- utils::getParseData(parse(text="a=1"))
+pd <- utils::getParseData(parse(text="a=1", keep.source=TRUE))
 fixed.pd <- fix_eq_assign(pd)
 expect_true(nrow(pd)+1 == nrow(fixed.pd))
 expect_that(sum(fixed.pd$parent==0), equals(1))
 
-pd <- utils::getParseData(parse(text="a=1\nb<-2\nc=3\nd<<-4"))
+pd <- utils::getParseData(parse(text="a=1\nb<-2\nc=3\nd<<-4", keep.source=TRUE))
 fixed.pd <- fix_eq_assign(pd)
 expect_true(nrow(pd)+2 == nrow(fixed.pd))
 expect_that(sum(fixed.pd$parent==0), equals(4))
 
-pd <- utils::getParseData(parse(text="a=b=1"))
+pd <- utils::getParseData(parse(text="a=b=1", keep.source=TRUE))
 fixed.pd <- fix_eq_assign(pd)
 expect_true(nrow(pd)+2 == nrow(fixed.pd))
 expect_that(sum(fixed.pd$parent==0), equals(1))
@@ -404,7 +404,7 @@ if(FALSE){#@testing
     }
     }
     "
-    }))
+    }, keep.source=TRUE))
     expect_is(pd, 'parse-data')
     pd2 <- pd[pd$line1 > 3, ]
     expect_is(pd2, 'parse-data')
@@ -420,7 +420,7 @@ if(FALSE){#@testing
         result
 }
 if(FALSE){#!@testing
-    pd       <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
+    pd       <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     expect_is(pd, 'parse-data')
     expect_is(pd[pd$parent==0, ], 'parse-data')
     expect_false(methods::is(pd[pd$parent==0, 'id'], 'parse-data'))
@@ -446,7 +446,7 @@ function(x){
 }
 }
 "
-}))
+}, keep.source=TRUE))
 comments <- get_comments(pd)
 expect_is(comments, 'parse-data')
 clean.pd <- pd - comments
@@ -471,6 +471,6 @@ if(FALSE){#TODO test for parse-data
         }
         }
         "
-    }))
+    }, keep.source=TRUE))
     sort(pd)
 }

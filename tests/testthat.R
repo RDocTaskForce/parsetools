@@ -1,5 +1,4 @@
 opar <- options(keep.source=TRUE, keep.source.pkgs=TRUE)
 library(testthat)
-library(parsetools)
 test_check("parsetools")
 options(opar)

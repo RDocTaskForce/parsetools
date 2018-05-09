@@ -42,7 +42,7 @@ if(FALSE){#!@testing
         x <- rnorm(10, 0, 1)
         y <- runif(10)
         plot(x, y)
-    "}))
+    "}, keep.source=TRUE))
     ids <- all_root_ids(pd)
     id <- ids[[3]]
     expect_true (is_pd_call(pd, ids[[3]]))
@@ -77,7 +77,7 @@ if(FALSE){#!@testing
         x <- rnorm(10, 0, 1)
         y <- runif(10)
         plot(x, y)
-    "}))
+    "}, keep.source=TRUE))
     ids <- all_root_ids(pd)
     id <- ids[[3]]
     expect_true (is_pd_symbol_call(pd, id))
@@ -106,7 +106,7 @@ if(FALSE){#!@testing
         x <- rnorm(10, 0, 1)
         y <- runif(10)
         plot(x, y)
-    "}))
+    "}, keep.source=TRUE))
     ids <- all_root_ids(pd)
     id <- ids[[3]]
     expect_equal(get_pd_call_symbol_id(pd, id), 45L)
@@ -131,7 +131,7 @@ if(FALSE){#!@testing
         x <- rnorm(10, 0, 1)
         y <- runif(10)
         plot(x, y)
-    "}))
+    "}, keep.source=TRUE))
     ids <- all_root_ids(pd)
     id <- ids[[3]]
     expect_equal(get_pd_call_symbol(pd, id), pd['45',])
@@ -164,7 +164,7 @@ function( pd            #< parse data of assignemnt
     #' @return a named list where each element is the parse-data for the argument.
 }
 if(FALSE){#! @testing
-    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
+    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     args <- get_pd_call_args(pd)
 
     expect_is(args, 'list')

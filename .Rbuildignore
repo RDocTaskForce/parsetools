@@ -2,3 +2,5 @@
 ^README\.md$
 ^CONDUCT\.md$
 ^CONTRIB\.md$
+^.*\.Rproj$
+^\.Rproj\.user$

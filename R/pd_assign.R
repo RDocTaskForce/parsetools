@@ -20,15 +20,15 @@ function( pd            #< parse data of assignemnt
     any(kids.pd[['token']] %in% assignment.opperators)
 }
 if(F){#! @testthat is_pd_assignment
-    pd <- get_parse_data(parse(text="x <-  1"))
+    pd <- get_parse_data(parse(text="x <-  1", keep.source=TRUE))
     expect_true(is_pd_assignment(pd))
-    pd <- get_parse_data(parse(text="x <<- 1"))
+    pd <- get_parse_data(parse(text="x <<- 1", keep.source=TRUE))
     expect_true(is_pd_assignment(pd))
-    pd <- get_parse_data(parse(text="1 ->  x"))
+    pd <- get_parse_data(parse(text="1 ->  x", keep.source=TRUE))
     expect_true(is_pd_assignment(pd))
-    pd <- get_parse_data(parse(text="1 ->> x"))
+    pd <- get_parse_data(parse(text="1 ->> x", keep.source=TRUE))
     expect_true(is_pd_assignment(pd))
-    pd <- get_parse_data(parse(text="x = 1"))
+    pd <- get_parse_data(parse(text="x = 1", keep.source=TRUE))
     expect_true(is_pd_assignment(pd))
 }
 
@@ -53,23 +53,23 @@ function( pd
     #' @return an id integer.
 }
 if(FALSE){#!@testing
-pd <- get_parse_data(parse(text="x<-1"))
+pd <- get_parse_data(parse(text="x<-1", keep.source=TRUE))
 val.id <- get_pd_assign_value_id(pd)
 expect_equal(val.id, 5L)
 
-pd <- get_parse_data(parse(text="x=1"))
+pd <- get_parse_data(parse(text="x=1", keep.source=TRUE))
 val.id <- get_pd_assign_value_id(pd)
 expect_equal(val.id, 5L)
 
-pd <- get_parse_data(parse(text="x<<-1"))
+pd <- get_parse_data(parse(text="x<<-1", keep.source=TRUE))
 val.id <- get_pd_assign_value_id(pd)
 expect_equal(val.id, 5L)
 
-pd <- get_parse_data(parse(text="1->x"))
+pd <- get_parse_data(parse(text="1->x", keep.source=TRUE))
 val.id <- get_pd_assign_value_id(pd)
 expect_equal(val.id, 2L)
 
-pd <- get_parse_data(parse(text="1->>x"))
+pd <- get_parse_data(parse(text="1->>x", keep.source=TRUE))
 val.id <- get_pd_assign_value_id(pd)
 expect_equal(val.id, 2L)
 }
@@ -88,24 +88,24 @@ function( pd #< The [parse-data] object, representing an assignment
     #' @return a \code{\link{parse-data}} object.
 }
 if(FALSE){#! @testthat get_pd_assign_value
-pd <- get_parse_data(parse(text="x<-1"))
+pd <- get_parse_data(parse(text="x<-1", keep.source=TRUE))
 
 val.pd <- get_pd_assign_value(pd)
 expect_true("NUM_CONST" %in% val.pd$token)
 
-pd <- get_parse_data(parse(text="x=1"))
+pd <- get_parse_data(parse(text="x=1", keep.source=TRUE))
 val.pd <- get_pd_assign_value(pd)
 expect_true("NUM_CONST" %in% val.pd$token)
 
-pd <- get_parse_data(parse(text="x<<-1"))
+pd <- get_parse_data(parse(text="x<<-1", keep.source=TRUE))
 val.pd <- get_pd_assign_value(pd)
 expect_true("NUM_CONST" %in% val.pd$token)
 
-pd <- get_parse_data(parse(text="1->x"))
+pd <- get_parse_data(parse(text="1->x", keep.source=TRUE))
 val.pd <- get_pd_assign_value(pd)
 expect_true("NUM_CONST" %in% val.pd$token)
 
-pd <- get_parse_data(parse(text="1->>x"))
+pd <- get_parse_data(parse(text="1->>x", keep.source=TRUE))
 val.pd <- get_pd_assign_value(pd)
 expect_true("NUM_CONST" %in% val.pd$token)
 }
@@ -133,7 +133,7 @@ if(F){#!@testthat
     pd <- get_parse_data(parse(text ={"hello_world <- function(){
         print('hello world')
     }
-    "}))
+    "}, keep.source=TRUE))
 
     expect_true(is_pd_assignment(pd))
     var.pd <- get_pd_assign_variable(pd)
@@ -167,7 +167,7 @@ if(F){#!@testthat
     print('hello world')
 }
 " %>%
-parse(text = .) %>%
+parse(text = ., keep.source=TRUE) %>%
 get_parse_data() %>%
 sort-> pd
 

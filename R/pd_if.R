@@ -84,7 +84,7 @@ if(FALSE){#!@testing if structures
         } else {
             alternate
         }
-    "}))
+    "}, keep.source=TRUE))
     id <- all_root_ids(pd) # 33
     
     expect_true(is_if_expr(pd, id))

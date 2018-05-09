@@ -74,20 +74,20 @@ extract_test_block <- function(pd, id=all_tagged_iff_ids(pd, .testing.tags)){
                 , paste( filename(pd), start_line(id), start_col(id), sep=':')
                 )
         if (attr(name, 'type') == 'setGeneric')
-            paste0("setGeneric(", shQuote(name), ", ...)")
+            paste0("setGeneric(\"", name, "\", ...)")
         else if(attr(name, 'type') == 'setClass')
-            paste0("setClass(", shQuote(name), ", ...)")
+            paste0("setClass(\"", name, "\", ...)")
         else 
             name
     }
 
-    line.directive <- paste("#line", start_line(content.id), shQuote(filename(pd), 'cmd'))
+    line.directive <- paste("#line", start_line(content.id), paste0('"', filename(pd), '"'))
     
     
     out.text <- if (length(content)<2)
-                    sprintf("test_that(%s, %s)", shQuote(name), content)
+                    sprintf("test_that('%s', %s)", name, content)
         else
-            out.text <- c( sprintf("test_that(%s, %s", shQuote(name), content[[1]])
+            out.text <- c( sprintf("test_that('%s', %s", name, content[[1]])
                          , content[-c(1, length(content))]
                          , paste0(content[length(content)], ")"))
     out.text <- c( line.directive, out.text)
@@ -140,7 +140,7 @@ if(FALSE){#!@testing
     if(F){#!@testing
         # no previous name
     }
-    '}))
+    '}, keep.source=TRUE))
     iff.ids <- all_tagged_iff_ids(pd, c('testing', 'testthat', 'test'))
     
     expect_error( extract_test_block(pd, iff.ids[[1L]])
@@ -171,10 +171,10 @@ if(FALSE){#!@testing
                 , info="testing after other iff")
     expect_equal( extract_test_block(pd, iff.ids[[5L]])
                 , structure(c( '#line 27 "<text>"'
-                             , 'test_that("setClass(\'A\', ...)", {#!@testing '
+                             , 'test_that(\'setClass("A", ...)\', {#!@testing '
                              , '        #testing a setClass'
                              , '    })'
-                             ), name="setClass(\'A\', ...)")
+                             ), name="setClass(\"A\", ...)")
                 , info="testing after setClass")
     expect_equal( extract_test_block(pd, iff.ids[[6L]])
                 , structure(c( '#line 32 "<text>"'
@@ -185,10 +185,10 @@ if(FALSE){#!@testing
                 , info="testing after setMethod")
     expect_equal( extract_test_block(pd, iff.ids[[7L]])
                 , structure(c( '#line 37 "<text>"'
-                             , 'test_that("setGeneric(\'my_generic\', ...)", {#!@testing '
+                             , 'test_that(\'setGeneric("my_generic", ...)\', {#!@testing '
                              , '        #testing a setClass'
                              , '    })'
-                             ), name="setGeneric('my_generic', ...)")
+                             ), name="setGeneric(\"my_generic\", ...)")
                 , info="testing after setGeneric")
     expect_error( extract_test_block(pd, iff.ids[[8L]])
                 , info="following call")
@@ -230,6 +230,7 @@ function( pd ){
     pd <- ._check_parse_data(pd)
     iff.ids <- all_tagged_iff_ids(pd, .testing.tags)
     .l <- lapply(iff.ids, extract_test_block, pd=pd)
+    if (length(.l)==0) return(NULL)
     return(structure( c(.l, recursive=TRUE)
                     , test.names      = sapply(.l, attr, 'name')
                     , start.locations = utils::head(cumsum(c(1, sapply(.l, length))),-1)

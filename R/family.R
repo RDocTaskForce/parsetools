@@ -33,6 +33,7 @@ function( pd, id
         , include.doc.comments     = TRUE
         , include.regular.comments = FALSE
         ){
+    #' @name get_family
     #' @title Get family of nodes.
     #' @inheritParams get_child_ids
     #' @param ...                       currently ignored. 
@@ -66,7 +67,7 @@ if(FALSE){#!@testing
         d <- 4
         }# end of section 2
         e <- 5
-    "}))
+    "}, keep.source=TRUE))
     id <- ascend_to_root(pd, pd[pd$text == 'c','id'])
     expect_identical(get_family(pd, id), pd[19:24,])
     
@@ -77,7 +78,7 @@ if(FALSE){#!@testing
             #! documentation comment inside.
             print('hello world')
         }
-    "}))
+    "}, keep.source=TRUE))
     fam <- get_family(pd, 37, include.doc.comments=TRUE, include.regular.comments=TRUE)
     expect_equal(fam[1,'text'], "# normal comment")
     fam <- get_family(pd, 37, include.doc.comments=TRUE, include.regular.comments=FALSE)
@@ -96,7 +97,7 @@ if(FALSE){#!@testing
             #! documentation comment inside.
             print('hello world')
         }
-    }"}))
+    }"}, keep.source=TRUE))
     group.id <- all_root_ids(pd)
     expect_true(is_grouping(pd, group.id))
     id <- expr.id <- all_root_ids(pd, FALSE)
@@ -181,7 +182,7 @@ if(FALSE){#!@testing
         d <- 4
         }# end of section 2
         e <- 5
-    "}))
+    "}, keep.source=TRUE))
     expect_equal(get_firstborn(pd, 52)$token, "'{'")
     expect_equal(get_firstborn(pd, 7)$text, "<-")
     

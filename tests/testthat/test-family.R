@@ -1,8 +1,8 @@
-#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
+#! This file was automatically produced by documentation::extract_tests on  2018-04-30 10:01:15
 #! changes will be overwritten.
 context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/family.R`')
-#line 59 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/family.R"
-test_that("get_family", {#!@testing
+#line 60 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/family.R"
+test_that('get_family', {#!@testing
     pd <- get_parse_data(parse(text={"a <- 1
         {# section 1
         b <- 2
@@ -12,7 +12,7 @@ test_that("get_family", {#!@testing
         d <- 4
         }# end of section 2
         e <- 5
-    "}))
+    "}, keep.source=TRUE))
     id <- ascend_to_root(pd, pd[pd$text == 'c','id'])
     expect_identical(get_family(pd, id), pd[19:24,])
     
@@ -23,7 +23,7 @@ test_that("get_family", {#!@testing
             #! documentation comment inside.
             print('hello world')
         }
-    "}))
+    "}, keep.source=TRUE))
     fam <- get_family(pd, 37, include.doc.comments=TRUE, include.regular.comments=TRUE)
     expect_equal(fam[1,'text'], "# normal comment")
     fam <- get_family(pd, 37, include.doc.comments=TRUE, include.regular.comments=FALSE)
@@ -42,7 +42,7 @@ test_that("get_family", {#!@testing
             #! documentation comment inside.
             print('hello world')
         }
-    }"}))
+    }"}, keep.source=TRUE))
     group.id <- all_root_ids(pd)
     expect_true(is_grouping(pd, group.id))
     id <- expr.id <- all_root_ids(pd, FALSE)
@@ -56,8 +56,8 @@ test_that("get_family", {#!@testing
     
     
 })
-#line 174 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/family.R"
-test_that("get_firstborn", {#!@testing
+#line 175 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/family.R"
+test_that('get_firstborn', {#!@testing
     pd <- get_parse_data(parse(text={"a <- 1
         {# section 1
         b <- 2
@@ -67,7 +67,7 @@ test_that("get_firstborn", {#!@testing
         d <- 4
         }# end of section 2
         e <- 5
-    "}))
+    "}, keep.source=TRUE))
     expect_equal(get_firstborn(pd, 52)$token, "'{'")
     expect_equal(get_firstborn(pd, 7)$text, "<-")
     

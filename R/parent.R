@@ -33,7 +33,7 @@ get_parent_id <- function(pd, id=pd$id) {
     pd[match(id, pd$id), 'parent']
 }
 if(FALSE){#! @testing
-    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
+    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     expect_identical(get_parent_id(pd, 1), 3L)
     expect_is(get_parent_id(pd, 1), "integer")
     
@@ -102,7 +102,7 @@ function( pd, id
     if (aggregate) ancestors else parent
 }
 if(FALSE){#! @testing
-    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
+    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     expect_identical(get_ancestor_ids(pd, 1, nancestors=Inf, aggregate=TRUE , include.self=TRUE , only.present = FALSE), c(1L, 3L, 23L,0L), info = "defaults, but fully specified.")
     expect_identical(get_ancestor_ids(pd, 1, nancestors=Inf, aggregate=TRUE , include.self=FALSE, only.present = FALSE), c(    3L, 23L,0L), info = "include.self=FALSE")
     expect_identical(get_ancestor_ids(pd, 1, nancestors= 2 , aggregate=TRUE , include.self=FALSE, only.present = FALSE), c(    3L, 23L   ), info = "nancestors=2, include.self=FALSE")

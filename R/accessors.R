@@ -42,7 +42,7 @@ if(FALSE){#!@testing
         x <- rnorm(10, 0, 1)
         y <- runif(10)
         plot(x, y)
-    "}))
+    "}, keep.source=TRUE))
     expect_equal(token(), pd$token)
     expect_equal(token(c(45,3, 58), pd), c("SYMBOL_FUNCTION_CALL", "SYMBOL", "expr"))
 }
@@ -57,7 +57,7 @@ if(FALSE){#!@testing
         x <- rnorm(10, 0, 1)
         y <- runif(10)
         plot(x, y)
-    "}))
+    "}, keep.source=TRUE))
     expect_equal(text(pd$id, pd), pd$text)
     expect_equal(text(), pd$text)
     expect_equal(text(c(45,3, 58), pd), c("plot", "x", ""))
@@ -73,7 +73,7 @@ if(FALSE){#!@testing
         x <- rnorm(10, 0, 1)
         y <- runif(10)
         plot(x, y)
-    "}))
+    "}, keep.source=TRUE))
     expect_equal(nodes(pd$id, pd), pd)
     expect_equal(nodes(pd$id), pd)
     expect_equal(nodes(c(45,3, 58), pd), pd[c('45', '3', '58'), ])
@@ -132,7 +132,7 @@ is_first_on_line <- function(id, pd=get('pd', parent.frame())){
 if(FALSE){#@tesrting
 "'
 
-' -> a.multiline.string" %>% parse(text=.) %>% get_parse_data() -> pd
+' -> a.multiline.string" %>% parse(text=., keep.source=TRUE) %>% get_parse_data() -> pd
 
 expect_true (is_first_on_line(1))
 expect_false(is_first_on_line(2))
@@ -143,7 +143,7 @@ x+
 y+
 1
 }
-" %>% parse(text=.) %>% 
+" %>% parse(text=., keep.source=TRUE) %>% 
 get_parse_data}
 
 }
@@ -157,7 +157,7 @@ is_last_on_line <- function(id, pd=get('pd', parent.frame())){
 if(FALSE){#@testing
 "'
 
-' -> a.multiline.string" %>% parse(text=.) %>% get_parse_data() -> pd
+' -> a.multiline.string" %>% parse(text=., keep.source=TRUE) %>% get_parse_data() -> pd
 
 expect_false(is_last_on_line(1, pd))
 expect_true(is_last_on_line(4, pd))
@@ -172,7 +172,7 @@ spans_multiple_lines <- function(id, pd=get('pd', parent.frame())){
 if(FALSE){#@testing
 "'
 
-' -> a.multiline.string" %>% parse(text=.) %>% get_parse_data() -> pd
+' -> a.multiline.string" %>% parse(text=., keep.source=TRUE) %>% get_parse_data() -> pd
 expect_true(spans_multiple_lines(1, pd))
 expect_false(spans_multiple_lines(4, pd))
 expect_true(spans_multiple_lines(all_root_ids(pd), pd))
@@ -187,14 +187,14 @@ if(F){#@testing
          {1 + 3}
 {2 + sin(pi)}
       }
-" %>% parse(text=.) %>%
+" %>% parse(text=., keep.source=TRUE) %>%
 get_parse_data -> pd
 expect_equal(terminal_ids_on_line(1), 1)
 expect_equal(text(terminal_ids_on_line(2)), c('{', '1', '+', '3', '}'))
 
 "'
 
-' -> a.multiline.string" %>% parse(text=.) %>% get_parse_data() -> pd
+' -> a.multiline.string" %>% parse(text=., keep.source=TRUE) %>% get_parse_data() -> pd
 expect_equal(text(terminal_ids_on_line(1, pd)), "'\n\n'")
 expect_equal(terminal_ids_on_line(2, pd), 1)
 expect_equal(terminal_ids_on_line(4, pd), integer(0))
@@ -212,7 +212,7 @@ if(FALSE){#@testing
 pd <- {"((1+
 2)+
 3)+
-4" %>% parse(text=.) %>%
+4" %>% parse(text=., keep.source=TRUE) %>%
 get_parse_data}
 
 expect_identical(ids_starting_on_line(1), head(pd$id, 10))
@@ -233,7 +233,7 @@ get_prev_terminal_id <- function(pd, id=pd$id){
     pd$id[max(ix)]
 }
 if(FALSE){#@testing
-    pd <- "   rnorm( 10,  0,   3)" %>% parse(text=.) %>% get_parse_data()
+    pd <- "   rnorm( 10,  0,   3)" %>% parse(text=., keep.source=TRUE) %>% get_parse_data()
     id <- 4
     expect_equal(get_prev_terminal_id(pd, id), 2L)
 

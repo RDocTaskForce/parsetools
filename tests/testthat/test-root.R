@@ -1,9 +1,9 @@
-#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
+#! This file was automatically produced by documentation::extract_tests on  2018-04-30 10:01:17
 #! changes will be overwritten.
 context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/root.R`')
 #line 53 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/root.R"
-test_that("is_root", {#! @testing
-    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
+test_that('is_root', {#! @testing
+    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     expect_true (is_root(pd, 23))
     expect_false(is_root(pd,  1))
     expect_equal(sum(is_root(pd)), 1)
@@ -13,7 +13,7 @@ test_that("is_root", {#! @testing
         x <- rnorm(10, mean=0, sd=1)
         y <- runif(10)
         plot(x,y)
-    }'}))
+    }'}, keep.source=TRUE))
     expect_true(is_root(pd, 68), info="Grouping root")
     expect_true(is_root(pd, 30), info="Root within grouping.")
     expect_equal(sum(is_root(pd)), 4)
@@ -42,7 +42,7 @@ test_that("is_root", {#! @testing
         4+5 #< this is a root expression
         }
         6+7 #< a regular root expression
-    "}))
+    "}, keep.source=TRUE))
     id <- max(pd[pd$token =="'{'", 'parent'])
     expect_true(is_root(pd, id, ignore.groups = TRUE))
     id <- min(pd[pd$token =="'{'", 'parent'])
@@ -55,11 +55,11 @@ test_that("is_root", {#! @testing
     pd <- get_parse_data(parse(text="
         # a comment
         an_expression()
-    "))
+    ", keep.source=TRUE))
     expect_false(is_root(pd, pd[1,'id']))
 })
 #line 140 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/root.R"
-test_that("all_root_ids", {#!@testthat all_root_ids
+test_that('all_root_ids', {#!@testthat all_root_ids
     pd <- get_parse_data(parse(text={"a <- 1
         {# section 1
         b <- 2
@@ -69,7 +69,7 @@ test_that("all_root_ids", {#!@testthat all_root_ids
         d <- 4
         }# end of section 2
         e <- 5
-    "}))
+    "}, keep.source=TRUE))
     expect_equal(all_root_ids(pd, TRUE), c(7, 52, 63))
     
     roots <- all_root_ids(pd, FALSE)
@@ -79,7 +79,7 @@ test_that("all_root_ids", {#!@testthat all_root_ids
     pd <- get_parse_data(parse(text="
         # a comment
         an_expression()
-    "))
+    ", keep.source=TRUE))
     expect_equal( all_root_ids(pd), -pd[1,'parent'])
 
     pd <- utils::getParseData(parse(text={"
@@ -96,12 +96,12 @@ test_that("all_root_ids", {#!@testthat all_root_ids
     }
     # Comment 3
     4+5
-    "}))
+    "}, keep.source=TRUE))
     id <- all_root_ids(pd)
     expect_equal(id, c(43, 61, 74))
 })
 #line 199 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/root.R"
-test_that("all_root_nodes", {#!@testing
+test_that('all_root_nodes', {#!@testing
     pd <- get_parse_data(parse(text={"a <- 1
         {# section 1
         b <- 2
@@ -111,7 +111,7 @@ test_that("all_root_nodes", {#!@testing
         d <- 4
         }# end of section 2
         e <- 5
-    "}))
+    "}, keep.source=TRUE))
     expect_equal(all_root_nodes(pd, TRUE)$id   , c(7, 52, 63))
     expect_equal(all_root_nodes(pd, TRUE)$line1, c(1,  2,  9))
 
@@ -119,8 +119,8 @@ test_that("all_root_nodes", {#!@testing
     expect_equal(all_root_nodes(pd, FALSE)$line1, c(1,  3,  5,  7,  9))
 })
 #line 237 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/root.R"
-test_that("ascend_to_root", {#@testing
-    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
+test_that('ascend_to_root', {#@testing
+    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     expect_equal(ascend_to_root(pd, id=23), 23)
     expect_equal(ascend_to_root(pd, id=1), 23)
     expect_identical(ascend_to_root(pd, id=0), 0L)
@@ -132,7 +132,7 @@ test_that("ascend_to_root", {#@testing
             print('hello world!')
         }
         #' comment after
-    "}))
+    "}, keep.source=TRUE))
     expect_equal(ascend_to_root(pd, 3), 34)
     
     expect_equal(ascend_to_root(pd), c(rep(34, 20), 0))

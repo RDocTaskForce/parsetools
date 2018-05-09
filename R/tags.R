@@ -90,7 +90,7 @@ if(FALSE){#!@testing
         #        @tag   TRUE, even though a regular comment    
         object @tag
         NULL
-    }'))
+    }', keep.source=TRUE))
     tag <- 'tag'
     id <- pd$id
     expect_equal(sum(has_tag(pd, tag)), 2)
@@ -173,7 +173,7 @@ if(FALSE){#!@testing
             object @tag
             NULL
         }
-    "}))
+    "}, keep.source=TRUE))
     tag <- 'tag'
     id  <- pd$id
     

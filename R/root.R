@@ -51,7 +51,7 @@ function( pd, id = pd$id
     #' @return a logical vector of same length as \code{id}
 }
 if(FALSE){#! @testing
-    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
+    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     expect_true (is_root(pd, 23))
     expect_false(is_root(pd,  1))
     expect_equal(sum(is_root(pd)), 1)
@@ -61,7 +61,7 @@ if(FALSE){#! @testing
         x <- rnorm(10, mean=0, sd=1)
         y <- runif(10)
         plot(x,y)
-    }'}))
+    }'}, keep.source=TRUE))
     expect_true(is_root(pd, 68), info="Grouping root")
     expect_true(is_root(pd, 30), info="Root within grouping.")
     expect_equal(sum(is_root(pd)), 4)
@@ -90,7 +90,7 @@ if(FALSE){#! @testing
         4+5 #< this is a root expression
         }
         6+7 #< a regular root expression
-    "}))
+    "}, keep.source=TRUE))
     id <- max(pd[pd$token =="'{'", 'parent'])
     expect_true(is_root(pd, id, ignore.groups = TRUE))
     id <- min(pd[pd$token =="'{'", 'parent'])
@@ -103,7 +103,7 @@ if(FALSE){#! @testing
     pd <- get_parse_data(parse(text="
         # a comment
         an_expression()
-    "))
+    ", keep.source=TRUE))
     expect_false(is_root(pd, pd[1,'id']))
 }
 
@@ -147,7 +147,7 @@ if(F){#!@testthat all_root_ids
         d <- 4
         }# end of section 2
         e <- 5
-    "}))
+    "}, keep.source=TRUE))
     expect_equal(all_root_ids(pd, TRUE), c(7, 52, 63))
     
     roots <- all_root_ids(pd, FALSE)
@@ -157,7 +157,7 @@ if(F){#!@testthat all_root_ids
     pd <- get_parse_data(parse(text="
         # a comment
         an_expression()
-    "))
+    ", keep.source=TRUE))
     expect_equal( all_root_ids(pd), -pd[1,'parent'])
 
     pd <- utils::getParseData(parse(text={"
@@ -174,7 +174,7 @@ if(F){#!@testthat all_root_ids
     }
     # Comment 3
     4+5
-    "}))
+    "}, keep.source=TRUE))
     id <- all_root_ids(pd)
     expect_equal(id, c(43, 61, 74))
 }
@@ -206,7 +206,7 @@ if(FALSE){#!@testing
         d <- 4
         }# end of section 2
         e <- 5
-    "}))
+    "}, keep.source=TRUE))
     expect_equal(all_root_nodes(pd, TRUE)$id   , c(7, 52, 63))
     expect_equal(all_root_nodes(pd, TRUE)$line1, c(1,  2,  9))
 
@@ -235,7 +235,7 @@ function( pd, id = pd$id
     #! @return integer vector of root ids.
 }
 if(FALSE){#@testing
-    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)'))
+    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     expect_equal(ascend_to_root(pd, id=23), 23)
     expect_equal(ascend_to_root(pd, id=1), 23)
     expect_identical(ascend_to_root(pd, id=0), 0L)
@@ -247,7 +247,7 @@ if(FALSE){#@testing
             print('hello world!')
         }
         #' comment after
-    "}))
+    "}, keep.source=TRUE))
     expect_equal(ascend_to_root(pd, 3), 34)
     
     expect_equal(ascend_to_root(pd), c(rep(34, 20), 0))

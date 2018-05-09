@@ -1,15 +1,15 @@
-#! This file was automatically produced by documentation::extract_tests on  2017-07-20 10:45:47
+#! This file was automatically produced by documentation::extract_tests on  2018-04-30 10:01:17
 #! changes will be overwritten.
 context('tests extracted from file `C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_if.R`')
 #line 80 "C:/Users/aredd/Box Sync/Projects/rdtf/parsetools/R/pd_if.R"
-test_that("if structures", {#!@testing if structures
+test_that('if structures', {#!@testing if structures
     pd <- get_parse_data(parse(text={"
         if(predicate){
             body
         } else {
             alternate
         }
-    "}))
+    "}, keep.source=TRUE))
     id <- all_root_ids(pd) # 33
     
     expect_true(is_if_expr(pd, id))
