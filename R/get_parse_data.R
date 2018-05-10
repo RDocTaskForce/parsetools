@@ -1,4 +1,4 @@
-{#######################################################################
+#######################################################################
 # get_parse_data.R
 # This file is part of the R package `parsetools`.
 #
@@ -7,62 +7,29 @@
 #
 # LICENSE
 # ========
-# The R package `parsetools` is free software: 
-# you can redistribute it and/or modify it under the terms of the 
+# The R package `parsetools` is free software:
+# you can redistribute it and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software
-# Foundation, either version 3 of the License, or (at your option) 
+# Foundation, either version 3 of the License, or (at your option)
 # any later version.
 #
-# This software is distributed in the hope that it will be useful, 
-# but WITHOUT ANY WARRANTY; without even the implied warranty of 
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License 
+# You should have received a copy of the GNU General Public License
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #
-}#######################################################################
+#######################################################################
 
 .pd.expected.names <-{c( 'line1', 'col1', 'line2', 'col2', 'id'
                        , 'parent', 'token', 'terminal', 'text'
                        )}
 
-#' @export
-valid_parse_data <-
-function( df ){
-    #' @title is a data.frame a valid parse-data?
-    #' @param df a data.frame object.
-    #' @description 
-    #'   Test if the given `df` data.frame conformes to `<parse-data>` conventions.
-    #' @return either TRUE if valid as parse-data or the reason why not.
-    if (!inherits(df, "data.frame")) return("Not a data.frame object")
-    if (!all(.pd.expected.names %in% names(df))) return("names of data do not conform.")
-    return(TRUE)
-}
-if(F){#!@test
-    df <- utils::getParseData(parse(text="rnorm(10,0,1)", keep.source=TRUE))
-    expect_true (valid_parse_data(df), 'parse-data')
-    expect_equal(valid_parse_data(datasets::iris      ), "names of data do not conform.")
-    expect_equal(valid_parse_data(stats::rnorm(10,0,1)), "Not a data.frame object")
-}
-
-as_parse_data <- function(df){
-    #! Convert data.frame to `parse-data`
-    is.valid <- valid_parse_data(df)
-    if (!isTRUE(is.valid)) stop("Cannot convert to parse-data: ", is.valid)
-    sort(structure( fix_eq_assign(classify_comment(df))
-                  , class=c( 'parse-data', 'data.frame')
-                  ))
-}
-if(FALSE){#!@testing
-    df <- utils::getParseData(parse(text="rnorm(10,0,1)", keep.source=TRUE))
-    expect_is   (as_parse_data(df), 'parse-data')
-    expect_error(as_parse_data(datasets::iris), "Cannot convert to parse-data: names of data do not conform.")
-    expect_error(as_parse_data(stats::rnorm(10,0,1)), "Cannot convert to parse-data: Not a data.frame object")
-}
 
 #' @export
-as.data.frame.parseData <- 
+as.data.frame.parseData <-
 function( x, ...){
     x <- t(unclass(x))
     colnames(x) <- c( "line1", "col1", "line2", "col2"
@@ -86,14 +53,14 @@ if(FALSE){#!@testing
     my_function <- function(object #< An object to do something with
             ){
         #' A title
-        #' 
+        #'
         #' A Description
         print(\"It Works!\")
         #< A return value.
     }"}, keep.source=TRUE)
     srcfile <- attr(p, 'srcfile')
     x <- srcfile$parseData
-    
+
     df1 <- as.data.frame.parseData(x, srcfile=srcfile)
     expect_true(valid_parse_data(df1))
 }
@@ -102,12 +69,12 @@ if(FALSE){#!@testing
 get_srcfile <- function(x){
     #! replicate of unexported function get_srcfile from utils.
     result <- attr(x, "srcfile")
-    if (!is.null(result)) 
+    if (!is.null(result))
         return(result)
     srcref <- attr(x, "wholeSrcref")
     if (is.null(srcref)) {
         srcref <- utils::getSrcref(x)
-        if (is.list(srcref) && length(srcref)) 
+        if (is.list(srcref) && length(srcref))
             srcref <- srcref[[length(srcref)]]
     }
     attr(srcref, "srcfile")
@@ -117,23 +84,26 @@ get_srcfile <- function(x){
 
 #' @export
 #' @aliases parse-data
-#' @title Get cleaned parse data 
-#' 
+#' @title Parse Data
+#'
 #' @param x     an object to get parse-data from.
-#' @param ...   passed on
-#' 
+#' @param ...   options for specific type of objects.
+#'
 #' @description
-#' A customized version of `<getParseData>` that will return 
+#' Parsing data is at the core of parse tools and thus at the core
+#' of the documentation package. The \code{get_parse_data} function is
+#' essentially a customized version of `<getParseData>` that will return
 #' a cleaned up version of the parse data for a variety of objects.
-#' This version also fails less often, even reparsing text when 
-#' needed. 
+#' This version also fails less often, even reparsing text when
+#' needed.
 get_parse_data <- function(x, ...)UseMethod("get_parse_data")
 
-#' @export 
-get_parse_data.srcfile <- 
+#' @export
+get_parse_data.srcfile <-
 function( x
         , ...                               #< discarded
         ){
+    #' @rdname get_parse_data
     stopifnot(inherits(x, 'srcfile'))
     df <-    if (!is.null(x$parseData)) as.data.frame.parseData(x$parseData, x, ...)
         else if (!is.null(x$lines    ) && length(x$lines) ) utils::getParseData(parse(text=x$lines, keep.source=TRUE), ...)
@@ -145,51 +115,55 @@ if(FALSE){#!@testing
     text <- "    my_function <- function(object #< An object to do something with
             ){
         #' A title
-        #' 
+        #'
         #' A Description
         print(\"It Works!\")
         #< A return value.
     }"
     tmp <- tempfile()
     writeLines(text, tmp)
-    
+
     readLines(tmp)
     source(tmp, keep.source = TRUE)
-    
-    srcref  <- utils::getSrcref(my_function) 
+
+    srcref  <- utils::getSrcref(my_function)
     srcfile <- attr(srcref, 'srcfile')
     expect_equal(srcfile$filename, tmp)
     expect_is(srcfile$parseData, 'parseData')
     pd <- get_parse_data.srcfile(srcfile)
     expect_is(pd, 'parse-data', info = "srcfile with parseData")
     expect_identical(attr(pd, 'srcfile'), srcfile, info='carried forward srcfile')
-    
+
     remove('parseData', envir = srcfile)
     expect_null(srcfile$parseData)
     expect_is(srcfile$lines, 'character')
     pd <- get_parse_data.srcfile(srcfile)
     expect_is(pd, 'parse-data', info = "srcfile from lines")
-    
+
     remove('lines', envir = srcfile)
     expect_null(srcfile$parseData)
     expect_null(srcfile$lines, 'character')
     pd <- get_parse_data.srcfile(srcfile)
     expect_is(pd, 'parse-data', info = "srcfile from file directly")
-    
+
     remove('filename', envir = srcfile)
     expect_error(get_parse_data.srcfile(srcfile), "could not retrieve parse-data for srcfile")
 
     unlink(tmp)
 }
 
-#' @export 
-get_parse_data.srcref <- 
+#' @export
+get_parse_data.srcref <-
 function( x
-        , ...                               #< passe to <getParseData>    
+        , ...                               #< passe to <getParseData>
         , ignore.groups            = TRUE   #< see <ascend_to_root>
         , include.doc.comments     = TRUE   #< see <get_family>
         , include.regular.comments = FALSE  #< see <get_family>
         ){
+    #' @rdname get_parse_data
+    #'
+    #' @inheritParams ascend_to_root
+    #' @inheritParams get_family
     stopifnot(inherits(x, 'srcref'))
     pd <- get_parse_data.srcfile(attr(x, 'srcfile'), ...)
     id <- pd[ pd$line1 == utils::getSrcLocation(x, 'line', TRUE )
@@ -206,11 +180,11 @@ function( x
               ))
 }
 if(FALSE){#!@testing
-    text <-{"my_function <- 
+    text <-{"my_function <-
         function( object #< An object to do something with
                 ){
             #' A title
-            #' 
+            #'
             #' A Description
             print('It Works!')
             #< A return value.
@@ -223,21 +197,22 @@ if(FALSE){#!@testing
     eval(p, envir=e)
     srcref <- utils::getSrcref(e$my_function)
     srcfile <- get_srcfile(e$my_function)
-    
-    
+
+
     expect_is(srcref, 'srcref')
     pd <- get_parse_data.srcref(srcref)
     expect_is(pd, 'parse-data')
     expect_identical(attr(pd, 'srcfile'), srcfile)
 }
 
-#' @export 
-get_parse_data.function <- 
+#' @export
+get_parse_data.function <-
 function(x, ...){
+    #' @describeIn get_parse_data
     stopifnot(is.function(x))
     if (methods::isGeneric(fdef=x)) {
         default <- attr(x, 'default')
-        if (is.null(default) || !is.function(default)) 
+        if (is.null(default) || !is.function(default))
             stop(deparse(substitute(x)), " appears to be a generic, but could not find the default method, where parse data should be found.")
         return(Recall(default, ...))
     }
@@ -259,7 +234,7 @@ pd.regular <- get_parse_data(hw)
 expect_that(pd.regular, is_a("data.frame"))
 expect_that(pd.regular[1,"text"], equals("#' Roxygen Line Before"))
 }
-if(FALSE){#@test get_parse_data.function grouped 
+if(FALSE){#@test get_parse_data.function grouped
 grouped.text <-
 "{#' Roxygen Line Before
 hw <-
@@ -296,11 +271,11 @@ expect_is(pd, "parse-data")
 if(FALSE){#@test get_parse_data.function S4 Generic
     # Note that testthat:::test_code will strip comments from code
     # this requires a parse & eval statement.
-    p <- parse(text="setGeneric(\"my_generic\", 
+    p <- parse(text="setGeneric(\"my_generic\",
         function(object #< An object to do something with
                 ){
             #' A title
-            #' 
+            #'
             #' A Description
             print(\"It Works!\")
             #< A return value.
@@ -315,7 +290,7 @@ if(FALSE){#@test get_parse_data.function S4 Generic
 get_parse_data.default <-
 function( x, ...){
     #! the default get_parse_data method
-    #! 
+    #!
     #! This extracts the srcref and uses that to obtain the parse data.
     #! Currently I have only found srcrefs as attributes of functions.
     srcref <- utils::getSrcref(x)
@@ -330,7 +305,7 @@ function( x, ...){
     }
 }
 if(FALSE){#!@testing
-    x <- 
+    x <-
     exprs <- parse(text=c('x <- rnorm(10, mean=0, sd=1)'
                          ,'y <- mean(x)'
                          ), keep.source=TRUE)
@@ -414,9 +389,9 @@ if(FALSE){#@testing
 #' @export
 `[.parse-data` <- function(x, ...){
     result <- NextMethod()
-    if(inherits(result, 'data-frame')) 
+    if(inherits(result, 'data-frame'))
         structure(result, class=c('parse-data', 'data.frame'))
-    else 
+    else
         result
 }
 if(FALSE){#!@testing
@@ -474,3 +449,48 @@ if(FALSE){#TODO test for parse-data
     }, keep.source=TRUE))
     sort(pd)
 }
+#' @export
+valid_parse_data <-
+function( df ){
+    #' @rdname get_parse_data
+    #' @param df a data.frame object.
+    #' @description
+    #' \subsection{valid_parse_data}{
+    #' The \code{valid_parse_data} function tests if the object \code{df}
+    #' conforms to the expected conventions of a \code{parse-data} object.
+    #' Returns TRUE if valid otherwise returns the reason it is not valid.
+    #' }
+    if (!inherits(df, "data.frame")) return("Not a data.frame object")
+    if (!all(.pd.expected.names %in% names(df))) return("names of data do not conform.")
+    return(TRUE)
+}
+if(F){#!@test
+    df <- utils::getParseData(parse(text="rnorm(10,0,1)", keep.source=TRUE))
+    expect_true (valid_parse_data(df), 'parse-data')
+    expect_equal(valid_parse_data(datasets::iris      ), "names of data do not conform.")
+    expect_equal(valid_parse_data(stats::rnorm(10,0,1)), "Not a data.frame object")
+}
+
+as_parse_data <- function(df){
+    #' @rdname get_parse_data
+    #' @description
+    #' \subsection{as_parse_data}{
+    #' The \code{as_parse_data} function tests if a data frame is valid through
+    #' \code{valid_parse_data} then returns the data with the comments
+    #' classified, as is expected for parse-data objects.  All parse data for
+    #' use with parsetools functions should be obtained either through
+    #' get_parse_data or converted through as_parse_data.
+    #' }
+    is.valid <- valid_parse_data(df)
+    if (!isTRUE(is.valid)) stop("Cannot convert to parse-data: ", is.valid)
+    sort(structure( fix_eq_assign(classify_comment(df))
+                  , class=c( 'parse-data', 'data.frame')
+                  ))
+}
+if(FALSE){#!@testing
+    df <- utils::getParseData(parse(text="rnorm(10,0,1)", keep.source=TRUE))
+    expect_is   (as_parse_data(df), 'parse-data')
+    expect_error(as_parse_data(datasets::iris), "Cannot convert to parse-data: names of data do not conform.")
+    expect_error(as_parse_data(stats::rnorm(10,0,1)), "Cannot convert to parse-data: Not a data.frame object")
+}
+
