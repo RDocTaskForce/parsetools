@@ -1,12 +1,13 @@
 
 #' Create a function to test if an id is contained in a type
-#' 
+#'
 #' @param calls The tokens to test against
-#' 
+#' @param .is A function to test if a specific id is a valid
+#'
 #' @internal
 pd_make_is_in_call <-
 function(calls = character(0), .is=pd_make_is_call(calls)){
-    me <- 
+    me <-
     function( id = pd$id
             , pd = get('pd', parent.frame())
             ){
@@ -17,11 +18,11 @@ function(calls = character(0), .is=pd_make_is_call(calls)){
 }
 #' @rdname pd_make_is_in_call
 #' @internal
-pd_make_is_call <- 
+pd_make_is_call <-
 function(calls = character(0)){
-    if (length(calls) ==0) 
+    if (length(calls) ==0)
         pd_is_symbol_call
-    else 
+    else
         function(id, pd)
             (pd_is_symbol_call(id, pd) & (text(pd_get_call_symbol_id(id, pd)) %in% calls))
 }
@@ -33,17 +34,17 @@ pd <- get_parse_data(parse(text={"
     }
     test('my message')
 "}))
-  
+
     is_in_test <- pd_make_is_in_call('test')
     .is <- environment(is_in_test)[['.is']]
     calls <- environment(is_in_test)[['calls']]
-    
+
     test.id <- all_root_ids(pd)[[2]]
     id <- pd[pd$text=="'my message'",'id']
-    
+
     expect_true(pd_is_symbol_call(test.id, pd))
     expect_identical(text(pd_get_call_symbol_id(test.id, pd)), 'test')
-    
+
     expect_true(.is(test.id, pd))
     expect_false(.is(id, pd))
     expect_true(is_in_test(id, pd))

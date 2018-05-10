@@ -1,26 +1,30 @@
 
 
 #' Associate relative ducumentation comments
-#' 
-#' Relative comment created with `#<` comment tags document something
+#'
+#' @param id id of the expression of interest
+#' @param pd The \code{\link{parse-data}} information
+#'
+#' Relative comment created with \code{\#\<} comment tags document something
 #' designated by the location of the comment.
 #' In general, the comment documents the previous symbol.
 #' A comment will not be associated with any parse id that does not have
 #' the same parent as the comment. For example,
-#' 
+#'
 #'     function(x #< a valid comment
-#'             ){
-#' 
-#' would associate `a valid comment` with `x`, but
-#' 
-#'     function(x){ #< not a valid comment     
-#' 
+#'             ){}
+#'
+#' would associate \code{a valid comment} with \code{x}, but
+#'
+#'     function(x){ #< not a valid comment
+#'                }
+#'
 #' would not.
-#' 
-#' @value Returns a vector of the same length as id.  Where the value is 
-#'        either the id of the associated object or NA if it cannot be 
-#'        associated.
-associate_relative_comments <- 
+#'
+#' @return Returns a vector of the same length as id.  Where the value is
+#'         either the id of the associated object or NA if it cannot be
+#'         associated.
+associate_relative_comments <-
 function( id = get_relative_comments(pd)$id
         , pd = get('pd', parent.frame())
         ){
@@ -44,14 +48,14 @@ if(F){#@test function relative comments
         ){}' %>%
     parse(text = .) %>%
     get_parse_data() -> pd
-    
+
     id <- get_relative_comments(pd)$id
 
     value <- associate_relative_comments(pd=pd)
     expect_identical(value[[1]], value[[2]])
     expect_identical(text(value, pd=pd), c('pd', 'pd', 'id'))
 
-# while one argument documented and another not should be discouraged, 
+# while one argument documented and another not should be discouraged,
 # it is allowed.
 'function( id, pd = get("pd", parent.frame()) #< parse data
         ){}' %>%
@@ -79,12 +83,12 @@ if(F){#@test class members
          , slots = c( x="numeric" #< the x field
                     , y="matrix"  #< the y field
                     )
-         )' %>% 
+         )' %>%
     parse(text = .) %>%
     get_parse_data() -> pd
 
     ids <- get_relative_comment_ids(pd)
     id <- ids[[1]]
-    
+
     pd_is_in_class_definition(id)
 }

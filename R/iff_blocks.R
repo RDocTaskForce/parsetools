@@ -7,18 +7,18 @@
 #
 # LICENSE
 # ========
-# The R package `parsetools` is free software: 
-# you can redistribute it and/or modify it under the terms of the 
+# The R package `parsetools` is free software:
+# you can redistribute it and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software
-# Foundation, either version 3 of the License, or (at your option) 
+# Foundation, either version 3 of the License, or (at your option)
 # any later version.
 #
-# This software is distributed in the hope that it will be useful, 
-# but WITHOUT ANY WARRANTY; without even the implied warranty of 
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License 
+# You should have received a copy of the GNU General Public License
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #
 }#######################################################################
@@ -40,18 +40,18 @@ function( id = all_root_ids(pd)
     #' @aliases iff-blocks
     #' @inheritParams get_child_ids
     #' @param allow.short Should \code{F} be interpreted as FALSE.
-    #' 
+    #'
     #' @description
-    #'   This function tests if an expression id is the root of an    
-    #'   \code{if(FALSE)} block, which many users use to deactive code but 
-    #'   can also be used to support including examples and testing code 
+    #'   This function tests if an expression id is the root of an
+    #'   \code{if(FALSE)} block, which many users use to deactive code but
+    #'   can also be used to support including examples and testing code
     #'   in the same file as the source code.
-    #' 
+    #'
     #' @keywords internal
     pd <- ._check_parse_data(pd)
     id <- ._check_id(id)
     if (length(id) > 1) return(sapply(id, is_iff_block, pd=pd, allow.short=allow.short))
-    
+
     if (token(id) != 'expr') return(FALSE)
     kids <- get_child_ids(id, pd)
     if (length(kids) < 2) return(FALSE)
@@ -62,13 +62,13 @@ function( id = all_root_ids(pd)
     return( ( row[['token']] == "NUM_CONST" && row[['text']] == "FALSE")
           || allow.short && ( row[['token']] == "SYMBOL" && row[['text']] == "F")
           )
-    #' @return A logical vector of same length as id indicating if the id 
+    #' @return A logical vector of same length as id indicating if the id
     #'      represents a \code{if(FALSE)} block.
 }
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"
         if(FALSE){# an if(FALSE) block
-        
+
         }
         if(F){# also an if(FALSE) block
         }
@@ -76,7 +76,7 @@ if(FALSE){#!@testing
         }
     "}, keep.source=TRUE))
     id <- all_root_ids(pd)
-    
+
     expect_true (is_iff_block(id[[1]], pd))
     expect_true (is_iff_block(id[[2]], pd))
     expect_false(is_iff_block(id[[2]], pd, FALSE))
@@ -86,7 +86,7 @@ if(FALSE){#!@testing
 }
 
 #' @export
-all_iff_ids <- 
+all_iff_ids <-
 function( pd
         , root.only=TRUE        #< only root blocks(`TRUE`) or all block (`FALSE`)
         , ignore.groups=FALSE   #< Ignore code grouping
@@ -97,16 +97,16 @@ function( pd
     #' @param root.only        only root blocks(`TRUE`) or all block (`FALSE`)
     #' @param ignore.groups    Ignore code grouping
     #' @param ...              passed to \code{\link{is_iff_block}}
-    #' 
+    #'
     #' @description
-    #'   Retreives all the ids from pd that identify 
+    #'   Retreives all the ids from pd that identify
     #'   \code{\link[=iff-blocks]{if(FALSE)}} blocks.
-    #'   See \code{\link{is_root}} for details on \code{root.only}.
+    #'   See \code{\link[=root]{is_root}} for details on \code{root.only}.
     #'   See \code{\link{is_grouping}} for details on groups affected by
-    #'   \code{ignore.groups}.    
-    #' 
-    #' @return an integer vector of all ids identifying 
-    #'   \code{\link[=iff-blocks]{if(FALSE)}}\link[=iff-blocks]{ blocks}.  
+    #'   \code{ignore.groups}.
+    #'
+    #' @return an integer vector of all ids identifying
+    #'   \code{\link[=iff-blocks]{if(FALSE)}}\link[=iff-blocks]{ blocks}.
     pd <- ._check_parse_data(pd)
     id <- if (root.only) all_root_ids(pd, !ignore.groups) else pd$id
     if (!length(id)) return(integer(0))
@@ -116,34 +116,34 @@ function( pd
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"
         if(FALSE){# an if(FALSE) block
-        
+
         }
         if(F){# also an if(FALSE) block
         }
         {# grouping block
             if(F){# iff nested in group
-            
+
             }
         }
         hw <- function(){
             if(F){# nested in a function
-                
+
             }
             print('hello world')
         }
     "}, keep.source=TRUE))
     iff.ids <- all_iff_ids(pd, root.only=TRUE, ignore.groups = FALSE)
     expect_equal(length(iff.ids), 2)
-    
+
     iff.ids <- all_iff_ids(pd, root.only=TRUE, ignore.groups = TRUE)
     expect_equal(length(iff.ids), 3)
-    
+
     iff.ids <- all_iff_ids(pd, root.only=FALSE, ignore.groups = FALSE)
     expect_equal(length(iff.ids), 4)
 }
 
 #' @export
-iff_is_tagged <- 
+iff_is_tagged <-
 function( id, tag, pd = get('pd', parent.frame())
         , doc.only = TRUE
         , ...
@@ -152,13 +152,13 @@ function( id, tag, pd = get('pd', parent.frame())
     #' @inheritParams has_tag
     #' @param doc.only  Should comments be restricted to documentation style
     #'                  comments only?
-    #' 
-    #' @seealso \code{\link{is_iff_block}}, \code{\link{has_tag}} 
+    #'
+    #' @seealso \code{\link{is_iff_block}}, \code{\link{has_tag}}
     #' @description
     #'   This functions tests if an id is: \enumerate{
-    #'   
-    #'   
-    if (length(id) > 1) 
+    #'
+    #'
+    if (length(id) > 1)
         return(sapply(id, iff_is_tagged, pd=pd, tag=tag, doc.only=doc.only))
     #'   \item an \code{if(FALSE)} block.
     if (!is_iff_block(id, pd)) return(FALSE)
@@ -185,7 +185,7 @@ if(FALSE){#!@testing
         }
         if(F){# @tag
         }
-        {#!@tag 
+        {#!@tag
         # not an if(F) block
         }
         {#@tag
@@ -204,37 +204,37 @@ if(FALSE){#!@testing
                 , c(T,T,F,F,F,F))
     expect_equal(iff_is_tagged(id, tag, pd, FALSE)
                 , c(T,T,T,F,F,F))
-                
+
     pd <- get_parse_data(parse(text='rnorm(1)', keep.source=TRUE))
-    expect_false(iff_is_tagged(all_root_ids(pd), tag, pd))            
-    
+    expect_false(iff_is_tagged(all_root_ids(pd), tag, pd))
+
     pd <- get_parse_data(parse(text='if(F)#!@tag not in block\nF', keep.source=TRUE))
-    expect_false(iff_is_tagged(all_root_ids(pd), tag, pd))            
-    
+    expect_false(iff_is_tagged(all_root_ids(pd), tag, pd))
+
     pd <- get_parse_data(parse(text='if(F){FALSE}', keep.source=TRUE))
-    expect_false(iff_is_tagged(all_root_ids(pd), tag, pd))            
-    
+    expect_false(iff_is_tagged(all_root_ids(pd), tag, pd))
+
     pd <- get_parse_data(parse(text='if(F){# @tag\nF\n}', keep.source=TRUE))
-    expect_false(iff_is_tagged(all_root_ids(pd), tag, pd))            
-    
+    expect_false(iff_is_tagged(all_root_ids(pd), tag, pd))
+
     pd <- get_parse_data(parse(text='if(F){#@tag\nF\n}', keep.source=TRUE))
-    expect_true(iff_is_tagged(all_root_ids(pd), tag, pd))    
+    expect_true(iff_is_tagged(all_root_ids(pd), tag, pd))
 }
 
 #' @export
-all_tagged_iff_ids <- 
+all_tagged_iff_ids <-
 function(pd, tag, doc.only=TRUE){
     #' @title Find all tagged \code{if(FALSE)} blocks.
     #' @inheritParams iff_is_tagged
     #' @description
     #'   Retrieves all ids identifying \code{\link[=iff-blocks]{if(FALSE)}}
-    #'   blocks that are also tagged with \code{tag}.  
+    #'   blocks that are also tagged with \code{tag}.
     #'   See \code{\link{iff_is_tagged}} for details.
-    #'   
-    #' @seealso \code{\link{is_iff_block}}, \code{\link{iff_is_tagged}}, 
-    #'          \code{\link{has_tag}} 
-    #' @return an integer vector giving the ids in \code{pd} that identify 
-    #'      \code{\link[=iff-blocks]{if(FALSE)}}\link[=iff-blocks]{ blocks} 
+    #'
+    #' @seealso \code{\link{is_iff_block}}, \code{\link{iff_is_tagged}},
+    #'          \code{\link{has_tag}}
+    #' @return an integer vector giving the ids in \code{pd} that identify
+    #'      \code{\link[=iff-blocks]{if(FALSE)}}\link[=iff-blocks]{ blocks}
     #'      that are also tagged with \code{tag}.
     id <- all_iff_ids(pd)
     if (!length(id)) return(id)
@@ -252,7 +252,7 @@ if(FALSE){#!@testing
         if(F){# @tag
             # determines doc.only parameter
         }
-        {#!@tag 
+        {#!@tag
             # not an if(F) block
         }
         {#@tag
@@ -276,69 +276,69 @@ if(FALSE){#!@testing
 
 #@ internal
 get_iff_associated_name <-
-function(id, pd = get('pd', parent.frame())){ 
+function(id, pd = get('pd', parent.frame())){
     #' @title find the name that should be assocciated with an \code{if(FALSE)} block.
     #' @inheritParams is_iff_block
-    #' 
+    #'
     #' @description
-    #'   For \code{\link[=iff-blocks]{if(FALSE)}} documentation blocks, such as 
-    #'   \code{@testing} and \code{@example} blocks, a user may supply an 
-    #'   information string which gives the name information for tests and 
+    #'   For \code{\link[=iff-blocks]{if(FALSE)}} documentation blocks, such as
+    #'   \code{@testing} and \code{@example} blocks, a user may supply an
+    #'   information string which gives the name information for tests and
     #'   examples.  for example, in \code{"if(FALSE)\{#@test my special test"}
     #'   the information string is "my special test".
-    #' 
+    #'
     #'   The more common case is when there is no information string.
-    #'   In these cases the name is inferred by the previous assignemnt or 
+    #'   In these cases the name is inferred by the previous assignemnt or
     #'   declaration.
-    #'   
-    #' The \code{id} argument should identify one and only one 
-    #' \code{\link[=iff-blocks]{if(FALSE)}} block, but as this is an internal 
+    #'
+    #' The \code{id} argument should identify one and only one
+    #' \code{\link[=iff-blocks]{if(FALSE)}} block, but as this is an internal
     #' function, argument checks are not performed.
-    #' 
-    #' @details 
+    #'
+    #' @details
     prev.id  <- get_prev_sibling_id(id, pd)
     while (TRUE){
         #' \code{\link[=iff-blocks]{if(FALSE)}} blocks can be placed
         #' sequentially and \code{get_iff_associated_name} will
         #' navigate back until it finds a non-IFF block to use for the name.
-        #' This way users can place mutliple tests and examples after a 
+        #' This way users can place mutliple tests and examples after a
         #' declaration.
-        #' 
+        #'
         if (is.na(prev.id)) return(NULL)
         if (!is_iff_block(prev.id, pd)) break
         prev.id <- get_prev_sibling_id(prev.id, pd)
     }
     if (pd_is_assignment(pd, prev.id)) {
-        #' If the previous expression is an assignment, the asignee variable of 
-        #' the assignment is chosen as the name.  
+        #' If the previous expression is an assignment, the asignee variable of
+        #' the assignment is chosen as the name.
         value.id <- pd_get_assign_value_id(prev.id)
         structure( utils::getParseText(pd, pd_get_assign_variable_id(pd, prev.id))
                  , type = if (pd_is_function(value.id)) "function_assignment"
                           else "assignment"
                  )
-        #' An attribute 'type' is also set on the return value.  
-        #' For function assignments \code{type="function_assignment"}, 
+        #' An attribute 'type' is also set on the return value.
+        #' For function assignments \code{type="function_assignment"},
         #' for all other assignments \code{type="assignment"}.
         #'
     } else if(pd_is_symbol_call(prev.id)) {
         switch( text(pd_get_call_symbol_id(prev.id, pd))
               , setClass = {
                     #' The names for \code{link{setClass}} calls will also be inferred.
-                    #' The name of the class is taken as the name, but the 
-                    #' return value also has the attribute of 
+                    #' The name of the class is taken as the name, but the
+                    #' return value also has the attribute of
                     #' \code{type="setClass"}.
-                    #' Note that it is common to assign the result of 
-                    #' \code{\link{setClass}} to a variable, which may or 
-                    #' may not match the class name.  In those cases the 
+                    #' Note that it is common to assign the result of
+                    #' \code{\link{setClass}} to a variable, which may or
+                    #' may not match the class name.  In those cases the
                     #' assignment operation takes priority and would have
                     #' \code{type="assignment"}.
-                    #' 
+                    #'
                     args <- pd_get_call_args(prev.id)
                     name <- unquote(args[[if('Class' %in% names(args)) 'Class' else 1L]][1,'text'])
                     structure(name, type = "setClass")
                 }
               , setMethod = {
-                    #' The names for \code{\link{setMethod}} will assume 
+                    #' The names for \code{\link{setMethod}} will assume
                     #' the S3 convention of \code{<method>.<class>}.
                     args <- pd_get_call_args(prev.id)
                     fname <- unquote(args[[ifelse('f' %in% names(args), 'f', 1L)]][1,'text'])
@@ -375,7 +375,7 @@ if(FALSE){#!@testing
     if(FALSE){#!@testthat
         expect_output(hello_world(), "hello world")
     }
-    
+
     ldf <- data.frame(id = 1:26, letters)
     if(FALSE){#!@testing
         # not a function assignment
@@ -388,29 +388,29 @@ if(FALSE){#!@testing
     if(F){#! @test
         expect_error(f2())
     }
-    
+
     setClass("A")
-    if(F){#!@testing 
+    if(F){#!@testing
         #testing a setClass
     }
-    
+
     setMethod("print", "A")
-    if(F){#!@testing 
+    if(F){#!@testing
         #testing a setMethod
     }
-    
+
     setGeneric("my_generic", function(x){x})
-    if(F){#!@testing 
+    if(F){#!@testing
         #testing a setClass
     }
-    
+
     rnorm(10)
     if(F){#!@testing
         # no previous name
     }
     '}, keep.source=TRUE))
     iff.ids <- all_tagged_iff_ids(pd, c('testing', 'testthat', 'test'))
-    
+
     expect_null( get_iff_associated_name(iff.ids[[1L]], pd), info="iff at beginning")
     expect_equal( get_iff_associated_name(iff.ids[[2L]], pd)
                 , structure("hello_world", type = "function_assignment")
