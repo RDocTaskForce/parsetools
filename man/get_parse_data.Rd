@@ -5,6 +5,7 @@
 \alias{parse-data}
 \alias{get_parse_data.srcfile}
 \alias{get_parse_data.srcref}
+\alias{get_parse_data.function}
 \alias{valid_parse_data}
 \alias{as_parse_data}
 \title{Parse Data}
@@ -15,6 +16,8 @@ get_parse_data(x, ...)
 
 \method{get_parse_data}{srcref}(x, ..., ignore.groups = TRUE,
   include.doc.comments = TRUE, include.regular.comments = FALSE)
+
+\method{get_parse_data}{function}(x, ...)
 
 valid_parse_data(df)
 
@@ -55,3 +58,9 @@ use with parsetools functions should be obtained either through
 get_parse_data or converted through as_parse_data.
 }
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{function}: Get parse information from a function.
+The function must have a srcref.
+}}
+

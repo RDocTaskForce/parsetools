@@ -12,6 +12,6 @@ strip_doc_comment_leads(comment, rm.space = TRUE)
 \item{rm.space}{should the space at the beginning of the line be removed.}
 }
 \description{
-Remove the characters identifying a documentation comment as a 
+Remove the characters identifying a documentation comment as a
 document comment leaving only the relevant text.
 }

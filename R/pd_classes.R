@@ -3,21 +3,18 @@
 .class.defining.functions <- c('setClass', 'setRefClass', 'R6Class')
 pd_is_class_definition <- pd_make_is_call(.class.defining.functions)
 if(FALSE){#@test
-'setClass( "testClass"
+pd <- get_parse_data(parse(text='setClass( "testClass"
      , slots = c( x="numeric" #< the x field
                 , y="matrix"  #< the y field
                 )
-     )' %>%
-    parse(text = .) %>%
-    get_parse_data() -> pd
-
+     )', keep.source=TRUE))
     expect_true(pd_is_class_definition(id = all_root_ids(pd), pd))
 }
 
 #' @internal
 pd_is_in_class_definition <- pd_make_is_in_call(.class.defining.functions)
 if(FALSE){#@test object in setClass
-'setClass( "testClass"
+pd <- get_parse_data(parse(text='setClass( "testClass"
      , slots = c( x="numeric" #< the x field
                 , y="matrix"  #< the y field
                 )
@@ -25,9 +22,7 @@ if(FALSE){#@test object in setClass
 setMethod("print", "testClass", function(){
     cat("This is just a test.")
 })
-' %>%
-    parse(text = .) %>%
-    get_parse_data() -> pd
+', keep.source=TRUE))
 
     root.id <- all_root_ids(pd)
 
@@ -161,7 +156,7 @@ if(FALSE){#@testing pd_class_definitions
         setClass('S4Test')
         setRefClass('RefTest')
         my_custom_class_definer('CustomTest')
-    "}))
+    "}, keep.source=TRUE))
 
     roots <- all_root_ids(pd)
 
@@ -264,7 +259,7 @@ testClass <-
                                     }
                                 )
                )
-"}))
+"}, keep.source=TRUE))
 
 roots <- all_root_ids(pd)
 

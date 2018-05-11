@@ -42,12 +42,10 @@ function( id = get_relative_comments(pd)$id
     return(possible)
 }
 if(F){#@test function relative comments
-'function( pd                    #< parse data
+pd <- get_parse_data(parse(text='function( pd                    #< parse data
                                 #< continuation comment
         , id = all_root_ids(pd) #< id number
-        ){}' %>%
-    parse(text = .) %>%
-    get_parse_data() -> pd
+        ){}', keep.source=TRUE))
 
     id <- get_relative_comments(pd)$id
 
@@ -57,19 +55,15 @@ if(F){#@test function relative comments
 
 # while one argument documented and another not should be discouraged,
 # it is allowed.
-'function( id, pd = get("pd", parent.frame()) #< parse data
-        ){}' %>%
-    parse(text = .) %>%
-    get_parse_data() -> pd
+pd <- get_parse_data(parse(text='function( id, pd = get("pd", parent.frame()) #< parse data
+        ){}', keep.source=TRUE))
     id <- get_relative_comments(pd)$id
 
     expect_identical(text(associate_relative_comments(id, pd), pd=pd), 'pd')
 
-'function( id, #< traditional comma placement.
+pd <- get_parse_data(parse(text='function( id, #< traditional comma placement.
            pd = get("pd", parent.frame()) #< parse data
-         ){}' %>%
-    parse(text = .) %>%
-    get_parse_data() -> pd
+         ){}', keep.source=TRUE))
     id <- get_relative_comments(pd)$id
 
     value <- associate_relative_comments(id, pd)
@@ -79,13 +73,11 @@ if(F){#@test function relative comments
     expect_identical(value, expected)
 }
 if(F){#@test class members
-'setClass( "testClass"
+pd <- get_parse_data(parse(text='setClass( "testClass"
          , slots = c( x="numeric" #< the x field
                     , y="matrix"  #< the y field
                     )
-         )' %>%
-    parse(text = .) %>%
-    get_parse_data() -> pd
+         )', keep.source=TRUE))
 
     ids <- get_relative_comment_ids(pd)
     id <- ids[[1]]

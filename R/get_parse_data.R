@@ -208,7 +208,8 @@ if(FALSE){#!@testing
 #' @export
 get_parse_data.function <-
 function(x, ...){
-    #' @describeIn get_parse_data
+    #' @describeIn get_parse_data Get parse information from a function.
+    #'                            The function must have a srcref.
     stopifnot(is.function(x))
     if (methods::isGeneric(fdef=x)) {
         default <- attr(x, 'default')

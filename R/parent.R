@@ -85,10 +85,7 @@ function( id, pd = get('pd', parent.frame()) #< parse data
 
     if ( include.self && only.present && !(id %in% pd$id))
             stop("only.present=TRUE and include.self=TRUE but id is not present in pd.")
-    if (nancestors == 0){
-        if ( include.self              ) return (id)
-        if (!include.self &&  aggregate) return (integer(0))
-    }
+    if (nancestors == 0 && include.self) return (id)
     if (aggregate) ancestors <- if (include.self) id else integer(0)
     while(nancestors > 0L){
         nancestors <- nancestors - 1
@@ -112,6 +109,7 @@ if(FALSE){#! @testing
     expect_identical(get_ancestor_ids( 1, pd,nancestors= 2 , aggregate=TRUE , include.self=TRUE , only.present = FALSE), c(1L, 3L, 23L   ), info = "nancestors=2, include.self=TRUE")
     expect_identical(get_ancestor_ids( 1, pd,nancestors= 2 , aggregate=FALSE, include.self=FALSE, only.present = FALSE),           23L    , info = "nancestors= 2, aggregate=FALSE")
     expect_identical(get_ancestor_ids( 1, pd,nancestors= 0 , aggregate=FALSE, include.self=TRUE , only.present = FALSE),    1L             , info = "nancestors=0, include.self=TRUE")
+    expect_identical(get_ancestor_ids( 1, pd,nancestors= 0 , aggregate=TRUE , include.self=TRUE , only.present = FALSE),    1L             , info = "nancestors=0, include.self=TRUE")
 
     expect_identical(get_ancestor_ids( 1, pd,nancestors=Inf, aggregate=FALSE, include.self=FALSE, only.present = FALSE),               0L , info = "nancestors= 2, aggregate=FALSE")
     expect_identical(get_ancestor_ids( 1, pd,nancestors=Inf, aggregate=FALSE, include.self=FALSE, only.present = TRUE ),           23L    , info = "nancestors= 2, aggregate=FALSE")
@@ -130,16 +128,14 @@ if(FALSE){#! @testing
     expect_identical(get_ancestor_ids(c(23, 11), pd, Inf, F, T, T), list(c(23L    ), c(          23L    )))
 }
 if(FALSE){#! @testing last parameter
-'
+pd <- get_parse_data(parse(text = '
 function(){
 setClass( "testClass"
      , slots = c( x="numeric" #< the x field
                 , y="matrix"  #< the y field
                 )
      )
- }' %>%
-    parse(text = .) %>%
-    get_parse_data() -> pd
+ }', keep.source=TRUE))
 
     root.id <- all_root_ids(pd)
     body.id <- get_function_body_id(root.id, pd)
