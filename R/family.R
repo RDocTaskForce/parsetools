@@ -7,18 +7,18 @@
 #
 # LICENSE
 # ========
-# The R package `parsetools` is free software: 
-# you can redistribute it and/or modify it under the terms of the 
+# The R package `parsetools` is free software:
+# you can redistribute it and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software
-# Foundation, either version 3 of the License, or (at your option) 
+# Foundation, either version 3 of the License, or (at your option)
 # any later version.
 #
-# This software is distributed in the hope that it will be useful, 
-# but WITHOUT ANY WARRANTY; without even the implied warranty of 
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License 
+# You should have received a copy of the GNU General Public License
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #
 }#######################################################################
@@ -36,14 +36,14 @@ function( id, pd
     #' @name get_family
     #' @title Get family of nodes.
     #' @inheritParams get_child_ids
-    #' @param ...                       currently ignored. 
+    #' @param ...                       currently ignored.
     #' @param include.doc.comments      include associated documentation comments.
     #' @param include.regular.comments  include associated regular comments.
     #' @description
     #'   Subset the \code{pd} to the family of \code{id}.
     id <- ._check_id(id)
     kids <- get_child_ids(id, pd, include.self=include.self, ngenerations=ngenerations, ...)
-    cids <- 
+    cids <-
         if (include.doc.comments || include.regular.comments){
             if (is_grouping(parent <- get_parent_id(id, pd), pd)) {
                 pd <- fix_grouping_comment_association(parent, pd)
@@ -70,7 +70,7 @@ if(FALSE){#!@testing
     "}, keep.source=TRUE))
     id <- ascend_to_root(pd[pd$text == 'c','id'], pd)
     expect_identical(get_family(id, pd), pd[19:24,])
-    
+
     pd <- get_parse_data(parse(text={"
         # normal comment
         #' Documenation before
@@ -87,7 +87,7 @@ if(FALSE){#!@testing
     expect_equal(fam[1,'text'], "# normal comment")
     fam <- get_family(37, pd, include.doc.comments=FALSE, include.regular.comments=FALSE)
     expect_equal(fam[1,'text'], "hw")
-    
+
     pd <- get_parse_data(parse(text={"
     #demonstration of grouped code.
     {
@@ -101,19 +101,19 @@ if(FALSE){#!@testing
     group.id <- all_root_ids(pd)
     expect_true(is_grouping(group.id, pd))
     id <- expr.id <- all_root_ids(pd, FALSE)
-    
+
     fam <- get_family(expr.id, pd, include.doc.comments=FALSE, include.regular.comments=FALSE)
     expect_equal(fam[1,'text'], 'hw')
     fam <- get_family(expr.id, pd, include.doc.comments=TRUE, include.regular.comments=FALSE)
     expect_equal(fam[1,'text'], "#' Documenation before")
     fam <- get_family(expr.id, pd, include.doc.comments=TRUE, include.regular.comments=TRUE)
     expect_equal(fam[1,'text'], "# normal comment")
-    
-    
+
+
 }
 
 #' @export
-get_sibling_ids <- function(id, pd){
+get_sibling_ids <- function(id, pd=get('pd', parent.frame())){
     #' @title Identify siblings.
     #' @inheritParams get_child_ids
     #' @description \subsection{get_sibling_ids}{
@@ -124,7 +124,7 @@ get_sibling_ids <- function(id, pd){
 }
 
 #' @export
-get_next_sibling_id <- function(id, pd){
+get_next_sibling_id <- function(id, pd=get('pd', parent.frame())){
     #' @rdname get_sibling_ids
     #' @description \subsection{get_next_sibling_id}{
     #'   gives the id of the next youngest sibling of the current id.
@@ -134,7 +134,7 @@ get_next_sibling_id <- function(id, pd){
     if (length(.)) sids[min(.)] else NA_integer_
 }
 #' @export
-get_prev_sibling_id <- function(id, pd){
+get_prev_sibling_id <- function(id, pd=get('pd', parent.frame())){
     #' @rdname get_sibling_ids
     #' @description \subsection{get_prev_sibling_id}{
     #'   gives the id of the next older sibling of the current id.
@@ -146,7 +146,7 @@ get_prev_sibling_id <- function(id, pd){
 
 #' @export
 #' @title Test if id is the firstborn.
-is_firstborn <- function(id, pd=get('pd', parent.frame())){ 
+is_firstborn <- function(id, pd=get('pd', parent.frame())){
     #' @inheritParams get_child_ids
     #' @description
     #'   Test if an expression is the firstborn, ie. oldest or lowest id.
@@ -185,11 +185,11 @@ if(FALSE){#!@testing
     "}, keep.source=TRUE))
     expect_equal(get_firstborn(52, pd)$token, "'{'")
     expect_equal(get_firstborn(7 , pd)$text, "<-")
-    
+
     expect_warning(get_firstborn_id(c(7, 52, .Machine$integer.max), pd))
     expect_identical( suppressWarnings(get_firstborn_id(c(7, 52, .Machine$integer.max), pd))
                     , c(2L, 10L, NA_integer_))
-    
+
     expect_true(is_firstborn(2, pd=pd))
     expect_identical(suppressWarnings(is_firstborn(-1)), NA)
     expect_identical(is_firstborn(c(1,3,7)), c(TRUE, FALSE, TRUE))

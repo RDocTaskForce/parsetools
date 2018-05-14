@@ -3,18 +3,64 @@
 \name{get_parse_data}
 \alias{get_parse_data}
 \alias{parse-data}
-\title{Get cleaned parse data}
+\alias{get_parse_data.srcfile}
+\alias{get_parse_data.srcref}
+\alias{get_parse_data.function}
+\alias{valid_parse_data}
+\alias{as_parse_data}
+\title{Parse Data}
 \usage{
 get_parse_data(x, ...)
+
+\method{get_parse_data}{srcfile}(x, ...)
+
+\method{get_parse_data}{srcref}(x, ..., ignore.groups = TRUE,
+  include.doc.comments = TRUE, include.regular.comments = FALSE)
+
+\method{get_parse_data}{function}(x, ...)
+
+valid_parse_data(df)
+
+as_parse_data(df)
 }
 \arguments{
 \item{x}{an object to get parse-data from.}
 
-\item{...}{passed on}
+\item{...}{options for specific type of objects.}
+
+\item{ignore.groups}{Should \link[=is_grouping]{groupings} be ignored?}
+
+\item{include.doc.comments}{include associated documentation comments.}
+
+\item{include.regular.comments}{include associated regular comments.}
+
+\item{df}{a data.frame object.}
 }
 \description{
-A customized version of `<getParseData>` that will return 
+Parsing data is at the core of parse tools and thus at the core
+of the documentation package. The \code{get_parse_data} function is
+essentially a customized version of `<getParseData>` that will return
 a cleaned up version of the parse data for a variety of objects.
-This version also fails less often, even reparsing text when 
+This version also fails less often, even reparsing text when
 needed.
+
+\subsection{valid_parse_data}{
+The \code{valid_parse_data} function tests if the object \code{df}
+conforms to the expected conventions of a \code{parse-data} object.
+Returns TRUE if valid otherwise returns the reason it is not valid.
 }
+
+\subsection{as_parse_data}{
+The \code{as_parse_data} function tests if a data frame is valid through
+\code{valid_parse_data} then returns the data with the comments
+classified, as is expected for parse-data objects.  All parse data for
+use with parsetools functions should be obtained either through
+get_parse_data or converted through as_parse_data.
+}
+}
+\section{Methods (by class)}{
+\itemize{
+\item \code{function}: Get parse information from a function.
+The function must have a srcref.
+}}
+

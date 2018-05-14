@@ -7,18 +7,18 @@
 #
 # LICENSE
 # ========
-# The R package `parsetools` is free software: 
-# you can redistribute it and/or modify it under the terms of the 
+# The R package `parsetools` is free software:
+# you can redistribute it and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software
-# Foundation, either version 3 of the License, or (at your option) 
+# Foundation, either version 3 of the License, or (at your option)
 # any later version.
 #
-# This software is distributed in the hope that it will be useful, 
-# but WITHOUT ANY WARRANTY; without even the implied warranty of 
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License 
+# You should have received a copy of the GNU General Public License
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #
 }#######################################################################
@@ -32,6 +32,7 @@ function( id = all_root_ids(pd)[1]       #< id of interest
         ){
     #' @title Is a call?
     #' @inheritParams get_child_ids
+    #' @param calls Acceptable calls, if \code{NULL} (default) all calls allowed.
     #' @description
     #'   Checks if the \code{id} identifies in \code{pd} a call expression.
     if (length(id)>1) return(sapply(id, pd_is_call, pd=pd))
@@ -49,7 +50,7 @@ if(FALSE){#!@testing
     expect_true (pd_is_call(ids[[3]]), pd)
     expect_false(pd_is_call(ids[[1]]), pd)
     expect_equal(pd_is_call(ids, pd), c(F, F, T))
-    
+
 }
 
 
@@ -61,7 +62,7 @@ function( id = all_root_ids(pd)[1]       #< id of interest
     #' @title Check if the call is specifically a symbol call
     #' @inheritParams pd_is_call
     #' @description
-    #'   Checks if the \code{id} identifies in \code{pd} specifically a 
+    #'   Checks if the \code{id} identifies in \code{pd} specifically a
     #'   symbol call expression, That is a call from a symbol.
     if (length(id) > 1) return(sapply(id, pd_is_symbol_call, pd=pd))
     if (!pd_is_call(id, pd)) return(FALSE)
@@ -88,19 +89,19 @@ if(FALSE){#!@testing
 
 
 #' @export
-pd_get_call_symbol_id <- 
+pd_get_call_symbol_id <-
 function( id = all_root_ids(pd)[1]       #< id of interest
         , pd = get('pd', parent.frame()) #< parse data of assignemnt
         ){
     #' @title Get the symbol of the function being called.
     #' @inheritParams pd_is_symbol_call
     #' @description
-    #'    Gets the id of the symbol of the call.  
+    #'    Gets the id of the symbol of the call.
     #'    That is the name of the function being called.
     if (length(id)>1) return(sapply(id, pd_get_call_symbol_id, pd=pd))
     if (!pd_is_symbol_call(id, pd)) return(NA_integer_)
-    get_child_ids( 
-        get_next_sibling_id( 
+    get_child_ids(
+        get_next_sibling_id(
             get_firstborn_id(id, pd), pd), pd)
 }
 if(FALSE){#!@testing
@@ -124,8 +125,8 @@ function( id = all_root_ids(pd)[1]       #< id of interest
     #' @description a wrapper to \code{\link{pd_is_symbol_call}} to subset
     #'     the \code{\link{parse-data}}.
     stopifnot(pd_is_symbol_call(id, pd))
-    get_child( 
-        get_next_sibling_id( 
+    get_child(
+        get_next_sibling_id(
             get_firstborn_id(id, pd), pd), pd)
 }
 if(FALSE){#!@testing

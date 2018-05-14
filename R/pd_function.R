@@ -7,18 +7,18 @@
 #
 # LICENSE
 # ========
-# The R package `parsetools` is free software: 
-# you can redistribute it and/or modify it under the terms of the 
+# The R package `parsetools` is free software:
+# you can redistribute it and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software
-# Foundation, either version 3 of the License, or (at your option) 
+# Foundation, either version 3 of the License, or (at your option)
 # any later version.
 #
-# This software is distributed in the hope that it will be useful, 
-# but WITHOUT ANY WARRANTY; without even the implied warranty of 
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License 
+# You should have received a copy of the GNU General Public License
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #
 }#######################################################################
@@ -26,13 +26,13 @@
 #' @export
 pd_is_function <-
 function( id = all_root_ids(pd)
-        , pd = get('pd', parent.frame()) 
+        , pd = get('pd', parent.frame())
         ){
     #' @title test if a function
     #' @inheritParams pd_is_assignment
     #' @description
     #'   Test if the \code{id} points to a function.
-    #'   
+    #'
     if (length(id) > 1) sapply(id, pd_is_function, pd=pd)
     kids.pd <- get_child(id=id, pd, ngenerations=1, FALSE)
     kids.pd[1, 'token'] == 'FUNCTION'
@@ -46,35 +46,32 @@ if(F){#! @testthat pd_is_function
     expect_false(pd_is_function(pd=pd))
 }
 
-pd_is_in_function <- 
+pd_is_in_function <-
 function( id = all_root_ids(pd)
-        , pd = get('pd', parent.frame()) 
+        , pd = get('pd', parent.frame())
         ){
-    
+
 }
 
 
 #' @describeIn pd_is_function Obtain the body of a function
 #' @export
-get_function_body_id <- 
+get_function_body_id <-
 function( id = all_root_ids(pd)
-        , pd=get('pd', parent.frame()) 
+        , pd = get('pd', parent.frame())
         ){
     if (length(id)>1L) return(sapply(id, get_function_body_id, pd=pd))
     max(get_child_ids(id, pd))
 }
 if(F){#@testing
-"hello_world <- function(){
+pd <- get_parse_data(parse(text="hello_world <- function(){
     print('hello world')
 }
-" %>%
-    parse(text = .) %>%
-    get_parse_data() %>%
-    sort-> pd
+", keep.source=TRUE))
 
     id <- pd_get_assign_value_id(pd=pd)
     body.id <- get_function_body_id(id, pd)
-    
+
     expected.body.id <- subset(pd, token == "'{'")$parent
     expect_equal(body.id, expected.body.id)
 
@@ -87,23 +84,21 @@ pd <- get_parse_data(parse(text='function(l,r)paste(l,r)', keep.source=TRUE))
 
 #' @describeIn pd_is_function Obtain the ids for the arguments of a function
 #' @export
-get_function_arg_ids <- 
+get_function_arg_ids <-
 function( id = pd$id
         , pd = get('pd', parent.frame())
         ){
     utils::tail(utils::head(get_child_ids(id=id, pd=pd), -1), -1)
 }
 if(F){#@testing
-'get_function_arg_ids <- 
+pd <- get_parse_data(parse(text='get_function_arg_ids <-
 function( pd                    #< parse data
         , id = all_root_ids(pd) #< id number
-        ){}' %>%
-    parse(text = .) %>%
-    get_parse_data() -> pd
-    
+        ){}', keep.source=TRUE))
+
     id <- pd_get_assign_value_id(pd=pd)
     arg.ids <- get_function_arg_ids(id, pd)
-  
+
     expect_identical( text(arg.ids, pd=pd)
                     , c('(', 'pd', '#< parse data', ','
                        , 'id', '=', '', '#< id number', ')'
@@ -111,7 +106,7 @@ function( pd                    #< parse data
                     )
 }
 
-get_function_arg_variable_ids <- 
+get_function_arg_variable_ids <-
 function( id = pd$id
         , pd = get('pd', parent.frame())
         ){
@@ -119,34 +114,28 @@ function( id = pd$id
     arg.ids[token(arg.ids, pd=pd) == 'SYMBOL_FORMALS']
 }
 if(F){#@testing
-'get_function_arg_ids <- 
+pd <- get_parse_data(parse(text='get_function_arg_ids <-
 function( pd                    #< parse data
         , id = all_root_ids(pd) #< id number
-        ){}' %>%
-    parse(text = .) %>%
-    get_parse_data() -> pd
-    
+        ){}', keep.source=TRUE))
+
     id <- pd_get_assign_value_id(pd=pd)
     expected <- pd[pd$parent==id & pd$text %in% c('pd', 'id'), 'id']
-    
+
     expect_identical(get_function_arg_variable_ids(id, pd), expected)
 }
 
-pd_is_function_arg <- 
+pd_is_function_arg <-
 function(id, pd){}
 if(F){#@testing
-'get_function_arg_ids <- 
+pd <- get_parse_data(parse(text='get_function_arg_ids <-
 function( pd                    #< parse data
                                 #^ continuation comment
         , id = all_root_ids(pd) #< id number
-        ){}' %>%
-    parse(text = .) %>%
-    get_parse_data() -> pd
-    
-    
+        ){}', keep.source=TRUE))
 }
 
-get_function_arg_associated_comment_ids <- 
+get_function_arg_associated_comment_ids <-
 function( id = pd$id
         , pd = get('pd', parent.frame())
         ){
@@ -157,21 +146,19 @@ function( id = pd$id
     comments[associate_relative_comments(comments) == id]
 }
 if(F){#@testing
-'get_function_arg_ids <- 
+pd <- get_parse_data(parse(text='get_function_arg_ids <-
 function( pd                    #< parse data
                                 #< continuation comment
         , id = all_root_ids(pd)
-        ){}' %>%
-    parse(text = .) %>%
-    get_parse_data() -> pd
-    
+        ){}', keep.source=TRUE))
+
     function.id <- pd_get_assign_value_id(pd=pd)
     arg.ids <- get_function_arg_variable_ids(function.id, pd)
     id <- arg.ids[[1]]
-    
+
     value <- get_function_arg_associated_comment_ids(id, pd)
     expect_identical(text(value, pd=pd), c('#< parse data', '#< continuation comment'))
-    
+
     expect_length(get_function_arg_associated_comment_ids(arg.ids[[2]], pd), 0)
 }
 

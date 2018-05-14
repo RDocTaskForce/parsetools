@@ -7,18 +7,18 @@
 #
 # LICENSE
 # ========
-# The R package `parsetools` is free software: 
-# you can redistribute it and/or modify it under the terms of the 
+# The R package `parsetools` is free software:
+# you can redistribute it and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software
-# Foundation, either version 3 of the License, or (at your option) 
+# Foundation, either version 3 of the License, or (at your option)
 # any later version.
 #
-# This software is distributed in the hope that it will be useful, 
-# but WITHOUT ANY WARRANTY; without even the implied warranty of 
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License 
+# You should have received a copy of the GNU General Public License
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #
 }#######################################################################
@@ -52,9 +52,9 @@ if(FALSE){#! @testing
     expect_equal(classify_comment.character("#< Relative comment     "), "RELATIVE_COMMENT")
     expect_equal(classify_comment.character("#^ Continuation comment "), "CONTINUATION_COMMENT")
     expect_equal(classify_comment.character("#@ Tag comment          "), "TAG_COMMENT")
-    
+
     expect_equal(classify_comment.character("1"), "")
-}    
+}
 classify_comment.data.frame <- function(x){
     stopifnot(valid_parse_data(x))
     idx <- x$token == "COMMENT"
@@ -62,14 +62,14 @@ classify_comment.data.frame <- function(x){
     structure(x, class=c("parse-data", "data.frame"))
 }
 if(FALSE){#! @testing
-    x <- 
+    x <-
     df <- utils::getParseData(parse(text="{
-        ## normal comment           
-        #' Roxygen comment          
-        #! Documentation comment    
-        #< Relative comment         
-        #^ Continuation comment     
-        #@ Tag comment              
+        ## normal comment
+        #' Roxygen comment
+        #! Documentation comment
+        #< Relative comment
+        #^ Continuation comment
+        #@ Tag comment
     }", keep.source=TRUE))
     pd <- classify_comment.data.frame(df)
     expect_is(pd, 'data.frame')
@@ -84,12 +84,12 @@ if(FALSE){#! @testing
 classify_comment <- function(x)UseMethod("classify_comment")
 if(FALSE){#! @testing
     df <- utils::getParseData(parse(text="{
-        ## normal comment           
-        #' Roxygen comment          
-        #! Documentation comment    
-        #< Relative comment         
-        #^ Continuation comment     
-        #@ Tag comment              
+        ## normal comment
+        #' Roxygen comment
+        #! Documentation comment
+        #< Relative comment
+        #^ Continuation comment
+        #@ Tag comment
     }", keep.source=TRUE))
     pd <- classify_comment(df)
     comments <- get_comments(pd)
@@ -106,7 +106,7 @@ if(FALSE){#! @testing
 #' @title Is this a comment?
 #' @param x   object to test
 #' @param ... other arguments, noteably \code{id} for \code{\link{parse-data}}.
-#' @description 
+#' @description
 #'   \subsection{is_doc_comment}{
 #'      A generic function for determining if an object is a comment.
 #'      Used for testing character vectors, as well as \code{\link{parse-data}} and
@@ -123,7 +123,7 @@ is_comment.character <- function(x, ...){
                               )
 }
 
-#' @export 
+#' @export
 is_comment.integer <- function(x, pd = get('pd', parent.frame()), ...){
     stopifnot(inherits(pd, 'parse-data'))
     token(id=x, pd) %in% c(comment.classes$class, "NORMAL_COMMENT")
@@ -142,7 +142,7 @@ is_comment.data.frame <- function(x, id=x$id, ...){
                                     , "NORMAL_COMMENT"
                                     )
 }
-if(FALSE){#!@testing 
+if(FALSE){#!@testing
     expect_true(is_comment("## normal comment       "))
     expect_true(is_comment("#' Roxygen comment      "))
     expect_true(is_comment("#! Documentation comment"))
@@ -151,12 +151,12 @@ if(FALSE){#!@testing
     expect_true(is_comment("#@ Tag comment          "))
     expect_false(is_comment("hello"))
     pd <- get_parse_data(parse(text={"
-        ## normal comment           
-        #' Roxygen comment          
-        #! Documentation comment    
-        #< Relative comment         
-        #^ Continuation comment     
-        #@ Tag comment              
+        ## normal comment
+        #' Roxygen comment
+        #! Documentation comment
+        #< Relative comment
+        #^ Continuation comment
+        #@ Tag comment
         Hello
     "}, keep.source=TRUE))
     rtn <- is_comment(pd)
@@ -178,18 +178,18 @@ if(F){#@testing
     expect_false(is_relative_comment("#@ Tag comment          "))
     expect_false(is_relative_comment("hello"))
     pd <- get_parse_data(parse(text={"
-        ## normal comment           
-        #' Roxygen comment          
-        #! Documentation comment    
-        #< Relative comment         
-        #^ Continuation comment     
-        #@ Tag comment              
+        ## normal comment
+        #' Roxygen comment
+        #! Documentation comment
+        #< Relative comment
+        #^ Continuation comment
+        #@ Tag comment
         Hello
-    "}))
+    "}, keep.source=TRUE))
     rtn <- is_relative_comment(pd)
     expect_is(rtn, 'logical')
     expect_equal(rtn, c(F,F,F,T,F,F,F,F))
-    
+
 }
 
 #' @export
@@ -219,28 +219,32 @@ if(FALSE){#! @testing
     expect_true (is_doc_comment("#@ Tag comment          "))
 
     pd <- utils::getParseData(parse(text="{
-        ## normal comment           
-        #' Roxygen comment          
-        #! Documentation comment    
-        #< Relative comment         
-        #^ Continuation comment     
-        #@ Tag comment              
+        ## normal comment
+        #' Roxygen comment
+        #! Documentation comment
+        #< Relative comment
+        #^ Continuation comment
+        #@ Tag comment
     }", keep.source=TRUE))
     rtn <- is_doc_comment(pd)
     expect_is(rtn, 'logical')
     expect_equal(rtn, c(F,F,F,T,T,T,T,T,F))
 
     pd <- get_parse_data(parse(text="{
-        ## normal comment           
-        #' Roxygen comment          
-        #! Documentation comment    
-        #< Relative comment         
-        #^ Continuation comment     
-        #@ Tag comment              
+        ## normal comment
+        #' Roxygen comment
+        #! Documentation comment
+        #< Relative comment
+        #^ Continuation comment
+        #@ Tag comment
     }", keep.source=TRUE))
     rtn <- is_doc_comment(pd)
     expect_is(rtn, 'logical')
     expect_equal(rtn, c(F,F,F,T,T,T,T,T,F))
+}
+#' @export
+is_doc_comment.integer <- function(x, pd=get('pd', parent.frame()), ...){
+    token(x, pd=pd) %in% comment.classes$class
 }
 
 # nocov start
@@ -261,22 +265,33 @@ function( type = comment.classes$class  #< type of the comments to extract
     }
 }
 
+make_get_comment_ids <-
+function( type = comment.classes$class
+        ){
+    function( pd = get('pd', parent.frame()) ){
+        pd <-  ._check_parse_data(pd)
+        pd[pd$token %in% type, 'id']
+    }
+}
+
 #' @export
 #' @rdname get_comments
 #' @description \subsection{get_doc_comments}{Get all documentation comments(any type).}
 get_doc_comments          <- make_get_comment.classes()
+doc_comments <- make_get_comment_ids(comment.classes$class)
 
 #' @export
 #' @rdname get_comments
 #' @description \subsection{get_roxygen_comments}{Get Roxygen \code{#'} comments only.}
 get_roxygen_comments      <- make_get_comment.classes("ROXYGEN_COMMENT")
+roxygen_comments <- make_get_comment_ids('ROXYGEN_COMMENT')
 
 #' @export
 #' @rdname get_comments
 #' @description \subsection{get_relative_comments}{Get relative \code{#<} comments only.}
 get_relative_comments     <- make_get_comment.classes("RELATIVE_COMMENT")
 get_relative_comment_ids <- function(pd){pd$id[pd$token == "RELATIVE_COMMENT"]}
-
+relative_comments <- make_get_comment_ids('RELATIVE_COMMENT')
 
 #' @export
 #' @rdname get_comments
@@ -298,30 +313,29 @@ get_normal_comments       <- make_get_comment.classes("NORMAL_COMMENT")
 # nocov end
 
 #@internal
-get_associated_continuation <-
-function( pd            #< parse data.
-        , id=pd$id[1]   #< id of the comment of interest
+get_associated_continuation_ids <-
+function( id = pd$id[1]                  #< id of the comment of interest
+        , pd = get('pd', parent.frame()) #< parse data.
         ){
-    #no covr start
     .Deprecated(msg="Support for continuations comments is in flux and support may be removed.")
     #! retrieve the continuation comments associated with the comment of interest.
-    #TODO check if this works better with next sibling formulation.
-    pd <- classify_comment(pd)
-    start <-
-    end   <- which(pd$id==id)
-    if (pd[start,'token'] %in%  c("DOC_COMMENT", "RELATIVE_COMMENT")) {
-        while(pd[end + 1, 'token'] == "CONTINUATION_COMMENT"){
-            end <- end + 1
-        }
-        return(pd[start:end, ])
-    } else if(pd[start, 'token'] %in% "ROXYGEN_COMMENT") {
-        return(pd[start,])
-    } else stop("not a valid starting comment.")
-    #! @return filtered parse data with the comments, will be empty if the id 
-    #! does not denote a documentation comment.
-    #no covr end
+    assoc.ids <- id
+    if (!is_doc_comment(id, pd))
+        stop("not a valid starting comment.")
+    while(TRUE){
+        id <- get_next_sibling_id(id, pd)
+        if (is.na(id) || token(id) != 'CONTINUATION_COMMENT') break
+        assoc.ids <-c(assoc.ids, id)
+    }
+    return(assoc.ids)
 }
-if(FALSE){# Deprecated testing code.
+get_associated_continuation <-
+    function( id = relative_comments(pd)
+            , pd = get('pd', parent.frame())
+            )
+        nodes(get_associated_continuation_ids(id=id, pd=pd), pd=pd)
+
+if(FALSE){#@testing
     pd <- get_parse_data(parse(text="
     #' A Title for this function
     function( x = 0 #< just a random argument
@@ -330,24 +344,27 @@ if(FALSE){# Deprecated testing code.
             ){x**y}
     # Regular Comment
     ", keep.source=TRUE))
-    id <- get_relative_comments(pd)$id[[2]]
-    
-    x <- get_associated_continuation(id, pd)
-    expect_equal( x$line1, c(4,5))
-    expect_equal( x$id, c(20,22))
-    expect_equal( x$text, c( "#< yet another"
-                           , "#^ argument."
-                           ))
-    
-    roxy <- get_roxygen_comments(pd)
-    expect_identical(roxy, get_associated_continuation(id = roxy$id, pd))
+    id <- get_relative_comment_ids(pd)[[2]]
 
-    expect_error(get_associated_continuation(id = get_normal_comments(pd)$id, pd))
+    expect_warning(x <- get_associated_continuation_ids(id, pd))
+    expect_equal( start_line(x, pd), c(4,5))
+    expect_equal( x, c(20,22))
+    expect_equal( text(x, pd), c( "#< yet another"
+                                , "#^ argument."
+                                ))
+
+    roxy <- get_roxygen_comments(pd)
+    expect_warning(x <- get_associated_continuation(roxy$id, pd))
+    expect_identical(roxy, x)
+
+    expect_error( suppressWarnings(get_associated_continuation(id = get_normal_comments(pd)$id, pd))
+                , "not a valid starting comment."
+                )
 }
 
 #' @export
 strip_doc_comment_leads.character <- function(comment, rm.space=TRUE){
-    comment <- gsub("^\\s+", "", comment)    
+    comment <- gsub("^\\s+", "", comment)
     comment <- gsub("^#[!^<'{}@]", "", comment)
     if(rm.space) comment <- trimws(comment)
     comment
@@ -370,12 +387,12 @@ strip_doc_comment_leads.data.frame <- function(comment, rm.space=TRUE){
 }
 if(FALSE){#! @testing
     pd <- utils::getParseData(parse(text="{
-        ## normal comment           
-        #' Roxygen comment          
-        #! Documentation comment    
-        #< Relative comment         
-        #^ Continuation comment     
-        #@ Tag comment              
+        ## normal comment
+        #' Roxygen comment
+        #! Documentation comment
+        #< Relative comment
+        #^ Continuation comment
+        #@ Tag comment
     }", keep.source=TRUE))
     comments <- get_comments(pd)
     pd2 <- strip_doc_comment_leads.data.frame(comments)
@@ -393,8 +410,8 @@ if(FALSE){#! @testing
 #' @title Remove the characters identifying a documentation comment.
 #' @param comment The text of the comments or parse data.
 #' @param rm.space      should the space at the beginning of the line be removed.
-#' @description 
-#' Remove the characters identifying a documentation comment as a 
+#' @description
+#' Remove the characters identifying a documentation comment as a
 #' document comment leaving only the relevant text.
 strip_doc_comment_leads <-
 function( comment, rm.space = TRUE)
@@ -407,14 +424,14 @@ if(FALSE){#! @testing
     expect_equal(strip_doc_comment_leads("#< Relative comment     "), "Relative comment")
     expect_equal(strip_doc_comment_leads("#^ Continuation comment "), "Continuation comment")
     expect_equal(strip_doc_comment_leads("#@ Tag comment          "), "Tag comment")
-    
+
     pd <- utils::getParseData(parse(text="{
-        ## normal comment           
-        #' Roxygen comment          
-        #! Documentation comment    
-        #< Relative comment         
-        #^ Continuation comment     
-        #@ Tag comment              
+        ## normal comment
+        #' Roxygen comment
+        #! Documentation comment
+        #< Relative comment
+        #^ Continuation comment
+        #@ Tag comment
     }", keep.source=TRUE))
     comments <- get_comments(pd)
     pd2 <- strip_doc_comment_leads(comments)

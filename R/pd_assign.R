@@ -82,7 +82,7 @@ function( pd #< The [parse-data] object, representing an assignment
     #' @title get the value of an assignment operator expression.
     #' @inheritParams pd_get_assign_value_id
     #' @description
-    #'   A convenience wrapper for getting the subset parse-data for 
+    #'   A convenience wrapper for getting the subset parse-data for
     #'   the value of an assignemtn expression.
     get_family(pd_get_assign_value_id(id), pd)
     #' @return a \code{\link{parse-data}} object.
@@ -126,7 +126,7 @@ function( pd #< The [parse-data] object, representing an assignment
           , LEFT_ASSIGN  = get_family(id = utils::head(kids.pd$id,1), pd)
           , EQ_ASSIGN    = get_family(id = utils::head(kids.pd$id,1), pd)
           )
-    #' @return will return the \code{\link{parse-data}}, 
+    #' @return will return the \code{\link{parse-data}},
     #'         which is typically rooted by an 'expr' token.
 }
 if(F){#!@testthat
@@ -148,9 +148,9 @@ function( pd #< The [parse-data] object, representing an assignment
     #' @title Get the variable of an assignment
     #' @inheritParams pd_is_assignment
     #' @description
-    #'   Gets the id for the variable portion of an assignment expression. 
+    #'   Gets the id for the variable portion of an assignment expression.
     #'   This accounts for the direction of the assignment arrow.
-    #'   
+    #'
     if(length(id) > 1)
         sapply(id, pd_get_assign_variable_id, pd=pd)
     child.ids   <- get_child_ids(id, pd, 1, FALSE)
@@ -162,13 +162,10 @@ function( pd #< The [parse-data] object, representing an assignment
     #' @return an id integer, typically pointing to an 'expr' node in pd.
 }
 if(F){#!@testthat
-"hello_world <- function(){
+pd <- get_parse_data(parse(text="hello_world <- function(){
     print('hello world')
 }
-" %>%
-parse(text = ., keep.source=TRUE) %>%
-get_parse_data() %>%
-sort-> pd
+", keep.source=TRUE))
 
     expect_true(pd_is_assignment(pd=pd))
 
