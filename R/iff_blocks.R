@@ -101,7 +101,7 @@ function( pd
     #' @description
     #'   Retreives all the ids from pd that identify
     #'   \code{\link[=iff-blocks]{if(FALSE)}} blocks.
-    #'   See \code{\link[=root]{is_root}} for details on \code{root.only}.
+    #'   See \code{\link{pd_is_root}} for details on \code{root.only}.
     #'   See \code{\link{pd_is_grouping}} for details on groups affected by
     #'   \code{ignore.groups}.
     #'

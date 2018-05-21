@@ -1,5 +1,5 @@
 {#######################################################################
-# is_root.R
+# root.R
 # This file is part of the R package `parsetools`.
 #
 # Author: Andrew Redd
@@ -48,7 +48,7 @@
 list()
 
 #' @export
-is_root <-
+pd_is_root <-
 function( id = pd$id
         , pd = get('pd', parent.frame())
         , ignore.groups = TRUE  #< Ignore groups? see details.
@@ -56,7 +56,7 @@ function( id = pd$id
     #' @describeIn root Test if a node is a root node
     #' @param ignore.groups Should \link[=pd_is_grouping]{groupings} be ignored?
     id <- ._check_id(id)
-    if (length(id) > 1) return(sapply(id, is_root, pd=pd, ignore.groups=ignore.groups))
+    if (length(id) > 1) return(sapply(id, pd_is_root, pd=pd, ignore.groups=ignore.groups))
     if (!(id %in% pd$id)) stop("id not present in pd")
     if (pd[pd$id == id,'token'] != 'expr') return(FALSE)
     parent <- pd[pd$id == id,'parent']
@@ -66,9 +66,9 @@ function( id = pd$id
 }
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
-    expect_true (is_root(23, pd))
-    expect_false(is_root( 1, pd))
-    expect_equal(sum(is_root(pd=pd)), 1)
+    expect_true (pd_is_root(23, pd))
+    expect_false(pd_is_root( 1, pd))
+    expect_equal(sum(pd_is_root(pd=pd)), 1)
 
 
     pd <- get_parse_data(parse(text={'{
@@ -76,18 +76,18 @@ if(FALSE){#! @testing
         y <- runif(10)
         plot(x,y)
     }'}, keep.source=TRUE))
-    expect_true(is_root(68, pd), info="Grouping root")
-    expect_true(is_root(30, pd), info="Root within grouping.")
-    expect_equal(sum(is_root(pd=pd)), 4)
-    expect_equal(sum(is_root(c(68, 30, 46, 62), pd)), 4)
-    expect_false(is_root(66, pd))
+    expect_true(pd_is_root(68, pd), info="Grouping root")
+    expect_true(pd_is_root(30, pd), info="Root within grouping.")
+    expect_equal(sum(pd_is_root(pd=pd)), 4)
+    expect_equal(sum(pd_is_root(c(68, 30, 46, 62), pd)), 4)
+    expect_false(pd_is_root(66, pd))
 
-    expect_equal(sum(is_root(pd$id, pd, ignore.groups=FALSE)), 1)
-    expect_error(is_root(0L, pd))
+    expect_equal(sum(pd_is_root(pd$id, pd, ignore.groups=FALSE)), 1)
+    expect_error(pd_is_root(0L, pd))
 
     pd[pd$parent %in% c(0,68) & pd$token == 'expr', ]
-    expect_false(is_root(30, pd, ignore.groups = FALSE))
-    expect_equal(is_root(c(68, 30), pd, ignore.groups = FALSE), c(TRUE, FALSE))
+    expect_false(pd_is_root(30, pd, ignore.groups = FALSE))
+    expect_equal(pd_is_root(c(68, 30), pd, ignore.groups = FALSE), c(TRUE, FALSE))
 
     pd <- get_parse_data(parse(text={"
         # a comment outside the grouping
@@ -105,19 +105,19 @@ if(FALSE){#! @testing
         6+7 #< a regular root expression
     "}, keep.source=TRUE))
     id <- max(pd[pd$token =="'{'", 'parent'])
-    expect_true(is_root(id, pd, ignore.groups = TRUE))
+    expect_true(pd_is_root(id, pd, ignore.groups = TRUE))
     id <- min(pd[pd$token =="'{'", 'parent'])
     expect_equal(get_family(id, pd)[3,'text'], "# Another Grouping")
 
     ids <- pd[pd$token =="'{'", 'parent']
-    expect_equal(is_root(ids, pd, ignore.groups = TRUE ), c(TRUE, FALSE, FALSE))
-    expect_equal(is_root(ids, pd, ignore.groups = FALSE), c(TRUE, FALSE, FALSE))
+    expect_equal(pd_is_root(ids, pd, ignore.groups = TRUE ), c(TRUE, FALSE, FALSE))
+    expect_equal(pd_is_root(ids, pd, ignore.groups = FALSE), c(TRUE, FALSE, FALSE))
 
     pd <- get_parse_data(parse(text="
         # a comment
         an_expression()
     ", keep.source=TRUE))
-    expect_false(is_root(pd[1,'id'], pd))
+    expect_false(pd_is_root(pd[1,'id'], pd))
 }
 
 
@@ -225,7 +225,7 @@ if(FALSE){#!@testing
 ascend_to_root <-
 function( id = pd$id
         , pd = get('pd', parent.frame())
-        , ignore.groups=TRUE    #< Ignore groups? see <is_root>.
+        , ignore.groups=TRUE    #< Ignore groups? see <pd_is_root>.
         ) {
     #' @describeIn root ascend from id to root
     id <- ._check_id(id)
@@ -234,7 +234,7 @@ function( id = pd$id
     while (TRUE) {
         if (is.na(parent) || parent == 0) return(0L)
         if (parent < 0) parent <- -parent
-        if (is_root(parent, pd, ignore.groups=ignore.groups)) return(parent)
+        if (pd_is_root(parent, pd, ignore.groups=ignore.groups)) return(parent)
         parent <- get_parent_id(parent, pd)
     }
 }
