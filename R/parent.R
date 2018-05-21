@@ -26,7 +26,7 @@
 #' @export
 get_parent_id <- function(id=pd$id, pd=get('pd', parent.frame())) {
     #' @title Get the parent of the expression identified by `id` in `pd`.
-    #' @inheritParams get_child_ids
+    #' @inheritParams get_children_ids
     #'
     #' @description Get the parent of the expression identified by `id` in `pd`.
     id <- ._check_id(id)
@@ -43,6 +43,8 @@ if(FALSE){#! @testing
     expect_identical(get_parent_id(pd, pd), pd$parent)
     expect_identical(get_parent_id(0L, pd), NA_integer_)
 }
+#' @internal
+parent <- internal(get_parent_id)
 
 #' @export
 get_ancestor_ids <-

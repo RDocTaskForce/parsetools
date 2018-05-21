@@ -24,6 +24,7 @@
 #' @return Returns a vector of the same length as id.  Where the value is
 #'         either the id of the associated object or NA if it cannot be
 #'         associated.
+#' @export
 associate_relative_comments <-
 function( id = get_relative_comments(pd)$id
         , pd = get('pd', parent.frame())

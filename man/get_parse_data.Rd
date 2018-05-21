@@ -28,7 +28,7 @@ as_parse_data(df)
 
 \item{...}{options for specific type of objects.}
 
-\item{ignore.groups}{Should \link[=is_grouping]{groupings} be ignored?}
+\item{ignore.groups}{Should \link[=pd_is_grouping]{groupings} be ignored?}
 
 \item{include.doc.comments}{include associated documentation comments.}
 

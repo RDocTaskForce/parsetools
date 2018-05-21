@@ -33,9 +33,9 @@ function( id = all_root_ids(pd)
     #' @description
     #'   Test if the \code{id} points to a function.
     #'
-    if (length(id) > 1) sapply(id, pd_is_function, pd=pd)
-    kids.pd <- get_child(id=id, pd, ngenerations=1, FALSE)
-    kids.pd[1, 'token'] == 'FUNCTION'
+    if (length(id) > 1) return(sapply(id, pd_is_function, pd=pd))
+    kids <- get_children_ids(id=id, pd, ngenerations=1, FALSE)
+    token(firstborn(id)) =='FUNCTION'
     #' @return a logical vector, same length as \code{id}.
 }
 if(F){#! @testthat pd_is_function
@@ -44,13 +44,15 @@ if(F){#! @testthat pd_is_function
 
     pd <- get_parse_data(parse(text="fun <- function(){}", keep.source=TRUE))
     expect_false(pd_is_function(pd=pd))
+
+    pd_is_function(pd$id, pd)
 }
 
 pd_is_in_function <-
 function( id = all_root_ids(pd)
         , pd = get('pd', parent.frame())
         ){
-
+    stop("Not implimented")
 }
 
 
@@ -61,7 +63,7 @@ function( id = all_root_ids(pd)
         , pd = get('pd', parent.frame())
         ){
     if (length(id)>1L) return(sapply(id, get_function_body_id, pd=pd))
-    max(get_child_ids(id, pd))
+    max(get_children_ids(id, pd))
 }
 if(F){#@testing
 pd <- get_parse_data(parse(text="hello_world <- function(){
@@ -83,12 +85,11 @@ pd <- get_parse_data(parse(text='function(l,r)paste(l,r)', keep.source=TRUE))
 }
 
 #' @describeIn pd_is_function Obtain the ids for the arguments of a function
-#' @export
 get_function_arg_ids <-
 function( id = pd$id
         , pd = get('pd', parent.frame())
         ){
-    utils::tail(utils::head(get_child_ids(id=id, pd=pd), -1), -1)
+    utils::tail(utils::head(get_children_ids(id=id, pd=pd), -1), -1)
 }
 if(F){#@testing
 pd <- get_parse_data(parse(text='get_function_arg_ids <-
@@ -125,14 +126,27 @@ function( pd                    #< parse data
     expect_identical(get_function_arg_variable_ids(id, pd), expected)
 }
 
+#' @export
+#' @rdname
 pd_is_function_arg <-
-function(id, pd){}
+function(id, pd){
+    pd_is_function(parent(id), pd=pd)
+
+    get_children_ids(parent(id))
+
+}
 if(F){#@testing
 pd <- get_parse_data(parse(text='get_function_arg_ids <-
 function( pd                    #< parse data
-                                #^ continuation comment
+                                #< continuation comment
         , id = all_root_ids(pd) #< id number
-        ){}', keep.source=TRUE))
+        ){
+
+        #< malplaced relative comment
+        }', keep.source=TRUE))
+
+id <- associate_relative_comments(pd=pd)
+#TODO finish testing pd_is_function_arg
 }
 
 get_function_arg_associated_comment_ids <-

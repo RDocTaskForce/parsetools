@@ -4,20 +4,18 @@ assignment.opperators <- c("LEFT_ASSIGN", "RIGHT_ASSIGN", "EQ_ASSIGN")
 
 #' @export
 pd_is_assignment <-
-function( pd            #< parse data of assignemnt
-        , id = all_root_ids(pd)[1] #< id of interest.
+function( id = all_root_ids(pd)[1]
+        , pd = get('pd', parent.frame())
         ){
     #' @title Check if it is an assignment
-    #' @inheritParams get_child_ids
+    #' @inheritParams get_children_ids
     #' @description
     #'   check if the provided parse-data is an assignment expression.
     id <- ._check_id(id)
-    if(pd[pd$id == id, 'token'] != 'expr')
-        FALSE
-    kids.pd <- get_children(id, pd, ngenerations=1)[[1]]
-    kids.pd <- kids.pd[kids.pd[['token']] != 'expr', ]
+    if (length(id)>1L) return(sapply(id, pd_is_assignment, pd=pd))
 
-    any(kids.pd[['token']] %in% assignment.opperators)
+    token(id) == 'expr' &&
+    any(token(children(id)) %in% assignment.opperators)
 }
 if(F){#! @testthat pd_is_assignment
     pd <- get_parse_data(parse(text="x <-  1", keep.source=TRUE))
@@ -44,7 +42,7 @@ function( id = all_root_ids(pd)
     #'    accounting for the direction of the arrow.
     if(length(id) > 1)
         sapply(id, pd_get_assign_value_id, pd=pd)
-    child.ids <- get_child_ids(id, pd, 1, FALSE)
+    child.ids <- get_children_ids(id, pd, 1, FALSE)
     type <- pd[pd$id %in% child.ids & pd$token %in% assignment.opperators, 'token']
     switch( type
           , RIGHT_ASSIGN = min(child.ids)
@@ -153,7 +151,7 @@ function( pd #< The [parse-data] object, representing an assignment
     #'
     if(length(id) > 1)
         sapply(id, pd_get_assign_variable_id, pd=pd)
-    child.ids   <- get_child_ids(id, pd, 1, FALSE)
+    child.ids   <- get_children_ids(id, pd, 1, FALSE)
     assign.pd   <- pd[pd$id %in% child.ids & pd$token %in% assignment.opperators, ]
     switch( assign.pd$token
           , RIGHT_ASSIGN = max(child.ids)

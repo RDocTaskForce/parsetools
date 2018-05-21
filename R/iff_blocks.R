@@ -38,7 +38,7 @@ function( id = all_root_ids(pd)
         ){
     #' @title test if an expresion ID points to a `if(FALSE)` statement.
     #' @aliases iff-blocks
-    #' @inheritParams get_child_ids
+    #' @inheritParams get_children_ids
     #' @param allow.short Should \code{F} be interpreted as FALSE.
     #'
     #' @description
@@ -53,10 +53,10 @@ function( id = all_root_ids(pd)
     if (length(id) > 1) return(sapply(id, is_iff_block, pd=pd, allow.short=allow.short))
 
     if (token(id) != 'expr') return(FALSE)
-    kids <- get_child_ids(id, pd)
+    kids <- get_children_ids(id, pd)
     if (length(kids) < 2) return(FALSE)
     if (!identical(pd[match(utils::head(kids, 2), pd$id), 'token'], c("IF", "'('"))) return(FALSE)
-    grandkids <- get_child_ids( kids[[3]], pd)
+    grandkids <- get_children_ids( kids[[3]], pd)
     if (length(grandkids) != 1) return(FALSE)
     row <- pd[match(grandkids, pd$id),]
     return( ( row[['token']] == "NUM_CONST" && row[['text']] == "FALSE")
@@ -102,7 +102,7 @@ function( pd
     #'   Retreives all the ids from pd that identify
     #'   \code{\link[=iff-blocks]{if(FALSE)}} blocks.
     #'   See \code{\link[=root]{is_root}} for details on \code{root.only}.
-    #'   See \code{\link{is_grouping}} for details on groups affected by
+    #'   See \code{\link{pd_is_grouping}} for details on groups affected by
     #'   \code{ignore.groups}.
     #'
     #' @return an integer vector of all ids identifying
@@ -308,7 +308,7 @@ function(id, pd = get('pd', parent.frame())){
         if (!is_iff_block(prev.id, pd)) break
         prev.id <- get_prev_sibling_id(prev.id, pd)
     }
-    if (pd_is_assignment(pd, prev.id)) {
+    if (pd_is_assignment(prev.id, pd)) {
         #' If the previous expression is an assignment, the asignee variable of
         #' the assignment is chosen as the name.
         value.id <- pd_get_assign_value_id(prev.id)
@@ -333,18 +333,38 @@ function(id, pd = get('pd', parent.frame())){
                     #' assignment operation takes priority and would have
                     #' \code{type="assignment"}.
                     #'
-                    args <- pd_get_call_args(prev.id)
-                    name <- unquote(args[[if('Class' %in% names(args)) 'Class' else 1L]][1,'text'])
+                    args <- pd_get_call_arg_ids(prev.id)
+                    line_error_if (length(args) == 0, prev.id,
+                        ": setClass must be called with a Class argument.")
+                    name <- {
+                            class.arg <- if ('Class' %in% names(args)) args[['Class']] else args[[1L]]
+                            while (token(class.arg) == 'expr') class.arg <- firstborn(class.arg)
+                            if (token(class.arg) == 'STR_CONST') unquote(text(class.arg)) else
+                                line_error(prev.id, 'cannot infer Class argument of setClass at')
+                        }
                     structure(name, type = "setClass")
                 }
               , setMethod = {
                     #' The names for \code{\link{setMethod}} will assume
                     #' the S3 convention of \code{<method>.<class>}.
-                    args <- pd_get_call_args(prev.id)
-                    fname <- unquote(args[[ifelse('f' %in% names(args), 'f', 1L)]][1,'text'])
+                    args <- pd_get_call_arg_ids(prev.id)
+                    line_error_if(length(args)==0, prev.id,
+                        "setMethod must be called with arguments.")
+                    fname <- {
+                        fname.arg <- args[[ifelse('f' %in% names(args), 'f', 1L)]]
+                        while (token(fname.arg) == 'expr') fname.arg <- firstborn(fname.arg)
+                        if (token(fname.arg) == 'STR_CONST') unquote(text(fname.arg)) else
+                            line_error(prev.id, "Cannot infer method name for setMethod.")
+                    }
                     #' In the case the the signature is more than just the class,
                     #' the signature will be collapsed, separated by commas.
-                    signature <- args[[ifelse('signature' %in% names(args), 'signature', 2L)]]
+                    signature <- {
+                        # args[[ifelse('signature' %in% names(args), 'signature', 2L)]]
+                        sig.arg <- args[[ifelse('signature' %in% names(args), 'f', 1L)]]
+                        while (token(fname.arg) == 'expr') fname.arg <- firstborn(fname.arg)
+                        if (token(fname.arg) == 'STR_CONST') unquote(text(fname.arg)) else
+                            line_error(prev.id, "Cannot infer method name for setMethod.")
+                    }
                     signature <- paste(unquote(signature$text), collapse=',')
                     name <- paste(fname, signature, sep='.')
                     structure(name, type="setMethod")
@@ -355,8 +375,15 @@ function(id, pd = get('pd', parent.frame())){
                     #' \code{\link{setGeneric}} can also be used with the name
                     #' of the generic function the inferred name and
                     #' \code{type="setGeneric"}.
-                    args <- pd_get_call_args(prev.id)
-                    fname <- unquote(args[[ifelse('f' %in% names(args), 'f', 1L)]][1,'text'])
+                    args <- pd_get_call_arg_ids(prev.id)
+                    line_error_if(length(args)==0, prev.id,
+                        "setGeneric must be called with arguments.")
+                    fname <- {
+                        fname.arg <- args[[ifelse('f' %in% names(args), 'f', 1L)]]
+                        while (token(fname.arg) == 'expr') fname.arg <- firstborn(fname.arg)
+                        if (token(fname.arg) == 'STR_CONST') unquote(text(fname.arg)) else
+                            line_error(prev.id, "Cannot infer method name for setGeneric")
+                    }
                     structure(fname, type='setGeneric')
                 }
               , NULL#' if not specified above the function returns \code{\link{NULL}}.

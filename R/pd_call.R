@@ -31,7 +31,7 @@ function( id = all_root_ids(pd)[1]       #< id of interest
         , calls = NULL
         ){
     #' @title Is a call?
-    #' @inheritParams get_child_ids
+    #' @inheritParams get_children_ids
     #' @param calls Acceptable calls, if \code{NULL} (default) all calls allowed.
     #' @description
     #'   Checks if the \code{id} identifies in \code{pd} a call expression.
@@ -87,7 +87,6 @@ if(FALSE){#!@testing
     expect_equal(pd_is_symbol_call(ids, pd), c(F, F, T))
 }
 
-
 #' @export
 pd_get_call_symbol_id <-
 function( id = all_root_ids(pd)[1]       #< id of interest
@@ -100,7 +99,8 @@ function( id = all_root_ids(pd)[1]       #< id of interest
     #'    That is the name of the function being called.
     if (length(id)>1) return(sapply(id, pd_get_call_symbol_id, pd=pd))
     if (!pd_is_symbol_call(id, pd)) return(NA_integer_)
-    get_child_ids(
+    stopifnot(pd_is_symbol_call(id, pd))
+    get_children_ids(
         get_next_sibling_id(
             get_firstborn_id(id, pd), pd), pd)
 }
@@ -114,6 +114,8 @@ if(FALSE){#!@testing
     id <- ids[[3]]
     expect_equal(pd_get_call_symbol_id(id, pd), 45L)
 }
+call_symbol <- internal(pd_get_call_symbol_id)
+
 
 #' @export
 pd_get_call_symbol <-
@@ -124,10 +126,7 @@ function( id = all_root_ids(pd)[1]       #< id of interest
     #' @inheritParams pd_is_symbol_call
     #' @description a wrapper to \code{\link{pd_is_symbol_call}} to subset
     #'     the \code{\link{parse-data}}.
-    stopifnot(pd_is_symbol_call(id, pd))
-    get_child(
-        get_next_sibling_id(
-            get_firstborn_id(id, pd), pd), pd)
+    text(pd_get_call_symbol_id(id))
 }
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"
@@ -137,11 +136,11 @@ if(FALSE){#!@testing
     "}, keep.source=TRUE))
     ids <- all_root_ids(pd)
     id <- ids[[3]]
-    expect_equal(pd_get_call_symbol(id, pd), pd['45',])
+    expect_equal(pd_get_call_symbol(id, pd), pd['45','text'])
 }
 
 #' @export
-pd_get_call_args <-
+pd_get_call_arg_ids <-
 function( id = all_root_ids(pd)[1]       #< id of interest
         , pd = get('pd', parent.frame()) #< parse data of assignemnt
         ){
@@ -149,31 +148,63 @@ function( id = all_root_ids(pd)[1]       #< id of interest
     #' @inheritParams pd_is_symbol_call
     #' @description
     #'   Retrieves the arguments of a call as a list.
-    kids <- get_child(id=id, pd=pd, ngenerations=1L, include.self=FALSE)
-    groups <- cumsum(kids$token %in% c("'('", "','", "')'"))
-    args <- split( kids[groups > 0 & groups < max(groups),][-1,]
-                 , groups[groups > 0 & groups < max(groups)][-1]
-                 )
-    arg.ids <- sapply(args, function(.).[!(.$token %in% c("','", "SYMBOL_SUB", "EQ_SUB")), 'id'])
-    arg.pd  <- get_children(arg.ids, pd=pd)
-    names(arg.pd) <-
-        sapply(args, function(.){
-                    if('SYMBOL_SUB' %in% .$token)
-                        .['SYMBOL_SUB' == .$token, 'text']
-                    else
-                        ''
-                })
-    arg.pd
-    #' @return a named list where each element is the parse-data for the argument.
+    stopifnot(length(id)==1L)
+    kids <- children(id, pd)
+    ix <- text(kids) %in% c('(', ',', ')')
+    if (all(ix[-1])) return(integer(0))
+    groups <- cumsum(ix)
+    args <- sapply( split(kids, groups)[c(-1L, -max(groups)-1L)]
+                  , `[`, -1)
+    val <- sapply( args, function(arg){
+                      if (length(arg) == 1) return(arg)
+                      if (length(arg) == 2) {
+                          #' @note Are there cases other than alist that could result in a two
+                          #' id argument?
+                          stopifnot( text(pd_get_call_symbol_id(id)) == 'alist')
+                          return(NA_integer_)
+                      }
+                      if (length(arg) == 3) {
+                          stopifnot( all(token(arg) == c('SYMBOL_SUB', 'EQ_SUB', 'expr')) )
+                          return(arg[[3]])
+                      }
+                      stop("I don't know how to handle this :(")
+                  })
+    names(val) <- sapply(args, function(arg){
+                      if (length(arg) == 1) return('')
+                      if (length(arg) >  1) return(text(arg[1]))
+                      stop()
+                  })
+    return(val)
+    #' @return a named list where each element is the id for the 'expr' element of the argument.
 }
+call_args <- internal(pd_get_call_arg_ids)
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
-    args <- pd_get_call_args(pd=pd)
+    args <- pd_get_call_arg_ids(pd=pd)
 
-    expect_is(args, 'list')
+    expect_is(args, 'integer')
     expect_equal(names(args), c('', 'mean', 'sd'))
-    expect_equivalent( args
-                     , list( pd['4', ], mean=pd['11', ], sd=pd['18', ])
-                     )
+    expect_identical(args, c(5L, mean=12L, sd=19L))
+    # expect_equivalent( args
+    #                  , list( pd['4', ], mean=pd['11', ], sd=pd['18', ])
+    #                  )
+    pd <- get_parse_data(parse(text='alist(x, y=z, ...=)', keep.source=TRUE))
+    args <- pd_get_call_arg_ids(pd=pd)
+    expect_identical(args, c( parent(pd_find_text('x'))
+                            , y = parent(pd_find_text('z'))
+                            , '...'=NA_integer_))
+}
+
+cumand <- function(a)Reduce('&&', a, right=TRUE, accumulate = TRUE)
+pd_call_arg_text <- function(args, arg.name, which=1L, pd=get('pd', parent.frame())) {
+    # args[[ifelse('signature' %in% names(args), 'signature', 2L)]]
+
+    # arg.is.named <- if(is.name)
+
+
+    arg <- args[[match(arg.name, names(args), which)]]
+    while (token(fname.arg) == 'expr') fname.arg <- firstborn(fname.arg)
+    if (token(fname.arg) == 'STR_CONST') unquote(text(fname.arg)) else
+        line_error(prev.id, "Cannot infer method name for setMethod.")
 }
 

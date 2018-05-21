@@ -7,31 +7,31 @@
 #
 # LICENSE
 # ========
-# The R package `parsetools` is free software: 
-# you can redistribute it and/or modify it under the terms of the 
+# The R package `parsetools` is free software:
+# you can redistribute it and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software
-# Foundation, either version 3 of the License, or (at your option) 
+# Foundation, either version 3 of the License, or (at your option)
 # any later version.
 #
-# This software is distributed in the hope that it will be useful, 
-# but WITHOUT ANY WARRANTY; without even the implied warranty of 
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License 
+# You should have received a copy of the GNU General Public License
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #
 }#######################################################################
 
 #@internal
-make_tag_regex <- 
+make_tag_regex <-
 function( tag              #< tag pattern, interpreted as a regular expression
-                           #^ or alternatives if more that one is passed in. 
+                           #^ or alternatives if more that one is passed in.
         , ...              #< discarded
         ){
-    if(length(tag)>1) 
+    if(length(tag)>1)
         tag <- paste0("(", paste(tag, collapse="|"), ")")
-        
+
     paste(comment.classes$prefix, collapse='|')
     paste0( "(?<=#|#'|#!|#<|\\s|^)"
           , "@", tag
@@ -40,18 +40,18 @@ function( tag              #< tag pattern, interpreted as a regular expression
 }
 if(FALSE){#!@
     tag <- 'tag'
-    cases <- c( '#@tag', '# @tag' , '@tag'         # TRUE 
+    cases <- c( '#@tag', '# @tag' , '@tag'         # TRUE
               , '@@tag'                            # maybe?
               , '#@ tag', 'tag', 'aname@tag.org'   # FALSE
               )
-    
+
     expect_equal(rx <- make_tag_regex(tag), "(?<=#|#'|#!|#<|\\s|^)@tag\\b")
     expect_equal( grepl(rx, cases, perl=TRUE)
                 , c(T, T, T, F, F, F, F)
                 )
-    
+
     other.cases <- gsub('tag', 'another', cases)
-    
+
     expect_equal( rx <- make_tag_regex(c('tag', 'another'))
                 , "(?<=#|#'|#!|#<|\\s|^)@(tag|another)\\b"
                 )
@@ -65,14 +65,14 @@ if(FALSE){#!@
 }
 
 #' @title Check if there is a documentation `@` tag.
-#' @inheritParams get_child_ids
+#' @inheritParams get_children_ids
 #' @param tag tag(s) to test for
 #' @param ... options passed on
 #' @export
-has_tag <- 
+has_tag <-
 function( pd, tag, id = pd$id, ...){
     #' @description
-    #' 
+    #'
     #' Check if a node of \code{parse-data} identified by \code{id}
     #' is both a comment and contains a documentation tag itentifed by
     #' the `@` symbol.
@@ -87,7 +87,7 @@ if(FALSE){#!@testing
         #!       @tag   TRUE
         #!      @@tag   FALSE
         #! @notag{@tag}@ FALSE
-        #        @tag   TRUE, even though a regular comment    
+        #        @tag   TRUE, even though a regular comment
         object @tag
         NULL
     }', keep.source=TRUE))
@@ -97,7 +97,7 @@ if(FALSE){#!@testing
 }
 
 #@ internal
-clean_tag_comments <- 
+clean_tag_comments <-
 function( x
         , tag
         ){
@@ -129,7 +129,7 @@ function( x     #< text to strip from
     #'    Also will remove '\code{#@tag}' replacing with '\code{#!}'.
     pattern <- paste0(make_tag_regex(tag, ...), '\\s*')
     x <- clean_tag_comments(x, tag)
-    
+
     gsub( pattern=pattern, replacement='', x
         , perl=TRUE, ignore.case=TRUE)
     #< @return text with the @ tag removed.
@@ -144,7 +144,7 @@ if(FALSE){#! @testthat
 }
 
 #' @export
-get_tagged_comment_ids <- 
+get_tagged_comment_ids <-
 function( pd, tag
         , doc.only = TRUE #< Restrict to documentation comments only?
         ){
@@ -153,7 +153,7 @@ function( pd, tag
     #' @param doc.only Restrict to documentation comments only?
     #' @description
     #'   Finds all ids that are comments and contain the given '@' \code{tag}.
-    #'   If doc.only is true(default) then only documentation comments are 
+    #'   If doc.only is true(default) then only documentation comments are
     #'   considered, otherwise all comments are examined.
     ids <- if (doc.only)
         pd[is_doc_comment(pd), 'id']
@@ -169,14 +169,14 @@ if(FALSE){#!@testing
             #!       @tag   TRUE
             #!      @@tag   FALSE
             #! @notag{@tag}@ FALSE
-            #        @tag   TRUE, even though a regular comment    
+            #        @tag   TRUE, even though a regular comment
             object @tag
             NULL
         }
     "}, keep.source=TRUE))
     tag <- 'tag'
     id  <- pd$id
-    
+
     expect_equal(get_tagged_comment_ids(pd, tag, TRUE ),   15L      )
     expect_equal(get_tagged_comment_ids(pd, tag, FALSE), c(15L, 21L))
 }

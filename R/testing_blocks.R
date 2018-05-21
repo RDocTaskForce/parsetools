@@ -7,18 +7,18 @@
 #
 # LICENSE
 # ========
-# The R package `parsetools` is free software: 
-# you can redistribute it and/or modify it under the terms of the 
+# The R package `parsetools` is free software:
+# you can redistribute it and/or modify it under the terms of the
 # GNU General Public License as published by the Free Software
-# Foundation, either version 3 of the License, or (at your option) 
+# Foundation, either version 3 of the License, or (at your option)
 # any later version.
 #
-# This software is distributed in the hope that it will be useful, 
-# but WITHOUT ANY WARRANTY; without even the implied warranty of 
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License 
+# You should have received a copy of the GNU General Public License
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #
 }#######################################################################
@@ -28,8 +28,8 @@
 
 .testing.tags <- c("test", "tests", "testing", "testthat")
 
-#' @export 
-extract_test_block <- 
+#' @export
+extract_test_block <-
 function( id = all_tagged_iff_ids(pd, .testing.tags)
         , pd = get('pd', parent.frame())
         ){
@@ -49,13 +49,13 @@ function( id = all_tagged_iff_ids(pd, .testing.tags)
     #'   Extract the content of a testing block as a character vector of lines.
     #'   The name, which is attached as an attribute is taken from the info
     #'   string or inferred by location, see Details.
-    #'   
+    #'
     stopifnot(is_iff_block(id,pd))
     content.id  <- pd_get_if_branch_id(id, pd)
-    
-    tag.comment <- get_child_ids(content.id, pd)[[2]]
+
+    tag.comment <- get_children_ids(content.id, pd)[[2]]
     info.string <- trimws(strip_doc_comment_leads(strip_tag(text(tag.comment), .testing.tags)))
-    
+
     content     <- lines(content.id, pd)
 
     name <- if (!is.null(info.string) && info.string!='') {
@@ -80,13 +80,13 @@ function( id = all_tagged_iff_ids(pd, .testing.tags)
             paste0("setGeneric(\"", name, "\", ...)")
         else if(attr(name, 'type') == 'setClass')
             paste0("setClass(\"", name, "\", ...)")
-        else 
+        else
             name
     }
 
     line.directive <- paste("#line", start_line(content.id), paste0('"', filename(pd), '"'))
-    
-    
+
+
     out.text <- if (length(content)<2)
                     sprintf("test_that('%s', %s)", name, content)
         else
@@ -95,7 +95,7 @@ function( id = all_tagged_iff_ids(pd, .testing.tags)
                          , paste0(content[length(content)], ")"))
     out.text <- c( line.directive, out.text)
     structure(out.text, name = name)
-    #' @return a character vector with the lines for the specific test(s) 
+    #' @return a character vector with the lines for the specific test(s)
     #'         with the name of the test included as an attribute.
 }
 if(FALSE){#!@testing
@@ -110,7 +110,7 @@ if(FALSE){#!@testing
     if(FALSE){#!@testthat
         expect_output(hello_world(), "hello world")
     }
-    
+
     ldf <- data.frame(id = 1:26, letters)
     if(FALSE){#!@testing
         # not a function assignment
@@ -123,29 +123,29 @@ if(FALSE){#!@testing
     if(F){#! @test
         expect_error(f2())
     }
-    
+
     setClass("A")
-    if(F){#!@testing 
+    if(F){#!@testing
         #testing a setClass
     }
-    
+
     setMethod("print", "A")
-    if(F){#!@testing 
+    if(F){#!@testing
         #testing a setMethod
     }
-    
+
     setGeneric("my_generic", function(x){x})
-    if(F){#!@testing 
+    if(F){#!@testing
         #testing a setClass
     }
-    
+
     rnorm(10)
     if(F){#!@testing
         # no previous name
     }
     '}, keep.source=TRUE))
     iff.ids <- all_tagged_iff_ids(pd, c('testing', 'testthat', 'test'))
-    
+
     expect_error( extract_test_block(iff.ids[[1L]], pd)
                 , "illformed block at <text>:2:5"
                 , info = "cannot find name for block"
@@ -174,28 +174,28 @@ if(FALSE){#!@testing
                 , info="testing after other iff")
     expect_equal( extract_test_block(iff.ids[[5L]], pd)
                 , structure(c( '#line 27 "<text>"'
-                             , 'test_that(\'setClass("A", ...)\', {#!@testing '
+                             , 'test_that(\'setClass("A", ...)\', {#!@testing'
                              , '        #testing a setClass'
                              , '    })'
                              ), name="setClass(\"A\", ...)")
                 , info="testing after setClass")
     expect_equal( extract_test_block(iff.ids[[6L]], pd)
                 , structure(c( '#line 32 "<text>"'
-                             , 'test_that(\'print.A\', {#!@testing '
+                             , 'test_that(\'print.A\', {#!@testing'
                              , '        #testing a setMethod'
                              , '    })'
                              ), name=structure("print.A", type = "setMethod"))
                 , info="testing after setMethod")
     expect_equal( extract_test_block(iff.ids[[7L]], pd)
                 , structure(c( '#line 37 "<text>"'
-                             , 'test_that(\'setGeneric("my_generic", ...)\', {#!@testing '
+                             , 'test_that(\'setGeneric("my_generic", ...)\', {#!@testing'
                              , '        #testing a setClass'
                              , '    })'
                              ), name="setGeneric(\"my_generic\", ...)")
                 , info="testing after setGeneric")
     expect_error( extract_test_block(iff.ids[[8L]], pd)
                 , info="following call")
-                
+
     expect_equal( extract_test_block(iff.ids[2:3], pd)
                 , structure(c( '#line 9 "<text>"'
                              , 'test_that(\'hello_world\', {#!@testthat'
@@ -208,7 +208,7 @@ if(FALSE){#!@testing
                              )
                            , test.names = c("hello_world", "ldf")
                            , start.locations = c(1, 5)
-                           )    
+                           )
                 , info = "multiple ids")
 
     pd <- get_parse_data(parse(text={"
@@ -228,7 +228,7 @@ if(FALSE){#!@testing
 
 
 #@internal
-extract_test_blocks_parse_data <- 
+extract_test_blocks_parse_data <-
 function( pd ){
     pd <- ._check_parse_data(pd)
     iff.ids <- all_tagged_iff_ids(pd, .testing.tags)
@@ -241,13 +241,13 @@ function( pd ){
 }
 
 #' @export
-extract_test_blocks <- 
+extract_test_blocks <-
 function( file ){
     #' @title extract tests from a file.
     #' @param file the file to retrieve tests from.
     #' @description
     #'    Convenience function for extracting all tests from a file.
-    #'    This parses the file and passes the work to 
+    #'    This parses the file and passes the work to
     #'    \code{\link{extract_test_block}}.
     pd <- get_parse_data(parse(file=file))
     extract_test_blocks_parse_data(pd)
@@ -285,6 +285,6 @@ expect_equal( test.blocks
                          )
                        , test.names = c("hello_world", "f2")
                        , start.locations = c(1, 5)
-                       )    
+                       )
             , info = "Write to file and read back.")
 }

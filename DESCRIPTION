@@ -22,9 +22,12 @@ Description: Tools and utilities for dealing with parse data.
 Collate: 
     'accessors.R'
     'checks.R'
+    'internal.R'
     'children.R'
     'comments.R'
+    'errors.R'
     'family.R'
+    'find-utils.R'
     'get_parse_data.R'
     'grouping.R'
     'iff_blocks.R'
@@ -36,8 +39,9 @@ Collate:
     'pd_comments.R'
     'pd_function.R'
     'pd_if.R'
+    'reconstitute.R'
     'root.R'
     'tags.R'
     'testing_blocks.R'
     'zzz.R'
-RoxygenNote: 6.0.1
+RoxygenNote: 6.0.1.9000

@@ -41,10 +41,10 @@
 #' interpreted as root.  Groupings are always interpreted as root if the
 #' parent is 0 or if the parent is a group and also a root.
 #'
-#' @inheritParams get_child_ids
+#' @inheritParams get_children_ids
 #'
 #' @aliases root root-nodes root-ids
-#' @seealso see \code{\link{is_grouping}} for details on what a grouping is.
+#' @seealso see \code{\link{pd_is_grouping}} for details on what a grouping is.
 list()
 
 #' @export
@@ -54,14 +54,14 @@ function( id = pd$id
         , ignore.groups = TRUE  #< Ignore groups? see details.
         ){
     #' @describeIn root Test if a node is a root node
-    #' @param ignore.groups Should \link[=is_grouping]{groupings} be ignored?
+    #' @param ignore.groups Should \link[=pd_is_grouping]{groupings} be ignored?
     id <- ._check_id(id)
-    if (length(id) > 1) return(sapply(id, FUN=is_root, pd=pd, ignore.groups=ignore.groups))
+    if (length(id) > 1) return(sapply(id, is_root, pd=pd, ignore.groups=ignore.groups))
     if (!(id %in% pd$id)) stop("id not present in pd")
     if (pd[pd$id == id,'token'] != 'expr') return(FALSE)
     parent <- pd[pd$id == id,'parent']
     if (parent == 0 ) return(TRUE)
-    if (ignore.groups && is_grouping(parent, pd)) return(TRUE)
+    if (ignore.groups && pd_is_grouping(parent, pd)) return(TRUE)
     return(FALSE)
 }
 if(FALSE){#! @testing
@@ -134,7 +134,7 @@ function( pd                    #< parse data from `<get_parse_data>`
     roots <- pd[ !(abs(pd$parent) %in% pd$id                )
                & !(    pd$token   %in% .excluded.root.tokens)
                , 'id']
-    while (!include.groups && any(. <- is_grouping(roots, pd))) {
+    while (!include.groups && any(. <- pd_is_grouping(roots, pd))) {
         groups <- roots[.]
         sub.ids <-
             pd[ pd$parent %in% groups
@@ -192,7 +192,7 @@ function( pd                    #< parse data from `<get_parse_data>`
         , include.groups = TRUE #< descend into grouped code \code{\{\}}?
         ){
     #' @title Find all root node from parse data
-    #' @inheritParams get_child_ids
+    #' @inheritParams get_children_ids
     #' @param include.groups descend into grouped code \code{\{\}}?
     #'
     #' @description
@@ -229,7 +229,7 @@ function( id = pd$id
         ) {
     #' @describeIn root ascend from id to root
     id <- ._check_id(id)
-    if (length(id) > 1) return(sapply(id, ascend_to_root, pd=pd, ignore.groups=ignore.groups))
+    if (length(id) > 1L) return(sapply(id, ascend_to_root, pd=pd, ignore.groups=ignore.groups))
     parent <- id
     while (TRUE) {
         if (is.na(parent) || parent == 0) return(0L)

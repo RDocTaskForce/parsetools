@@ -23,6 +23,7 @@
 #
 }#######################################################################
 
+#' @include internal.R
 
 #' @export
 get_family <-
@@ -35,17 +36,17 @@ function( id, pd
         ){
     #' @name get_family
     #' @title Get family of nodes.
-    #' @inheritParams get_child_ids
+    #' @inheritParams get_children_ids
     #' @param ...                       currently ignored.
     #' @param include.doc.comments      include associated documentation comments.
     #' @param include.regular.comments  include associated regular comments.
     #' @description
     #'   Subset the \code{pd} to the family of \code{id}.
     id <- ._check_id(id)
-    kids <- get_child_ids(id, pd, include.self=include.self, ngenerations=ngenerations, ...)
+    kids <- get_children_ids(id, pd, include.self=include.self, ngenerations=ngenerations, ...)
     cids <-
         if (include.doc.comments || include.regular.comments){
-            if (is_grouping(parent <- get_parent_id(id, pd), pd)) {
+            if (pd_is_grouping(parent <- get_parent_id(id, pd), pd)) {
                 pd <- fix_grouping_comment_association(parent, pd)
             }
             pd[ pd$token %in% c( if (include.doc.comments    ) comment.classes$class
@@ -99,7 +100,7 @@ if(FALSE){#!@testing
         }
     }"}, keep.source=TRUE))
     group.id <- all_root_ids(pd)
-    expect_true(is_grouping(group.id, pd))
+    expect_true(pd_is_grouping(group.id, pd))
     id <- expr.id <- all_root_ids(pd, FALSE)
 
     fam <- get_family(expr.id, pd, include.doc.comments=FALSE, include.regular.comments=FALSE)
@@ -115,13 +116,15 @@ if(FALSE){#!@testing
 #' @export
 get_sibling_ids <- function(id, pd=get('pd', parent.frame())){
     #' @title Identify siblings.
-    #' @inheritParams get_child_ids
+    #' @inheritParams get_children_ids
     #' @description \subsection{get_sibling_ids}{
     #'   A convenience function for identifying siblings of the given id.
     #'   Siblings are nodes with the same parent.
     #' }
-    get_child_ids(get_parent_id(id, pd), pd)
+    if (length(id) > 1) return(lapply(id, get_sibling_ids, pd=pd))
+    get_children_ids(get_parent_id(id, pd), pd)
 }
+siblings <- internal(get_sibling_ids)
 
 #' @export
 get_next_sibling_id <- function(id, pd=get('pd', parent.frame())){
@@ -133,6 +136,8 @@ get_next_sibling_id <- function(id, pd=get('pd', parent.frame())){
     . <- which(sids>id)
     if (length(.)) sids[min(.)] else NA_integer_
 }
+next_sibling <- internal(get_next_sibling_id)
+
 #' @export
 get_prev_sibling_id <- function(id, pd=get('pd', parent.frame())){
     #' @rdname get_sibling_ids
@@ -143,11 +148,12 @@ get_prev_sibling_id <- function(id, pd=get('pd', parent.frame())){
     . <- which(sids<id)
     if (length(.)) sids[max(.)] else NA_integer_
 }
+prev_sibling <- internal(get_prev_sibling_id)
 
 #' @export
 #' @title Test if id is the firstborn.
 is_firstborn <- function(id, pd=get('pd', parent.frame())){
-    #' @inheritParams get_child_ids
+    #' @inheritParams get_children_ids
     #' @description
     #'   Test if an expression is the firstborn, ie. oldest or lowest id.
     id == get_firstborn_id(get_parent_id(id, pd), pd)
@@ -157,21 +163,29 @@ is_firstborn <- function(id, pd=get('pd', parent.frame())){
 #' @title get the firstborn child.
 get_firstborn_id <-
 function(id=all_root_ids(pd), pd=get('pd', parent.frame())){
-    #' @inheritParams get_child_ids
+    #' @inheritParams get_children_ids
     #' @description
     #'   Get the id of the firstborn child of id.
     #'   Without the "_id" is a wrapper for giving the nodes.
     id <- ._check_id(id)
-    kids <- lapply(id, get_child_ids, pd=pd)
-    as.integer(sapply(kids, min))
+    if (length(id) > 1L) return(sapply(id, get_firstborn_id, pd=pd))
+    kids <- get_children_ids(id=id, pd=pd)
+    if (length(kids)==0 ) return(NA_integer_)
+    else min(kids)
+}
+#' @internal
+firstborn <- internal(get_firstborn_id)
+if(F){#@testing
+
+
 }
 
 #' @export
+#' @rdname get_firstborn_id
 get_firstborn <-
-function(id=all_root_ids(pd), pd=get('pd', parent.frame())){
-    #' @rdname get_firstborn_id
+function(id=all_root_ids(pd), pd=get('pd', parent.frame()))
     nodes(get_firstborn_id(id, pd))
-}
+
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"a <- 1
         {# section 1
@@ -186,7 +200,6 @@ if(FALSE){#!@testing
     expect_equal(get_firstborn(52, pd)$token, "'{'")
     expect_equal(get_firstborn(7 , pd)$text, "<-")
 
-    expect_warning(get_firstborn_id(c(7, 52, .Machine$integer.max), pd))
     expect_identical( suppressWarnings(get_firstborn_id(c(7, 52, .Machine$integer.max), pd))
                     , c(2L, 10L, NA_integer_))
 
