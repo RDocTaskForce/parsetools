@@ -156,7 +156,7 @@ pd_is_firstborn <- function(id, pd=get('pd', parent.frame())){
     #' @inheritParams get_children_ids
     #' @description
     #'   Test if an expression is the firstborn, ie. oldest or lowest id.
-    id == get_firstborn_id(get_parent_id(id, pd), pd)
+    id == firstborn(parent(id, pd), pd)
 }
 
 #' @export
@@ -175,16 +175,12 @@ function(id=all_root_ids(pd), pd=get('pd', parent.frame())){
 }
 #' @internal
 firstborn <- internal(get_firstborn_id)
-if(F){#@testing
-
-
-}
 
 #' @export
 #' @rdname get_firstborn_id
 get_firstborn <-
 function(id=all_root_ids(pd), pd=get('pd', parent.frame()))
-    nodes(get_firstborn_id(id, pd))
+    nodes(firstborn(id, pd))
 
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"a <- 1

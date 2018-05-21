@@ -31,7 +31,7 @@ function(id = pd$id, pd = get('pd', parent.frame())){
     #'   Tests if the id(s) represent if expressions.
     if (length(id)>1) sapply(id, pd_is_if, pd=pd)
     (token(id) == 'expr') &&
-    (token(get_firstborn_id(id, pd)) == 'IF')
+    (token(firstborn(id)) == 'IF')
     #' @return a logical vector of same length as id.
 }
 

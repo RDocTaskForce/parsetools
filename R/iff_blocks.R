@@ -164,9 +164,9 @@ function( id, tag, pd = get('pd', parent.frame())
     if (!is_iff_block(id, pd)) return(FALSE)
     #'   \item is a curly braced group of code.
     if (token(. <- pd_get_if_branch_id(id)) != 'expr')   return(FALSE)
-    if (token(. <- get_firstborn_id( . , pd)) != "'{'" )   return(FALSE)
+    if (token(. <- firstborn( . , pd)) != "'{'" )   return(FALSE)
     #'   \item has a comment as the first parsed element.
-    if (!is_comment(pd, . <- get_next_sibling_id(., pd))) return(FALSE)
+    if (!is_comment(pd, . <- next_sibling(., pd))) return(FALSE)
     #'   \item and that it's a documentation comment if doc.only is true.
     if (doc.only && !is_doc_comment(pd, .)) return(FALSE)
     #'   \item and finally that the comment contains the identified \code{tag(s)}.
@@ -296,7 +296,7 @@ function(id, pd = get('pd', parent.frame())){
     #' function, argument checks are not performed.
     #'
     #' @details
-    prev.id  <- get_prev_sibling_id(id, pd)
+    prev.id  <- prev_sibling(id, pd)
     while (TRUE){
         #' \code{\link[=iff-blocks]{if(FALSE)}} blocks can be placed
         #' sequentially and \code{get_iff_associated_name} will
@@ -306,7 +306,7 @@ function(id, pd = get('pd', parent.frame())){
         #'
         if (is.na(prev.id)) return(NULL)
         if (!is_iff_block(prev.id, pd)) break
-        prev.id <- get_prev_sibling_id(prev.id, pd)
+        prev.id <- prev_sibling(prev.id, pd)
     }
     if (pd_is_assignment(prev.id, pd)) {
         #' If the previous expression is an assignment, the asignee variable of

@@ -14,12 +14,14 @@ Imports:
     utils, 
     tools
 Suggests:
-    testthat, covr
+    testthat, covr,
+    knitr,
+    rmarkdown
 Description: Tools and utilities for dealing with parse data. 
     parse data represents the parse tree as a data frame with location and type
     information.  This package provides functions for navigating the parse 
     tree as a data frame.
-Collate: 
+Collate:
     'accessors.R'
     'checks.R'
     'internal.R'
@@ -45,3 +47,4 @@ Collate:
     'testing_blocks.R'
     'zzz.R'
 RoxygenNote: 6.0.1.9000
+VignetteBuilder: knitr

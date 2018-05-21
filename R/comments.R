@@ -327,7 +327,7 @@ function( id = pd$id[1]                  #< id of the comment of interest
     if (!is_doc_comment(id, pd))
         stop("not a valid starting comment.")
     while(TRUE){
-        id <- get_next_sibling_id(id, pd)
+        id <- next_sibling(id)
         if (is.na(id) || token(id) != 'CONTINUATION_COMMENT') break
         assoc.ids <-c(assoc.ids, id)
     }
