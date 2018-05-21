@@ -27,9 +27,6 @@ internal <- function(fun, id=pd$id){
         body.args$.check = FALSE
 
     body <- as.call(c(..fun, body.args))
-
-    # body <- substitute(..fun(id=id, pd=pd), list(..fun=..fun))
-
     as.function( c(args, body)
                , envir = topenv()
                )
@@ -61,8 +58,6 @@ if(F){#@testing
     expect_identical(test4, expected4)
 }
 
-
-
 make_get_all <- function(fun){
     ..fun <- substitute(fun)
     body <- substitute(pd[..fun(id=pd$id, pd=pd), 'id'])
@@ -74,4 +69,53 @@ if(F){
     expect_equal( body(make_get_all(pd_is_function))
                 , substitute(pd[pd_is_function(id=pd$id, pd=pd), 'id'], emptyenv())
                 )
+}
+
+external <- function(fun){
+    ..fun <- substitute(fun)
+
+    flist <- formals(fun)
+    args <- list()
+    if ('id' %in% names(flist))
+        args$id <- alist(id=)[[1]]
+    if ('pd' %in% names(flist))
+        args$pd <- alist(pd=)[[1]]
+    body.args <- lapply(names(args), as.name)
+    names(body.args) <- names(args)
+    if (length(setdiff(names(flist), c('id', 'pd', '.check')))){
+        args <- c(args, alist(...=))
+        body.args <- c(body.args, as.name('...'))
+    }
+    if ('.check' %in% names(flist))
+        body.args$.check = TRUE
+
+    body <- as.call(c(..fun, body.args))
+    as.function( c(args, body)
+               , envir = topenv()
+               )
+}
+if(F){#@testing
+    internal_test <- function(id=pd$id, pd=get('pd', parent.frame())){"do something"}
+    test <- external(internal_test)
+    expected <- function(id, pd)internal_test(id=id, pd=pd)
+    environment(expected) <- asNamespace('parsetools')
+    expect_identical(test, expected)
+
+    internal_test <- function(id=pd$id, pd=get('pd', parent.frame()), .check=FALSE){"do something"}
+    test <- external(internal_test)
+    expected <- function(id, pd)internal_test(id=id, pd=pd, .check=TRUE)
+    environment(expected) <- asNamespace('parsetools')
+    expect_identical(test, expected)
+
+    internal_test <- function(id=pd$id, pd=get('pd', parent.frame()), N=1){"do something"}
+    test <- external(internal_test)
+    expected <- function(id, pd, ...)internal_test(id=id, pd=pd, ...)
+    environment(expected) <- asNamespace('parsetools')
+    expect_identical(test, expected)
+
+    internal_test <- function(id=pd$id, pd=get('pd', parent.frame()), N=1, .check=FALSE){"do something"}
+    test <- external(internal_test)
+    expected <- function(id, pd, ...)internal_test(id=id, pd=pd, ..., .check=TRUE)
+    environment(expected) <- asNamespace('parsetools')
+    expect_identical(test, expected)
 }
