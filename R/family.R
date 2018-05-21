@@ -152,7 +152,7 @@ prev_sibling <- internal(get_prev_sibling_id)
 
 #' @export
 #' @title Test if id is the firstborn.
-is_firstborn <- function(id, pd=get('pd', parent.frame())){
+pd_is_firstborn <- function(id, pd=get('pd', parent.frame())){
     #' @inheritParams get_children_ids
     #' @description
     #'   Test if an expression is the firstborn, ie. oldest or lowest id.
@@ -203,8 +203,8 @@ if(FALSE){#!@testing
     expect_identical( suppressWarnings(get_firstborn_id(c(7, 52, .Machine$integer.max), pd))
                     , c(2L, 10L, NA_integer_))
 
-    expect_true(is_firstborn(2, pd=pd))
-    expect_identical(suppressWarnings(is_firstborn(-1)), NA)
-    expect_identical(is_firstborn(c(1,3,7)), c(TRUE, FALSE, TRUE))
+    expect_true(pd_is_firstborn(2, pd=pd))
+    expect_identical(suppressWarnings(pd_is_firstborn(-1,pd)), NA)
+    expect_identical(pd_is_firstborn(c(1,3,7),pd), c(TRUE, FALSE, TRUE))
 }
 
