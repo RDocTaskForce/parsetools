@@ -109,36 +109,6 @@ expect_true("NUM_CONST" %in% val.pd$token)
 }
 
 #' @export
-pd_get_assign_variable <-
-function( pd #< The [parse-data] object, representing an assignment
-        ){
-    #' @title Get the variable of an assignment
-    #' @inheritParams pd_is_assignment
-    #' @description
-    #'   Gets the variable portion of an assignment expression. This can be a
-    #'   single variable or an expression for assignment to portions like
-    #'   like assigning to an indexed element of a vector.
-    kids.pd <- sort(get_child(id=all_root_ids(pd), pd, 1, FALSE))
-    switch( kids.pd[2, 'token']
-          , RIGHT_ASSIGN = get_family(id = utils::tail(kids.pd$id,1), pd)
-          , LEFT_ASSIGN  = get_family(id = utils::head(kids.pd$id,1), pd)
-          , EQ_ASSIGN    = get_family(id = utils::head(kids.pd$id,1), pd)
-          )
-    #' @return will return the \code{\link{parse-data}},
-    #'         which is typically rooted by an 'expr' token.
-}
-if(F){#!@testthat
-    pd <- get_parse_data(parse(text ={"hello_world <- function(){
-        print('hello world')
-    }
-    "}, keep.source=TRUE))
-
-    expect_true(pd_is_assignment(pd=pd))
-    var.pd <- pd_get_assign_variable(pd=pd)
-    expect_equal(getParseText(var.pd, all_root_ids(var.pd)), "hello_world")
-}
-
-#' @export
 pd_get_assign_variable_id <-
 function( pd #< The [parse-data] object, representing an assignment
         , id = all_root_ids(pd)
@@ -167,8 +137,7 @@ pd <- get_parse_data(parse(text="hello_world <- function(){
 
     expect_true(pd_is_assignment(pd=pd))
 
-    var.pd <- pd_get_assign_variable(pd=pd)
     var.id <- pd_get_assign_variable_id(pd=pd)
-    expect_equal(var.id, all_root_ids(var.pd))
+    expect_equal(var.id, parent(pd_find_text("hello_world")))
 }
 
