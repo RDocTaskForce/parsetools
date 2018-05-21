@@ -103,13 +103,17 @@ if(FALSE){#! @test
 children <- internal(get_children_ids)
 
 #' @export
-get_child <-
-function( id, pd = get('pd', parent.frame())
+get_children_pd <-
+function( id, pd
         , ...       #< passed to <get_children_ids>.
+        , .check = TRUE
         ) {
     #' @inheritParams get_children_ids
-    #' @rdname get_children
-
+    #' @rdname get_children_ids
+    if(.check)
+        stopifnot( length(id) == 1L
+                 , inherits(pd, 'parse-data')
+                 )
     pd[pd$id %in% get_children_ids( id, pd,...), ]
 }
 if(FALSE){#!@test
@@ -117,51 +121,26 @@ if(FALSE){#!@test
     pd       <- get_parse_data(parse(text=text, keep.source=TRUE))
     id       <- 3
 
-get_children_ids(3L, pd)
-    expect_identical( get_child(3, pd), utils::head(pd, 1), info='defaults')
-    expect_identical( get_child(3, pd, include.self=TRUE), utils::head(pd, 2), info='include.self=TRUE')
+    expect_identical( get_children_pd(3, pd), utils::head(pd, 1), info='defaults')
+    expect_identical( get_children_pd(3, pd, include.self=TRUE), utils::head(pd, 2), info='include.self=TRUE')
 
-    expect_identical( get_child(id=23, pd=pd, ngenerations=1, include.self=FALSE)
+    expect_identical( get_children_pd(id=23, pd=pd, ngenerations=1, include.self=FALSE)
                     , pd[pd$parent==23,]
                     , info='defaults')
 
-    expect_identical( get_child(id=23, pd=pd, ngenerations=1, include.self=TRUE)
+    expect_identical( get_children_pd(id=23, pd=pd, ngenerations=1, include.self=TRUE)
                     , pd[pd$parent==23 | pd$id==23,]
                     , info='defaults')
 
-    expect_identical( get_child(id=23, pd=pd, ngenerations=2, include.self=TRUE)
+    expect_identical( get_children_pd(id=23, pd=pd, ngenerations=2, include.self=TRUE)
                     , pd
                     , info='defaults')
 
-    expect_identical( get_child(id=23, pd=pd, ngenerations=2, include.self=FALSE, all.generations=FALSE)
+    expect_identical( get_children_pd(id=23, pd=pd, ngenerations=2, include.self=FALSE, all.generations=FALSE)
                     , pd[pd$parent != 23 & pd$parent != 0, ]
                     , info='defaults')
-}
 
-#' @export
-get_children <-
-function( id, pd = get('pd', parent.frame())
-        , ...       #< passed to <get_child>.
-        ){
-    #' @inheritParams get_children_ids
-    #' @param ... passed on.
-    #' @title Find the children of an expression
-    #'
-    #' @description
-    #'   This takes the \code{pd} and find all the children of the expression
-    #'   with the given \code{id}.
-    #'
-    #' @family  parse-functions
-    #' @return a list of parse-data objects corresponding to \code{id}
-    id <- ._check_id(id)
-    return(lapply(id, get_child, pd=pd, ...))
-}
-if(FALSE){#! @test
-    'rnorm(10, mean=0, sd=1)' -> text
-    pd  <- get_parse_data(parse(text=text, keep.source=TRUE))
-    res <- get_children(id=23, pd)
-    expect_is(res, 'list')
-    expect_equal(length(res), 1)
+    expect_error(get_children_pd(id=pd$id, pd=pd))
 }
 
 
