@@ -163,3 +163,10 @@ if(FALSE){#! @test
     expect_is(res, 'list')
     expect_equal(length(res), 1)
 }
+
+
+#' Count the number of children
+n_children <- function(id=pd$id, pd=get('pd', parent.frame())){
+    if (length(id)>1L) sapply(id, n_children, pd=pd)
+    length(children(id))
+}
