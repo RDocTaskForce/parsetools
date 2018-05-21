@@ -360,13 +360,15 @@ function(id, pd = get('pd', parent.frame())){
                     #' the signature will be collapsed, separated by commas.
                     signature <- {
                         # args[[ifelse('signature' %in% names(args), 'signature', 2L)]]
-                        sig.arg <- args[[ifelse('signature' %in% names(args), 'f', 1L)]]
-                        while (token(fname.arg) == 'expr') fname.arg <- firstborn(fname.arg)
-                        if (token(fname.arg) == 'STR_CONST') unquote(text(fname.arg)) else
-                            line_error(prev.id, "Cannot infer method name for setMethod.")
+                        sig.arg <- args[[ifelse('signature' %in% names(args), 'f', 2L)]]
+                        if (pd_is_symbol_call(sig.arg)) {
+                            if (!(text(pd_get_call_symbol_id(sig.arg)) %in% c('signature', 'c')))
+                                line_error(sig.arg, 'Cannot infer signature for setMethod.')
+                            args <- call_args(sig.arg)
+                            sig.args.text <- expr_text(args)
+                        } else expr_text(sig.arg)
                     }
-                    signature <- paste(unquote(signature$text), collapse=',')
-                    name <- paste(fname, signature, sep='.')
+                    name <- paste0(fname, paste0(',', signature, collapse=''), '-method')
                     structure(name, type="setMethod")
                     #' the type attribute will be set to \code{"setMethod"}.
                     #'
@@ -435,6 +437,13 @@ if(FALSE){#!@testing
     if(F){#!@testing
         # no previous name
     }
+
+    setMethod("fun", c("A","B"), function(x,y){
+        x+y
+    })
+    if(F){#!@testing
+        #testing a setMethod with multiple signature elements.
+    }
     '}, keep.source=TRUE))
     iff.ids <- all_tagged_iff_ids(pd, c('testing', 'testthat', 'test'))
 
@@ -452,13 +461,16 @@ if(FALSE){#!@testing
                 , structure("A", type = "setClass")
                 , info="iff after other iff")
     expect_equal( get_iff_associated_name(iff.ids[[6L]], pd)
-                , structure("print.A", type = "setMethod")
+                , structure("print,A-method", type = "setMethod")
                 , info="iff after other iff")
     expect_equal( get_iff_associated_name(iff.ids[[7L]], pd)
                 , structure("my_generic", type = "setGeneric")
                 , info="iff after other iff")
     expect_null ( get_iff_associated_name(iff.ids[[8L]], pd)
                 , info="following call")
+    expect_equal( get_iff_associated_name(iff.ids[[9L]], pd)
+                , structure("fun,A,B-method", type = "setMethod")
+                , info="iff after other iff")
 }
 
 

@@ -241,4 +241,28 @@ pd <- get_parse_data(parse(text="   rnorm( 10,  0,   3)", keep.source=TRUE))
                 )
 }
 
-
+#' Get the expression text
+#'
+#' If id represents a expr token reitterate on the firstborn.
+#' Throws an error if anything but an expression or text if found.
+#' @internal
+expr_text <- function(id, pd=get('pd', parent.frame())){
+    if (length(id)>1L) return(sapply(id, expr_text, pd=pd))
+    while (token(id) == 'expr' && n_children(id) == 1L)
+        id <- firstborn(id)
+    if (token(id) != 'STR_CONST')
+        col_error(id, "a string constant is expected.")
+    unquote(text(id))
+}
+if(FALSE){#@testing
+    pd <- get_parse_data(parse(text="
+        signature(x='hello', y='world')
+    "))
+    ids <- c( parent(pd_find_text("'hello'"))
+            , parent(pd_find_text("'world'"))
+            )
+    expect_identical(expr_text(ids, pd), c("hello", "world"))
+    expect_error( expr_text(all_root_ids(pd))
+                , "<text>:2:9:  a string constant is expected."
+                )
+}

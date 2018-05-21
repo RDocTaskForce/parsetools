@@ -181,10 +181,10 @@ if(FALSE){#!@testing
                 , info="testing after setClass")
     expect_equal( extract_test_block(iff.ids[[6L]], pd)
                 , structure(c( '#line 32 "<text>"'
-                             , 'test_that(\'print.A\', {#!@testing'
+                             , 'test_that(\'print,A-method\', {#!@testing'
                              , '        #testing a setMethod'
                              , '    })'
-                             ), name=structure("print.A", type = "setMethod"))
+                             ), name=structure("print,A-method", type = "setMethod"))
                 , info="testing after setMethod")
     expect_equal( extract_test_block(iff.ids[[7L]], pd)
                 , structure(c( '#line 37 "<text>"'
