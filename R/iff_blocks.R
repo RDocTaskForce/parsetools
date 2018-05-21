@@ -311,8 +311,8 @@ function(id, pd = get('pd', parent.frame())){
     if (pd_is_assignment(prev.id, pd)) {
         #' If the previous expression is an assignment, the asignee variable of
         #' the assignment is chosen as the name.
-        value.id <- pd_get_assign_value_id(prev.id)
-        structure( utils::getParseText(pd, pd_get_assign_variable_id(pd, prev.id))
+        value.id <- assign_value(prev.id)
+        structure( utils::getParseText(pd, assign_variable(prev.id))
                  , type = if (pd_is_function(value.id)) "function_assignment"
                           else "assignment"
                  )

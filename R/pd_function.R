@@ -71,7 +71,7 @@ pd <- get_parse_data(parse(text="hello_world <- function(){
 }
 ", keep.source=TRUE))
 
-    id <- pd_get_assign_value_id(pd=pd)
+    id <- assign_value(pd=pd)
     body.id <- get_function_body_id(id, pd)
 
     expected.body.id <- subset(pd, token == "'{'")$parent
@@ -97,7 +97,7 @@ function( pd                    #< parse data
         , id = all_root_ids(pd) #< id number
         ){}', keep.source=TRUE))
 
-    id <- pd_get_assign_value_id(pd=pd)
+    id <- assign_value(pd=pd)
     arg.ids <- get_function_arg_ids(id, pd)
 
     expect_identical( text(arg.ids, pd=pd)
@@ -120,7 +120,7 @@ function( pd                    #< parse data
         , id = all_root_ids(pd) #< id number
         ){}', keep.source=TRUE))
 
-    id <- pd_get_assign_value_id(pd=pd)
+    id <- assign_value(pd=pd)
     expected <- pd[pd$parent==id & pd$text %in% c('pd', 'id'), 'id']
 
     expect_identical(get_function_arg_variable_ids(id, pd), expected)
@@ -166,7 +166,7 @@ function( pd                    #< parse data
         , id = all_root_ids(pd)
         ){}', keep.source=TRUE))
 
-    function.id <- pd_get_assign_value_id(pd=pd)
+    function.id <- assign_value(pd=pd)
     arg.ids <- get_function_arg_variable_ids(function.id, pd)
     id <- arg.ids[[1]]
 
