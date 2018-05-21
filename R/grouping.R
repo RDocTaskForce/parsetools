@@ -35,8 +35,6 @@ function( id = pd$id
   id <- ._check_id(id)
   if(length(id) > 1) return(sapply(id, pd_is_grouping, pd=pd))
 
-  # child  <- get_children_ids(id, pd, 1)
-  # parent <- get_parent_id(id, pd)
   #' @description
   #' a grouping is defined as a non empty set
   return(  length(children(id))

@@ -45,7 +45,7 @@ function( id, pd, .check = TRUE){
         stopifnot(all(pd_is_assignment(id, pd)))
     if(length(id) > 1)
         sapply(id, pd_get_assign_value_id, pd=pd)
-    child.ids <- get_children_ids(id, pd, 1, FALSE)
+    child.ids <- children(id, pd, 1, FALSE)
     type <- pd[pd$id %in% child.ids & pd$token %in% assignment.opperators, 'token']
     switch( type
           , RIGHT_ASSIGN = min(child.ids)
@@ -87,7 +87,7 @@ function( id, pd){
     #'
     if(length(id) > 1)
         sapply(id, pd_get_assign_variable_id, pd=pd)
-    child.ids   <- get_children_ids(id, pd, 1, FALSE)
+    child.ids   <- children(id, pd, 1, FALSE)
     assign.pd   <- pd[pd$id %in% child.ids & pd$token %in% assignment.opperators, ]
     switch( assign.pd$token
           , RIGHT_ASSIGN = max(child.ids)

@@ -43,7 +43,7 @@ function( id, pd
     #' @description
     #'   Subset the \code{pd} to the family of \code{id}.
     id <- ._check_id(id)
-    kids <- get_children_ids(id, pd, include.self=include.self, ngenerations=ngenerations, ...)
+    kids <- children(id, pd, include.self=include.self, ngenerations=ngenerations, ...)
     cids <-
         if (include.doc.comments || include.regular.comments){
             if (pd_is_grouping(parent <- get_parent_id(id, pd), pd)) {
@@ -122,7 +122,7 @@ get_sibling_ids <- function(id, pd=get('pd', parent.frame())){
     #'   Siblings are nodes with the same parent.
     #' }
     if (length(id) > 1) return(lapply(id, get_sibling_ids, pd=pd))
-    get_children_ids(get_parent_id(id, pd), pd)
+    children(parent(id, pd), pd)
 }
 siblings <- internal(get_sibling_ids)
 
@@ -169,7 +169,7 @@ function(id=all_root_ids(pd), pd=get('pd', parent.frame())){
     #'   Without the "_id" is a wrapper for giving the nodes.
     id <- ._check_id(id)
     if (length(id) > 1L) return(sapply(id, get_firstborn_id, pd=pd))
-    kids <- get_children_ids(id=id, pd=pd)
+    kids <- children(id=id, pd=pd)
     if (length(kids)==0 ) return(NA_integer_)
     else min(kids)
 }

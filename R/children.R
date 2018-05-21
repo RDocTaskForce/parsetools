@@ -58,6 +58,7 @@ function( id, pd = get('pd', parent.frame())
     }
     ids
 }
+children <- internal(get_children_ids)
 if(FALSE){#! @test
     pd       <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     id       <- pd[pd$parent==0, 'id']
@@ -100,8 +101,6 @@ if(FALSE){#! @test
     expect_true( all(pd$id %in% get_children_ids(0, pd, Inf)))
 }
 
-children <- internal(get_children_ids)
-
 #' @export
 get_children_pd <-
 function( id, pd
@@ -114,7 +113,7 @@ function( id, pd
         stopifnot( length(id) == 1L
                  , inherits(pd, 'parse-data')
                  )
-    pd[pd$id %in% get_children_ids( id, pd,...), ]
+    pd[pd$id %in% children( id, pd,...), ]
 }
 if(FALSE){#!@test
     'rnorm(10, mean=0, sd=1)' -> text

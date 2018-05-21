@@ -44,7 +44,7 @@ function(id = pd$id, pd = get('pd', parent.frame())){
     #'   Returns the id of the predicate of the if statemment,
     #'   i.e. the conditional statement.
     stopifnot(pd_is_if(id))
-    kids <- get_children_ids(id, pd)
+    kids <- children(id, pd)
     if (length(kids)<5) stop("inproper if statement")
     kids[[3L]]
 }
@@ -57,7 +57,7 @@ function(id = pd$id, pd = get('pd', parent.frame())){
     #'   Returns the id of the body of the branch executed if the predicate
     #'   evaluates to true.
     stopifnot(pd_is_if(id))
-    kids <- get_children_ids(id, pd)
+    kids <- children(id, pd)
     if (length(kids)<5) stop("inproper if statement")
     branch.id <- kids[[5L]]
     #TODO fix when a comment is in the way.
@@ -71,7 +71,7 @@ function(id = pd$id, pd = get('pd', parent.frame())){
     #' @description
     #'   Gets the id of the alternate branch, i.e. the else branch.
     stopifnot(pd_is_if(id))
-    kids <- get_children_ids(id, pd)
+    kids <- children(id, pd)
     if (length(kids)<7 || token(kids[[6]]) != 'ELSE')
         stop("inproper if-else statement")
     kids[[7L]]

@@ -34,7 +34,7 @@ function( id = all_root_ids(pd)
     #'   Test if the \code{id} points to a function.
     #'
     if (length(id) > 1) return(sapply(id, pd_is_function, pd=pd))
-    kids <- get_children_ids(id=id, pd, ngenerations=1, FALSE)
+    kids <- children(id, pd, ngenerations=1, include.self=FALSE)
     token(firstborn(id)) =='FUNCTION'
     #' @return a logical vector, same length as \code{id}.
 }
@@ -63,7 +63,7 @@ function( id = all_root_ids(pd)
         , pd = get('pd', parent.frame())
         ){
     if (length(id)>1L) return(sapply(id, get_function_body_id, pd=pd))
-    max(get_children_ids(id, pd))
+    max(children(id, pd))
 }
 if(F){#@testing
 pd <- get_parse_data(parse(text="hello_world <- function(){
@@ -89,7 +89,7 @@ get_function_arg_ids <-
 function( id = pd$id
         , pd = get('pd', parent.frame())
         ){
-    utils::tail(utils::head(get_children_ids(id=id, pd=pd), -1), -1)
+    utils::tail(utils::head(children(id=id, pd=pd), -1), -1)
 }
 if(F){#@testing
 pd <- get_parse_data(parse(text='get_function_arg_ids <-
@@ -130,9 +130,11 @@ function( pd                    #< parse data
 #' @rdname
 pd_is_function_arg <-
 function(id, pd){
+    #TODO
+    stop("not implimented")
     pd_is_function(parent(id), pd=pd)
 
-    get_children_ids(parent(id))
+    children(parent(id))
 
 }
 if(F){#@testing
