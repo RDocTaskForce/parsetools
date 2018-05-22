@@ -230,12 +230,11 @@ function( id = pd$id
     #' @describeIn root ascend from id to root
     id <- ._check_id(id)
     if (length(id) > 1L) return(sapply(id, ascend_to_root, pd=pd, ignore.groups=ignore.groups))
-    parent <- id
     while (TRUE) {
-        if (is.na(parent) || parent == 0) return(0L)
-        if (parent < 0) parent <- -parent
-        if (pd_is_root(parent, pd, ignore.groups=ignore.groups)) return(parent)
-        parent <- get_parent_id(parent, pd)
+        if (is.na(id) || id == 0) return(0L)
+        if (id < 0) id <- -id
+        if (pd_is_root(id, pd, ignore.groups=ignore.groups)) return(id)
+        id <- parent(id)
     }
 }
 if(FALSE){#@testing

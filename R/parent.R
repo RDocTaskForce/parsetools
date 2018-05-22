@@ -74,24 +74,15 @@ function( id, pd = get('pd', parent.frame()) #< parse data
     id <- ._check_id(id)
     stopifnot( nancestors >= 0
              , include.self || (nancestors >  0)
+             , length(id) == 1L
              )
-    if (length(id) > 1) {
-            return(lapply( id, get_ancestor_ids, pd=pd
-                         , nancestors   = nancestors
-                         , last         = last
-                         , aggregate    = aggregate
-                         , include.self = include.self
-                         , only.present = only.present
-                         ))
-    }
-
     if ( include.self && only.present && !(id %in% pd$id))
             stop("only.present=TRUE and include.self=TRUE but id is not present in pd.")
     if (nancestors == 0 && include.self) return (id)
     if (aggregate) ancestors <- if (include.self) id else integer(0)
     while(nancestors > 0L){
         nancestors <- nancestors - 1
-        parent <- get_parent_id(id, pd)
+        parent <- parent(id, pd)
         if (is.na(parent)) break
         if (only.present && !parent %in% pd$id){
             parent <- id
@@ -103,6 +94,7 @@ function( id, pd = get('pd', parent.frame()) #< parse data
     }
     if (aggregate) ancestors else parent
 }
+ancestors <- internal(get_ancestor_ids)
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     expect_identical(get_ancestor_ids( 1, pd,nancestors=Inf, aggregate=TRUE , include.self=TRUE , only.present = FALSE), c(1L, 3L, 23L,0L), info = "defaults, but fully specified.")
@@ -140,16 +132,18 @@ setClass( "testClass"
  }', keep.source=TRUE))
 
     root.id <- all_root_ids(pd)
-    body.id <- get_function_body_id(root.id, pd)
-    id <- pd[pd$text=="#< the x field", 'id']
+    body.id <- parent(pd_find_text('{'))
+    id <- pd_find_text("#< the x field")
 
     expect_true(root.id %in% get_ancestor_ids(id, pd))
     expect_false(root.id %in% get_ancestor_ids(id, pd, last=body.id))
 
     id2 <- pd[pd$text=="#< the y field", 'id']
 
-    value <- get_ancestor_ids(c(id, id2), pd, last = body.id, include.self =FALSE)
-    expect_identical(value[[1]], value[[2]])
-    expect_false(root.id %in% value[[1]])
-    expect_false(root.id %in% value[[2]])
+    expect_error(get_ancestor_ids(c(id, id2), pd, last = body.id, include.self =FALSE))
+    expect_identical( get_ancestor_ids(id , pd, last = body.id, include.self =FALSE)
+                    ,     ancestors   (id2, pd, last = body.id, include.self =FALSE)
+                    )
+    test.object <- get_ancestor_ids(id, pd, last = body.id, include.self =FALSE)
+    expect_false(root.id %in% test.object)
 }

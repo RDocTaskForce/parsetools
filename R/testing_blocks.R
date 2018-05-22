@@ -51,7 +51,7 @@ function( id = all_tagged_iff_ids(pd, .testing.tags)
     #'   string or inferred by location, see Details.
     #'
     stopifnot(is_iff_block(id,pd))
-    content.id  <- pd_get_if_branch_id(id, pd)
+    content.id  <- if_branch(id, pd)
 
     tag.comment <- children(content.id, pd)[[2]]
     info.string <- trimws(strip_doc_comment_leads(strip_tag(text(tag.comment), .testing.tags)))

@@ -62,38 +62,38 @@ children <- internal(get_children_ids)
 if(FALSE){#! @test
     pd       <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     id       <- pd[pd$parent==0, 'id']
-    kids.ids <- get_children_ids(id, pd, 1, include.self = FALSE)
-    expect_equal( kids.ids, c(3,2,5,6,9,10,12,13,16,17,19,20)
+    expect_equal( get_children_ids(id, pd, 1, include.self = FALSE)
+                , c(3,2,5,6,9,10,12,13,16,17,19,20)
                 , info="for default values"
                 )
 
-    kids.ids <- get_children_ids(id, pd, 1, include.self=TRUE)
-    expect_equal( kids.ids, c(23,3,2,5,6,9,10,12,13,16,17,19,20)
+    expect_equal( get_children_ids(id, pd, 1, include.self=TRUE)
+                , c(23,3,2,5,6,9,10,12,13,16,17,19,20)
                 , info='include.self=TRUE'
                 )
 
-    kids.ids <- get_children_ids( id, pd, 2, include.self=FALSE
-                                , all.generations = FALSE
-                                )
-    expect_equal( kids.ids, c(1,4,11,18)
+    expect_equal( get_children_ids( id, pd, 2, include.self=FALSE
+                                  , all.generations = FALSE
+                                  )
+                , c(1,4,11,18)
                 , info='ngenerations=2, include.self=FALSE, all.generations=FALSE'
                 )
 
-    kids.ids <- get_children_ids( id, pd
-                                , ngenerations=2
-                                , include.self=FALSE
-                                , all.generations = TRUE
-                                )
-    expect_equal( kids.ids, c(c(3,2,5,6,9,10,12,13,16,17,19,20), c(1,4,11,18))
+    expect_equal( get_children_ids( id, pd
+                                  , ngenerations=2
+                                  , include.self=FALSE
+                                  , all.generations = TRUE
+                                  )
+                , c(c(3,2,5,6,9,10,12,13,16,17,19,20), c(1,4,11,18))
                 , info='ngenerations=2, include.self=FALSE, all.generations=TRUE'
                 )
 
-    kids.ids <- get_children_ids( id, pd
-                                , ngenerations=2
-                                , include.self=TRUE
-                                , all.generations = TRUE
-                                )
-    expect_equal( kids.ids, c(23, c(3,2,5,6,9,10,12,13,16,17,19,20), c(1,4,11,18))
+    expect_equal( get_children_ids( id, pd
+                                  , ngenerations=2
+                                  , include.self=TRUE
+                                  , all.generations = TRUE
+                                  )
+                , c(23, c(3,2,5,6,9,10,12,13,16,17,19,20), c(1,4,11,18))
                 , info='ngenerations=2, include.self=TRUE, all.generations=TRUE'
                 )
 

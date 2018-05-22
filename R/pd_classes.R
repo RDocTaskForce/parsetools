@@ -231,13 +231,13 @@ function( id = pd$id
         , calls = NULL
         ){
     if (length(id) > 1L) return(sapply(id, pd_get_closest_call, pd=pd, calls=calls))
-    ancestors <- get_ancestor_ids(id, pd, only.present=TRUE)
-    ancestors <- ancestors[pd_is_symbol_call(ancestors)]
-    if (length(ancestors) == 0 ) return(NA_integer_)
+    all.ancestors <- ancestors(id, pd, only.present=TRUE)
+    call.ancestors <- all.ancestors[pd_is_symbol_call(ancestors)]
+    if (length(call.ancestors) == 0 ) return(NA_integer_)
     if (length(calls))
-        ancestors <- ancestors[text(pd_get_call_symbol_id(ancestors)) %in% calls]
+        call.ancestors <- call.ancestors[text(call_symbol(call.ancestors)) %in% calls]
     if (length(ancestors) == 0 ) return(NA_integer_)
-    ancestors[[1]]
+    call.ancestors[[1]]
 }
 if(FALSE){#@testing
 pd <- get_parse_data(parse(text={"
@@ -264,13 +264,13 @@ testClass <-
 roots <- all_root_ids(pd)
 
 id.10 <- pd[pd$text == '10','id']
-expect_equal(text(pd_get_call_symbol_id(pd_get_closest_call(id.10, pd=pd), pd=pd)), 'rnorm')
+expect_equal(text(call_symbol(pd_get_closest_call(id.10, pd=pd), pd=pd)), 'rnorm')
 
 id.hw <- pd[pd$text == "'hello world'", 'id']
 
-expect_equal(text(pd_get_call_symbol_id(pd_get_closest_call(id.hw, pd=pd))), 'print')
-expect_equal(text(pd_get_call_symbol_id(pd_get_closest_call(id.hw, pd=pd, 'list'))), 'list')
-expect_equal(text(pd_get_call_symbol_id(pd_get_closest_call(id.hw, pd=pd, 'setRefClass'))), 'setRefClass')
+expect_equal(text(call_symbol(pd_get_closest_call(id.hw, pd=pd))), 'print')
+expect_equal(text(call_symbol(pd_get_closest_call(id.hw, pd=pd, 'list'))), 'list')
+expect_equal(text(call_symbol(pd_get_closest_call(id.hw, pd=pd, 'setRefClass'))), 'setRefClass')
 
 expect_true(is.na(pd_get_closest_call(id.hw, pd=pd, 'setClass')))
 }

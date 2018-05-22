@@ -46,7 +46,7 @@ function( id, pd
     kids <- children(id, pd, include.self=include.self, ngenerations=ngenerations, ...)
     cids <-
         if (include.doc.comments || include.regular.comments){
-            if (pd_is_grouping(parent <- get_parent_id(id, pd), pd)) {
+            if (pd_is_grouping(parent <- parent(id, pd), pd)) {
                 pd <- fix_grouping_comment_association(parent, pd)
             }
             pd[ pd$token %in% c( if (include.doc.comments    ) comment.classes$class
@@ -132,7 +132,7 @@ get_next_sibling_id <- function(id, pd=get('pd', parent.frame())){
     #' @description \subsection{get_next_sibling_id}{
     #'   gives the id of the next youngest sibling of the current id.
     #' }
-    sids <- get_sibling_ids(id, pd)
+    sids <- siblings(id, pd)
     . <- which(sids>id)
     if (length(.)) sids[min(.)] else NA_integer_
 }
@@ -144,9 +144,9 @@ get_prev_sibling_id <- function(id, pd=get('pd', parent.frame())){
     #' @description \subsection{get_prev_sibling_id}{
     #'   gives the id of the next older sibling of the current id.
     #' }
-    sids <- get_sibling_ids(id, pd)
-    . <- which(sids<id)
-    if (length(.)) sids[max(.)] else NA_integer_
+    sibs <- siblings(id, pd)
+    . <- which(sibs<id)
+    if (length(.)) sibs[max(.)] else NA_integer_
 }
 prev_sibling <- internal(get_prev_sibling_id)
 

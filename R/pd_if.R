@@ -48,6 +48,8 @@ function(id = pd$id, pd = get('pd', parent.frame())){
     if (length(kids)<5) stop("inproper if statement")
     kids[[3L]]
 }
+if_predicate <- internal(pd_get_if_predicate_id)
+
 #' @export
 pd_get_if_branch_id <-
 function(id = pd$id, pd = get('pd', parent.frame())){
@@ -63,6 +65,8 @@ function(id = pd$id, pd = get('pd', parent.frame())){
     #TODO fix when a comment is in the way.
     #' @return an id integer.
 }
+if_branch <- internal(pd_get_if_branch_id)
+
 #' @export
 pd_get_if_alternate_id <-
 function(id = pd$id, pd = get('pd', parent.frame())){
@@ -77,6 +81,8 @@ function(id = pd$id, pd = get('pd', parent.frame())){
     kids[[7L]]
     #' @return an id integer.
 }
+if_alternate <- internal(pd_get_if_alternate_id)
+
 if(FALSE){#!@testing if structures
     pd <- get_parse_data(parse(text={"
         if(predicate){

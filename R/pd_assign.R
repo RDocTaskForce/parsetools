@@ -56,24 +56,19 @@ function( id, pd, .check = TRUE){
 assign_value <- internal(pd_get_assign_value_id, all_assignment_ids(pd))
 if(FALSE){#!@testing
 pd <- get_parse_data(parse(text="x<-1", keep.source=TRUE))
-val.id <- pd_get_assign_value_id(all_assignment_ids(pd), pd=pd)
-expect_equal(val.id, 5L)
+expect_equal(pd_get_assign_value_id(all_assignment_ids(pd), pd=pd), 5L)
 
 pd <- get_parse_data(parse(text="x=1", keep.source=TRUE))
-val.id <- pd_get_assign_value_id(all_assignment_ids(pd), pd=pd)
-expect_equal(val.id, 5L)
+expect_equal(pd_get_assign_value_id(all_assignment_ids(pd), pd=pd), 5L)
 
 pd <- get_parse_data(parse(text="x<<-1", keep.source=TRUE))
-val.id <- pd_get_assign_value_id(all_assignment_ids(pd), pd=pd)
-expect_equal(val.id, 5L)
+expect_equal(pd_get_assign_value_id(all_assignment_ids(pd), pd=pd), 5L)
 
 pd <- get_parse_data(parse(text="1->x", keep.source=TRUE))
-val.id <- pd_get_assign_value_id(all_assignment_ids(pd), pd=pd)
-expect_equal(val.id, 2L)
+expect_equal(pd_get_assign_value_id(all_assignment_ids(pd), pd=pd), 2L)
 
 pd <- get_parse_data(parse(text="1->>x", keep.source=TRUE))
-val.id <- pd_get_assign_value_id(all_assignment_ids(pd), pd=pd)
-expect_equal(val.id, 2L)
+expect_equal(pd_get_assign_value_id(all_assignment_ids(pd), pd=pd), 2L)
 }
 
 #' @export
@@ -103,8 +98,7 @@ pd <- get_parse_data(parse(text="hello_world <- function(){
 ", keep.source=TRUE))
 
     expect_true(pd_is_assignment(all_root_ids(pd), pd=pd))
-
-    var.id <- pd_get_assign_variable_id(all_root_ids(pd), pd=pd)
-    expect_equal(var.id, parent(pd_find_text("hello_world")))
+    expect_equal( pd_get_assign_variable_id(all_root_ids(pd), pd=pd)
+                , parent(pd_find_text("hello_world")))
 }
 

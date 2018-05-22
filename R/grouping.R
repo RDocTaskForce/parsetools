@@ -74,25 +74,26 @@ if(FALSE){#! @testing
 #' @inheritParams get_children_ids
 #' @description get the ids that represent the grouping nodes.
 #' @return an integer vector of ids.
-get_grouping_ids <- function(pd) {pd[pd_is_grouping(pd=pd), 'id']}
+all_grouping_ids <- make_get_all(pd_is_grouping)
+    # function(pd) {pd[pd_is_grouping(pd=pd), 'id']}
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='{
         this(is+a-grouping)
     }', keep.source=TRUE))
 
-    expect_is(get_grouping_ids(pd), 'integer')
-    expect_equal(length(get_grouping_ids(pd)), 1)
-    expect_equal(get_grouping_ids(pd), 25)
+    expect_is(all_grouping_ids(pd), 'integer')
+    expect_equal(length(all_grouping_ids(pd)), 1)
+    expect_equal(all_grouping_ids(pd), 25)
 }
 
 fix_grouping_comment_association <-
-function( id = get_grouping_ids(pd)
+function( id = all_grouping_ids(pd)
         , pd = get('pd', parent.frame())
         ){
     id <- ._check_id(id)
     stopifnot(pd_is_grouping(id, pd))
     for (i in id) {
-        cids <- get_children_ids(i, pd)
+        cids <- children(i, pd)
         for (cid in cids)
             if (is_comment(pd, cid)) {
                 n <- next_sibling(cid)
@@ -120,7 +121,7 @@ if(FALSE){#!@testing
     # Comment 3
     4+5
     "}, keep.source=TRUE))
-    id <- get_grouping_ids(pd)
+    id <- all_grouping_ids(pd)
 
     fixed <- fix_grouping_comment_association(pd=pd)
 

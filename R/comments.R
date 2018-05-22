@@ -268,7 +268,7 @@ function( type = comment.classes$class  #< type of the comments to extract
 make_get_comment_ids <-
 function( type = comment.classes$class
         ){
-    function( pd = get('pd', parent.frame()) ){
+    function(pd){
         pd <-  ._check_parse_data(pd)
         pd[pd$token %in% type, 'id']
     }
@@ -282,38 +282,27 @@ doc_comments <- make_get_comment_ids(comment.classes$class)
 
 #' @export
 #' @rdname get_comments
-#' @description \subsection{get_roxygen_comments}{Get Roxygen \code{#'} comments only.}
-get_roxygen_comments      <- make_get_comment.classes("ROXYGEN_COMMENT")
-roxygen_comments <- make_get_comment_ids('ROXYGEN_COMMENT')
+#' @description \subsection{get_roxygen_comment_ids}{Get Roxygen \code{#'} comments only.}
+get_roxygen_comment_ids <- make_get_comment_ids("ROXYGEN_COMMENT")
+roxygen_comments <- internal(get_roxygen_comment_ids)
 
 #' @export
 #' @rdname get_comments
-#' @description \subsection{get_relative_comments}{Get relative \code{#<} comments only.}
-get_relative_comments     <- make_get_comment.classes("RELATIVE_COMMENT")
-#' @export
-#' @rdname get_comments
-get_relative_comment_ids <- function(pd){pd$id[pd$token == "RELATIVE_COMMENT"]}
-#' @export
-#' @rdname get_comments
-relative_comments <- make_get_comment_ids('RELATIVE_COMMENT')
+#' @description \subsection{get_relative_comment_ids}{Get relative \code{#<} comments only.}
+get_relative_comment_ids <- make_get_comment_ids('RELATIVE_COMMENT')
+relative_comments <- internal(get_relative_comment_ids)
 
 #' @export
 #' @rdname get_comments
 #' @description \subsection{get_continuation_comments}{Get continuation \code{#^} comments only.}
-get_continuation_comments <- make_get_comment.classes("CONTINUATION_COMMENT")
-
-#' @export
-#' @rdname get_comments
-#' @description \subsection{get_argument_descriptors}{
-#'     Get comments used for argument description (\code{#<}, and \code{#^}.}
-get_argument_descriptors  <- make_get_comment.classes(c( "RELATIVE_COMMENT"
-                                                       , "CONTINUATION_COMMENT"
-                                                       ))
+get_continuation_comment_ids <- make_get_comment_ids("CONTINUATION_COMMENT")
+continuation_comments <- internal(get_continuation_comment_ids)
 
 #' @export
 #' @rdname get_comments
 #' @description \subsection{get_normal_comments}{Get normal (non-documenting) comments only.}
-get_normal_comments       <- make_get_comment.classes("NORMAL_COMMENT")
+get_normal_comment_ids <- make_get_comment_ids("NORMAL_COMMENT")
+normal_comments <- internal(get_normal_comment_ids)
 # nocov end
 
 #@internal
@@ -333,11 +322,6 @@ function( id = pd$id[1]                  #< id of the comment of interest
     }
     return(assoc.ids)
 }
-get_associated_continuation <-
-    function( id = relative_comments(pd)
-            , pd = get('pd', parent.frame())
-            )
-        nodes(get_associated_continuation_ids(id=id, pd=pd), pd=pd)
 
 if(FALSE){#@testing
     pd <- get_parse_data(parse(text="
@@ -348,7 +332,7 @@ if(FALSE){#@testing
             ){x**y}
     # Regular Comment
     ", keep.source=TRUE))
-    id <- get_relative_comment_ids(pd)[[2]]
+    id <- relative_comments(pd)[[2]]
 
     expect_warning(x <- get_associated_continuation_ids(id, pd))
     expect_equal( start_line(x, pd), c(4,5))
@@ -356,12 +340,7 @@ if(FALSE){#@testing
     expect_equal( text(x, pd), c( "#< yet another"
                                 , "#^ argument."
                                 ))
-
-    roxy <- get_roxygen_comments(pd)
-    expect_warning(x <- get_associated_continuation(roxy$id, pd))
-    expect_identical(roxy, x)
-
-    expect_error( suppressWarnings(get_associated_continuation(id = get_normal_comments(pd)$id, pd))
+    expect_error( suppressWarnings(get_associated_continuation_ids(id = get_normal_comments(pd)$id, pd))
                 , "not a valid starting comment."
                 )
 }

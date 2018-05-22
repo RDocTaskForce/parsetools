@@ -102,6 +102,7 @@ function( id = all_root_ids(pd)[1]       #< id of interest
     stopifnot(pd_is_symbol_call(id, pd))
     children(next_sibling(firstborn(id)))
 }
+call_symbol <- internal(pd_get_call_symbol_id)
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
@@ -112,36 +113,10 @@ if(FALSE){#!@testing
     id <- ids[[3]]
     expect_equal(pd_get_call_symbol_id(id, pd), 45L)
 }
-call_symbol <- internal(pd_get_call_symbol_id)
-
-
-#' @export
-pd_get_call_symbol <-
-function( id = all_root_ids(pd)[1]       #< id of interest
-        , pd = get('pd', parent.frame()) #< parse data of assignemnt
-        ){
-    #' @title Get the symbol of the function being called.
-    #' @inheritParams pd_is_symbol_call
-    #' @description a wrapper to \code{\link{pd_is_symbol_call}} to subset
-    #'     the \code{\link{parse-data}}.
-    text(pd_get_call_symbol_id(id))
-}
-if(FALSE){#!@testing
-    pd <- get_parse_data(parse(text={"
-        x <- rnorm(10, 0, 1)
-        y <- runif(10)
-        plot(x, y)
-    "}, keep.source=TRUE))
-    ids <- all_root_ids(pd)
-    id <- ids[[3]]
-    expect_equal(pd_get_call_symbol(id, pd), pd['45','text'])
-}
 
 #' @export
 pd_get_call_arg_ids <-
-function( id = all_root_ids(pd)[1]       #< id of interest
-        , pd = get('pd', parent.frame()) #< parse data of assignemnt
-        ){
+function( id, pd){
     #' @title get the arguments of a call.
     #' @inheritParams pd_is_symbol_call
     #' @description
@@ -158,7 +133,7 @@ function( id = all_root_ids(pd)[1]       #< id of interest
                       if (length(arg) == 2) {
                           #' @note Are there cases other than alist that could result in a two
                           #' id argument?
-                          stopifnot( text(pd_get_call_symbol_id(id)) == 'alist')
+                          stopifnot( text(call_symbol(id)) == 'alist')
                           return(NA_integer_)
                       }
                       if (length(arg) == 3) {
@@ -178,19 +153,16 @@ function( id = all_root_ids(pd)[1]       #< id of interest
 call_args <- internal(pd_get_call_arg_ids)
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
-    args <- pd_get_call_arg_ids(pd=pd)
+    test.object <- pd_get_call_arg_ids(all_root_ids(pd), pd=pd)
 
-    expect_is(args, 'integer')
-    expect_equal(names(args), c('', 'mean', 'sd'))
-    expect_identical(args, c(5L, mean=12L, sd=19L))
-    # expect_equivalent( args
-    #                  , list( pd['4', ], mean=pd['11', ], sd=pd['18', ])
-    #                  )
+    expect_is(test.object, 'integer')
+    expect_equal(names(test.object), c('', 'mean', 'sd'))
+    expect_identical(test.object, c(5L, mean=12L, sd=19L))
     pd <- get_parse_data(parse(text='alist(x, y=z, ...=)', keep.source=TRUE))
-    args <- pd_get_call_arg_ids(pd=pd)
-    expect_identical(args, c( parent(pd_find_text('x'))
-                            , y = parent(pd_find_text('z'))
-                            , '...'=NA_integer_))
+    expect_identical( call_args(pd=pd)
+                    , c( parent(pd_find_text('x'))
+                       , y = parent(pd_find_text('z'))
+                       , '...'=NA_integer_))
 }
 
 cumand <- function(a)Reduce('&&', a, right=TRUE, accumulate = TRUE)

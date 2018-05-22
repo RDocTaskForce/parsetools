@@ -72,16 +72,12 @@ pd <- get_parse_data(parse(text="hello_world <- function(){
 ", keep.source=TRUE))
 
     id <- assign_value(pd=pd)
-    body.id <- get_function_body_id(id, pd)
+    expect_equal(get_function_body_id(id, pd), parent(pd_find_text('{')))
 
-    expected.body.id <- subset(pd, token == "'{'")$parent
-    expect_equal(body.id, expected.body.id)
-
-pd <- get_parse_data(parse(text='function(l,r)paste(l,r)', keep.source=TRUE))
-    base.id <- subset(pd, text=='paste')$parent
-    expected <- get_parent_id(base.id, pd)
-    body.id <- get_function_body_id(pd=pd)
-    expect_identical(body.id, expected)
+    pd <- get_parse_data(parse(text='function(l,r)paste(l,r)', keep.source=TRUE))
+    expect_identical( get_function_body_id(pd=pd)
+                    , parent(parent(pd_find_text('paste')), pd)
+                    )
 }
 
 #' @describeIn pd_is_function Obtain the ids for the arguments of a function
@@ -98,9 +94,7 @@ function( pd                    #< parse data
         ){}', keep.source=TRUE))
 
     id <- assign_value(pd=pd)
-    arg.ids <- get_function_arg_ids(id, pd)
-
-    expect_identical( text(arg.ids, pd=pd)
+    expect_identical( text(get_function_arg_ids(id, pd), pd=pd)
                     , c('(', 'pd', '#< parse data', ','
                        , 'id', '=', '', '#< id number', ')'
                        )
@@ -108,12 +102,15 @@ function( pd                    #< parse data
 }
 
 get_function_arg_variable_ids <-
-function( id = pd$id
-        , pd = get('pd', parent.frame())
-        ){
-    arg.ids <- get_function_arg_ids(id, pd)
+function( id, pd, .check = TRUE){
+    if (.check)
+        stopifnot( pd_is_function(id, pd)
+                 , length(id) == 1L
+                 )
+    arg.ids <- function_args(id, pd)
     arg.ids[token(arg.ids, pd=pd) == 'SYMBOL_FORMALS']
 }
+function_arg_variables <- internal(get_function_arg_variable_ids)
 if(F){#@testing
 pd <- get_parse_data(parse(text='get_function_arg_ids <-
 function( pd                    #< parse data
@@ -152,15 +149,19 @@ id <- associate_relative_comments(pd=pd)
 }
 
 get_function_arg_associated_comment_ids <-
-function( id = pd$id
-        , pd = get('pd', parent.frame())
-        ){
+function( id, pd, .check = TRUE){
+    if (.check)
+        stopifnot( inherits(pd, 'parse-data')
+                 , length(id) == 1L
+                 # , pd_is_function_arg(id, pd)
+                 )
     stopifnot(length(id)==1)
-    sibling.args <- get_function_arg_variable_ids(get_parent_id(id, pd), pd)
-    all.siblings  <- get_sibling_ids(id, pd)
-    comments <- intersect(get_relative_comment_ids(pd), all.siblings)
+    sibling.args <- function_arg_variables(parent(id, pd), pd)
+    all.siblings  <- siblings(id, pd)
+    comments <- intersect(relative_comments(pd), all.siblings)
     comments[associate_relative_comments(comments) == id]
 }
+function_arg_associated_comments <- internal(get_function_arg_associated_comment_ids)
 if(F){#@testing
 pd <- get_parse_data(parse(text='get_function_arg_ids <-
 function( pd                    #< parse data
@@ -169,11 +170,11 @@ function( pd                    #< parse data
         ){}', keep.source=TRUE))
 
     function.id <- assign_value(pd=pd)
-    arg.ids <- get_function_arg_variable_ids(function.id, pd)
+    arg.ids <- function_arg_variables(function.id, pd)
     id <- arg.ids[[1]]
 
-    value <- get_function_arg_associated_comment_ids(id, pd)
-    expect_identical(text(value, pd=pd), c('#< parse data', '#< continuation comment'))
+    expect_identical(text(get_function_arg_associated_comment_ids(id, pd), pd=pd)
+                    , c('#< parse data', '#< continuation comment'))
 
     expect_length(get_function_arg_associated_comment_ids(arg.ids[[2]], pd), 0)
 }

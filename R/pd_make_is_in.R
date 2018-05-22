@@ -12,8 +12,8 @@ function(calls = character(0), .is=pd_make_is_call(calls)){
             , pd = get('pd', parent.frame())
             ){
         if (length(id) > 1) return(sapply(id, me, pd=pd))
-        ancestors <- get_ancestor_ids(id, pd, only.present=TRUE)
-        any(.is(id=ancestors, pd=pd))
+        my.ancestors <- ancestors(id, pd, only.present=TRUE)
+        any(.is(id=my.ancestors, pd=pd))
     }
 }
 #' @rdname pd_make_is_in_call
@@ -24,7 +24,7 @@ function(calls = character(0)){
         pd_is_symbol_call
     else
         function(id, pd)
-            (pd_is_symbol_call(id, pd) & (text(pd_get_call_symbol_id(id, pd)) %in% calls))
+            (pd_is_symbol_call(id, pd) & (text(call_symbol(id, pd)) %in% calls))
 }
 
 if(FALSE){#@test pd_make_is_call & pd_make_is_in_call
@@ -43,7 +43,7 @@ pd <- get_parse_data(parse(text={"
     id <- pd[pd$text=="'my message'",'id']
 
     expect_true(pd_is_symbol_call(test.id, pd))
-    expect_identical(text(pd_get_call_symbol_id(test.id, pd)), 'test')
+    expect_identical(text(call_symbol(test.id, pd)), 'test')
 
     expect_true(.is(test.id, pd))
     expect_false(.is(id, pd))

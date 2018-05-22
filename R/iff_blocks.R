@@ -163,7 +163,7 @@ function( id, tag, pd = get('pd', parent.frame())
     #'   \item an \code{if(FALSE)} block.
     if (!is_iff_block(id, pd)) return(FALSE)
     #'   \item is a curly braced group of code.
-    if (token(. <- pd_get_if_branch_id(id)) != 'expr')   return(FALSE)
+    if (token(. <- if_branch(id)) != 'expr')   return(FALSE)
     if (token(. <- firstborn( . , pd)) != "'{'" )   return(FALSE)
     #'   \item has a comment as the first parsed element.
     if (!is_comment(pd, . <- next_sibling(., pd))) return(FALSE)
@@ -321,7 +321,7 @@ function(id, pd = get('pd', parent.frame())){
         #' for all other assignments \code{type="assignment"}.
         #'
     } else if(pd_is_symbol_call(prev.id)) {
-        switch( text(pd_get_call_symbol_id(prev.id, pd))
+        switch( text(call_symbol(prev.id, pd))
               , setClass = {
                     #' The names for \code{link{setClass}} calls will also be inferred.
                     #' The name of the class is taken as the name, but the
@@ -333,7 +333,7 @@ function(id, pd = get('pd', parent.frame())){
                     #' assignment operation takes priority and would have
                     #' \code{type="assignment"}.
                     #'
-                    args <- pd_get_call_arg_ids(prev.id)
+                    args <- call_args(prev.id)
                     line_error_if (length(args) == 0, prev.id,
                         ": setClass must be called with a Class argument.")
                     name <- {
@@ -347,7 +347,7 @@ function(id, pd = get('pd', parent.frame())){
               , setMethod = {
                     #' The names for \code{\link{setMethod}} will assume
                     #' the S3 convention of \code{<method>.<class>}.
-                    args <- pd_get_call_arg_ids(prev.id)
+                    args <- call_args(prev.id)
                     line_error_if(length(args)==0, prev.id,
                         "setMethod must be called with arguments.")
                     fname <- {
@@ -362,7 +362,7 @@ function(id, pd = get('pd', parent.frame())){
                         # args[[ifelse('signature' %in% names(args), 'signature', 2L)]]
                         sig.arg <- args[[ifelse('signature' %in% names(args), 'f', 2L)]]
                         if (pd_is_symbol_call(sig.arg)) {
-                            if (!(text(pd_get_call_symbol_id(sig.arg)) %in% c('signature', 'c')))
+                            if (!(text(call_symbol(sig.arg)) %in% c('signature', 'c')))
                                 line_error(sig.arg, 'Cannot infer signature for setMethod.')
                             args <- call_args(sig.arg)
                             sig.args.text <- expr_text(args)
@@ -377,7 +377,7 @@ function(id, pd = get('pd', parent.frame())){
                     #' \code{\link{setGeneric}} can also be used with the name
                     #' of the generic function the inferred name and
                     #' \code{type="setGeneric"}.
-                    args <- pd_get_call_arg_ids(prev.id)
+                    args <- call_args(prev.id)
                     line_error_if(length(args)==0, prev.id,
                         "setGeneric must be called with arguments.")
                     fname <- {

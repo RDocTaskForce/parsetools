@@ -26,12 +26,12 @@
 #'         associated.
 #' @export
 associate_relative_comments <-
-function( id = get_relative_comments(pd)$id
+function( id = relative_comments(pd)
         , pd = get('pd', parent.frame())
         ){
     if (length(id)>1L) return(sapply(id, associate_relative_comments, pd=pd))
 
-    sibs <- get_sibling_ids(id, pd)
+    sibs <- siblings(id, pd)
     possible <- sibs[token(sibs, pd) == 'SYMBOL_FORMALS']
     if (length(possible) == 0L) return(NA)
     possible <- possible[end_line(possible) <= start_line(id)]
@@ -47,8 +47,7 @@ pd <- get_parse_data(parse(text='function( pd                    #< parse data
                                 #< continuation comment
         , id = all_root_ids(pd) #< id number
         ){}', keep.source=TRUE))
-
-    id <- get_relative_comments(pd)$id
+    id <- relative_comments(pd)
 
     value <- associate_relative_comments(pd=pd)
     expect_identical(value[[1]], value[[2]])
@@ -58,14 +57,14 @@ pd <- get_parse_data(parse(text='function( pd                    #< parse data
 # it is allowed.
 pd <- get_parse_data(parse(text='function( id, pd = get("pd", parent.frame()) #< parse data
         ){}', keep.source=TRUE))
-    id <- get_relative_comments(pd)$id
+    id <- relative_comments(pd)
 
     expect_identical(text(associate_relative_comments(id, pd), pd=pd), 'pd')
 
 pd <- get_parse_data(parse(text='function( id, #< traditional comma placement.
            pd = get("pd", parent.frame()) #< parse data
          ){}', keep.source=TRUE))
-    id <- get_relative_comments(pd)$id
+    id <- relative_comments(pd)
 
     value <- associate_relative_comments(id, pd)
     expected <- pd[ token(pd=pd)  ==  "SYMBOL_FORMALS"
@@ -80,7 +79,7 @@ pd <- get_parse_data(parse(text='setClass( "testClass"
                     )
          )', keep.source=TRUE))
 
-    ids <- get_relative_comment_ids(pd)
+    ids <- relative_comments(pd)
     id <- ids[[1]]
 
     pd_is_in_class_definition(id)
