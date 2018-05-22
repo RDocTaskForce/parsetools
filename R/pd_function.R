@@ -87,6 +87,7 @@ function( id = pd$id
         ){
     utils::tail(utils::head(children(id=id, pd=pd), -1), -1)
 }
+function_args <- internal(get_function_arg_ids)
 if(F){#@testing
 pd <- get_parse_data(parse(text='get_function_arg_ids <-
 function( pd                    #< parse data

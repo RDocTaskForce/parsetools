@@ -232,11 +232,11 @@ function( id = pd$id
         ){
     if (length(id) > 1L) return(sapply(id, pd_get_closest_call, pd=pd, calls=calls))
     all.ancestors <- ancestors(id, pd, only.present=TRUE)
-    call.ancestors <- all.ancestors[pd_is_symbol_call(ancestors)]
+    call.ancestors <- all.ancestors[pd_is_symbol_call(all.ancestors)]
     if (length(call.ancestors) == 0 ) return(NA_integer_)
     if (length(calls))
         call.ancestors <- call.ancestors[text(call_symbol(call.ancestors)) %in% calls]
-    if (length(ancestors) == 0 ) return(NA_integer_)
+    if (length(call.ancestors) == 0 ) return(NA_integer_)
     call.ancestors[[1]]
 }
 if(FALSE){#@testing

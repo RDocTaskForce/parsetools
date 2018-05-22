@@ -322,7 +322,7 @@ function( id = pd$id[1]                  #< id of the comment of interest
     }
     return(assoc.ids)
 }
-
+associated_continuations <- internal(get_associated_continuation_ids)
 if(FALSE){#@testing
     pd <- get_parse_data(parse(text="
     #' A Title for this function
@@ -340,7 +340,7 @@ if(FALSE){#@testing
     expect_equal( text(x, pd), c( "#< yet another"
                                 , "#^ argument."
                                 ))
-    expect_error( suppressWarnings(get_associated_continuation_ids(id = get_normal_comments(pd)$id, pd))
+    expect_error( suppressWarnings(get_associated_continuation_ids(id = normal_comments(pd), pd))
                 , "not a valid starting comment."
                 )
 }

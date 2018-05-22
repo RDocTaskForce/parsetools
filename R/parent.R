@@ -113,13 +113,7 @@ if(FALSE){#! @testing
     expect_error(get_ancestor_ids(1, pd, nancestors=  0, include.self=FALSE))
     expect_error(get_ancestor_ids(1, pd, nancestors= -1))
 
-    expect_is(get_ancestor_ids(c(11, 18), pd), 'list')
-    expect_identical(get_ancestor_ids(c(23, 11), pd, Inf, T, T, F), list(c(23L, 0L), c(11L, 12L, 23L, 0L)))
-    expect_identical(get_ancestor_ids(c(23, 11), pd,  2L, T, T, F), list(c(23L, 0L), c(11L, 12L, 23L    )))
-    expect_identical(get_ancestor_ids(c(23, 11), pd,  2L, T, F, F), list(c(     0L), c(     12L, 23L    )))
-    expect_identical(get_ancestor_ids(c(23, 11), pd,  2L, F, F, F), list(c(     0L), c(          23L    )))
-    expect_identical(get_ancestor_ids(c(23, 11), pd, Inf, T, T, T), list(c(23L    ), c(11L, 12L, 23L    )))
-    expect_identical(get_ancestor_ids(c(23, 11), pd, Inf, F, T, T), list(c(23L    ), c(          23L    )))
+    expect_error(get_ancestor_ids(c(11, 18), pd))
 }
 if(FALSE){#! @testing last parameter
 pd <- get_parse_data(parse(text = '

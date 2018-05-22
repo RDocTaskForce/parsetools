@@ -150,7 +150,7 @@ function( id, pd){
     return(val)
     #' @return a named list where each element is the id for the 'expr' element of the argument.
 }
-call_args <- internal(pd_get_call_arg_ids)
+call_args <- internal(pd_get_call_arg_ids, all_root_ids(pd))
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     test.object <- pd_get_call_arg_ids(all_root_ids(pd), pd=pd)
