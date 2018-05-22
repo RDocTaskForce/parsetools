@@ -92,7 +92,7 @@ if(FALSE){#! @testing
         #@ Tag comment
     }", keep.source=TRUE))
     pd <- classify_comment(df)
-    comments <- get_comments(pd)
+    comments <- nodes(all_comment_ids(pd))
     expect_is(comments, 'data.frame')
     expect_is(comments, 'parse-data')
     expect_equal( comments$token
@@ -107,49 +107,23 @@ if(FALSE){#! @testing
 #' @param x   object to test
 #' @param ... other arguments, noteably \code{id} for \code{\link{parse-data}}.
 #' @description
-#'   \subsection{is_doc_comment}{
+#'   \subsection{pd_is_doc_comment}{
 #'      A generic function for determining if an object is a comment.
 #'      Used for testing character vectors, as well as \code{\link{parse-data}} and
 #'      generic data frames.
 #'   }
 #' @return Should return a logical vector, for parse-data and data.frame should
 #'         be length of \code{nrow(x)}.  For character same length as x.
-is_comment <- function(x, ...)UseMethod("is_comment")
-
-#' @export
-is_comment.character <- function(x, ...){
-    classify_comment(x) %in% c( comment.classes$class
-                              , "NORMAL_COMMENT"
-                              )
+pd_is_comment <- function(id, pd, .check=TRUE){
+    if (.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+    }
+    token(id, pd) %in% c(comment.classes$class, "NORMAL_COMMENT")
 }
-
-#' @export
-is_comment.integer <- function(x, pd = get('pd', parent.frame()), ...){
-    stopifnot(inherits(pd, 'parse-data'))
-    token(id=x, pd) %in% c(comment.classes$class, "NORMAL_COMMENT")
-}
-
-#' @export
-`is_comment.parse-data` <- function(x, id=x$id, ...){
-    x[ x$id %in% id, 'token'] %in% c( comment.classes$class
-                                    , "NORMAL_COMMENT"
-                                    )
-}
-#' @export
-is_comment.data.frame <- function(x, id=x$id, ...){
-    x <- classify_comment(x)
-    x[ x$id %in% id, 'token'] %in% c( comment.classes$class
-                                    , "NORMAL_COMMENT"
-                                    )
-}
+all_comment_ids <- make_get_all(pd_is_comment)
+is_comment <- internal(pd_is_comment)
 if(FALSE){#!@testing
-    expect_true(is_comment("## normal comment       "))
-    expect_true(is_comment("#' Roxygen comment      "))
-    expect_true(is_comment("#! Documentation comment"))
-    expect_true(is_comment("#< Relative comment     "))
-    expect_true(is_comment("#^ Continuation comment "))
-    expect_true(is_comment("#@ Tag comment          "))
-    expect_false(is_comment("hello"))
     pd <- get_parse_data(parse(text={"
         ## normal comment
         #' Roxygen comment
@@ -159,24 +133,24 @@ if(FALSE){#!@testing
         #@ Tag comment
         Hello
     "}, keep.source=TRUE))
-    rtn <- is_comment(pd)
+    rtn <- is_comment(pd=pd)
     expect_is(rtn, 'logical')
     expect_equal(rtn, c(T,T,T,T,T,T,F,F))
+
+    all_comment_ids(pd)
+
 }
 
-is_relative_comment <- function(x,...)UseMethod("is_relative_comment")
-is_relative_comment.character <- function(x,...)classify_comment(x) == 'RELATIVE_COMMENT'
-`is_relative_comment.parse-data` <- function(x, id=x$id, ...){
-    token(id, pd=x) == "RELATIVE_COMMENT"
+pd_is_relative_comment <- function(id, pd, .check=TRUE){
+    if(.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+    }
+    token(id, pd) == "RELATIVE_COMMENT"
 }
+all_relative_comment_ids <- make_get_all(pd_is_relative_comment)
+is_relative_comment <- internal(pd_is_relative_comment)
 if(F){#@testing
-    expect_false(is_relative_comment("## normal comment       "))
-    expect_false(is_relative_comment("#' Roxygen comment      "))
-    expect_false(is_relative_comment("#! Documentation comment"))
-    expect_true (is_relative_comment("#< Relative comment     "))
-    expect_false(is_relative_comment("#^ Continuation comment "))
-    expect_false(is_relative_comment("#@ Tag comment          "))
-    expect_false(is_relative_comment("hello"))
     pd <- get_parse_data(parse(text={"
         ## normal comment
         #' Roxygen comment
@@ -186,11 +160,12 @@ if(F){#@testing
         #@ Tag comment
         Hello
     "}, keep.source=TRUE))
-    rtn <- is_relative_comment(pd)
-    expect_is(rtn, 'logical')
+
+    expect_is(rtn <- pd_is_relative_comment(pd$id, pd=pd), 'logical')
     expect_equal(rtn, c(F,F,F,T,F,F,F,F))
 
 }
+
 
 #' @export
 #' @rdname is_comment
@@ -198,18 +173,15 @@ if(F){#@testing
 #'   \subsection{is_doc_comment}{
 #'       Additionally tests if the comment is a documentation type comment.
 #'   }
-is_doc_comment <- function(x, ...)UseMethod("is_doc_comment")
-#' @export
-is_doc_comment.character <- function(x, ...){classify_comment(x) %in% comment.classes$class}
-#' @export
-`is_doc_comment.parse-data` <- function(x, id=x$id, ...){
-    x[ x$id %in% id, 'token'] %in% comment.classes$class
+pd_is_doc_comment <- function(id, pd, .check=TRUE){
+    if (.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+    }
+    token(id) %in% comment.classes$class
 }
-#' @export
-is_doc_comment.data.frame   <- function(x, id=x$id, ...){
-    x <- ._check_parse_data(x)
-    x[ x$id %in% id, 'token'] %in% comment.classes$class
-}
+all_doc_comment_ids <- make_get_all(pd_is_doc_comment)
+is_doc_comment <- internal(pd_is_doc_comment)
 if(FALSE){#! @testing
     expect_false(is_doc_comment("## normal comment       "))
     expect_true (is_doc_comment("#' Roxygen comment      "))
@@ -242,68 +214,6 @@ if(FALSE){#! @testing
     expect_is(rtn, 'logical')
     expect_equal(rtn, c(F,F,F,T,T,T,T,T,F))
 }
-#' @export
-is_doc_comment.integer <- function(x, pd=get('pd', parent.frame()), ...){
-    token(x, pd=pd) %in% comment.classes$class
-}
-
-# nocov start
-#' @export
-#' @title Getter functions
-#' @param pd a \code{\link{parse-data}} object.
-#' @return a subsetted \code{\link{parse-data}} object.
-#' @description \subsection{get_comments}{Get all comments, documentation or otherwise.}
-get_comments <- function(pd){ pd[is_comment(pd),]}
-make_get_comment.classes <-
-function( type = comment.classes$class  #< type of the comments to extract
-        ){
-    #! Create extraction functions for comment types.
-    #! @keywords internal, utilities
-    function(pd){
-        x <- classify_comment(pd)
-        x[x$token %in% type, ]
-    }
-}
-
-make_get_comment_ids <-
-function( type = comment.classes$class
-        ){
-    function(pd){
-        pd <-  ._check_parse_data(pd)
-        pd[pd$token %in% type, 'id']
-    }
-}
-
-#' @export
-#' @rdname get_comments
-#' @description \subsection{get_doc_comments}{Get all documentation comments(any type).}
-get_doc_comments          <- make_get_comment.classes()
-doc_comments <- make_get_comment_ids(comment.classes$class)
-
-#' @export
-#' @rdname get_comments
-#' @description \subsection{get_roxygen_comment_ids}{Get Roxygen \code{#'} comments only.}
-get_roxygen_comment_ids <- make_get_comment_ids("ROXYGEN_COMMENT")
-roxygen_comments <- internal(get_roxygen_comment_ids)
-
-#' @export
-#' @rdname get_comments
-#' @description \subsection{get_relative_comment_ids}{Get relative \code{#<} comments only.}
-get_relative_comment_ids <- make_get_comment_ids('RELATIVE_COMMENT')
-relative_comments <- internal(get_relative_comment_ids)
-
-#' @export
-#' @rdname get_comments
-#' @description \subsection{get_continuation_comments}{Get continuation \code{#^} comments only.}
-get_continuation_comment_ids <- make_get_comment_ids("CONTINUATION_COMMENT")
-continuation_comments <- internal(get_continuation_comment_ids)
-
-#' @export
-#' @rdname get_comments
-#' @description \subsection{get_normal_comments}{Get normal (non-documenting) comments only.}
-get_normal_comment_ids <- make_get_comment_ids("NORMAL_COMMENT")
-normal_comments <- internal(get_normal_comment_ids)
-# nocov end
 
 #@internal
 get_associated_continuation_ids <-
@@ -377,7 +287,7 @@ if(FALSE){#! @testing
         #^ Continuation comment
         #@ Tag comment
     }", keep.source=TRUE))
-    comments <- get_comments(pd)
+    comments <- nodes(get_comment_ids(pd))
     pd2 <- strip_doc_comment_leads.data.frame(comments)
     expect_is(pd2, 'data.frame')
     expect_is(pd2, 'parse-data')
@@ -416,7 +326,7 @@ if(FALSE){#! @testing
         #^ Continuation comment
         #@ Tag comment
     }", keep.source=TRUE))
-    comments <- get_comments(pd)
+    comments <- nodes(all_comment_ids(pd))
     pd2 <- strip_doc_comment_leads(comments)
     expect_is(pd2, 'data.frame')
     expect_is(pd2, 'parse-data')

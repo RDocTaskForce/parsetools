@@ -50,7 +50,7 @@ function( id = all_tagged_iff_ids(pd, .testing.tags)
     #'   The name, which is attached as an attribute is taken from the info
     #'   string or inferred by location, see Details.
     #'
-    stopifnot(is_iff_block(id,pd))
+    stopifnot(pd_is_iff_block(id,pd))
     content.id  <- if_branch(id, pd)
 
     tag.comment <- children(content.id, pd)[[2]]
@@ -71,7 +71,7 @@ function( id = all_tagged_iff_ids(pd, .testing.tags)
         #! which will be prefixed by "test-" and placed in the `dir`
         #! directory.
         #!
-        name <- get_iff_associated_name(id, pd)
+        name <- iff_associated_name(id, pd)
         if(is.null(name))
             stop( "illformed block at "
                 , paste( filename(pd), start_line(id), start_col(id), sep=':')

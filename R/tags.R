@@ -65,7 +65,7 @@ if(FALSE){#!@
 }
 
 #' @title Check if there is a documentation `@` tag.
-#' @inheritParams get_children_ids
+#' @inheritParams pd_get_children_ids
 #' @param tag tag(s) to test for
 #' @param ... options passed on
 #' @export
@@ -77,7 +77,7 @@ function( pd, tag, id = pd$id, ...){
     #' is both a comment and contains a documentation tag itentifed by
     #' the `@` symbol.
     tag.rx <- make_tag_regex(tag, ...)
-    is_comment(id, pd) & grepl(tag.rx, text(id, pd), perl=TRUE, ignore.case=TRUE)
+    pd_is_comment(id, pd) & grepl(tag.rx, text(id, pd), perl=TRUE, ignore.case=TRUE)
 }
 if(FALSE){#!@testing
     # Note that testthat:::test_code will strip comments from code
@@ -156,9 +156,9 @@ function( pd, tag
     #'   If doc.only is true(default) then only documentation comments are
     #'   considered, otherwise all comments are examined.
     ids <- if (doc.only)
-        pd[is_doc_comment(pd), 'id']
+        all_doc_comment_ids()
     else
-        pd[is_comment(pd), 'id']
+        all_comment_ids()
     ids[has_tag(pd, tag, ids)]
     #' @return an integer vector of ids.
 }

@@ -27,11 +27,12 @@
 
 #' @export
 #' @title Get all nodes that are children of `id`.
-get_children_ids <-
-function( id, pd = get('pd', parent.frame())
+pd_get_children_ids <-
+function( id, pd
         , ngenerations    = 1
         , include.self    = FALSE
         , all.generations = TRUE
+        , .check=TRUE
         ) {
     #' @param pd              The \code{\link{parse-data}} information
     #' @param id              id of the expression of interest
@@ -45,7 +46,10 @@ function( id, pd = get('pd', parent.frame())
     #'   i.e. lower in the heirarchy or with id as a parent.
     #'   If \code{ngenerations} is greater than 1 and \code{all.generations}
     #'   is \code{TRUE}, all descendents are aggregated and returned.
-    id <- ._check_id(id)
+    if (.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+    }
     parents <- id
     ids <- if(include.self) parents else integer(0)
     while(ngenerations != 0) {
@@ -58,28 +62,28 @@ function( id, pd = get('pd', parent.frame())
     }
     ids
 }
-children <- internal(get_children_ids)
+children <- internal(pd_get_children_ids)
 if(FALSE){#! @test
     pd       <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     id       <- pd[pd$parent==0, 'id']
-    expect_equal( get_children_ids(id, pd, 1, include.self = FALSE)
+    expect_equal( pd_get_children_ids(id, pd, 1, include.self = FALSE)
                 , c(3,2,5,6,9,10,12,13,16,17,19,20)
                 , info="for default values"
                 )
 
-    expect_equal( get_children_ids(id, pd, 1, include.self=TRUE)
+    expect_equal( pd_get_children_ids(id, pd, 1, include.self=TRUE)
                 , c(23,3,2,5,6,9,10,12,13,16,17,19,20)
                 , info='include.self=TRUE'
                 )
 
-    expect_equal( get_children_ids( id, pd, 2, include.self=FALSE
+    expect_equal( pd_get_children_ids( id, pd, 2, include.self=FALSE
                                   , all.generations = FALSE
                                   )
                 , c(1,4,11,18)
                 , info='ngenerations=2, include.self=FALSE, all.generations=FALSE'
                 )
 
-    expect_equal( get_children_ids( id, pd
+    expect_equal( pd_get_children_ids( id, pd
                                   , ngenerations=2
                                   , include.self=FALSE
                                   , all.generations = TRUE
@@ -88,7 +92,7 @@ if(FALSE){#! @test
                 , info='ngenerations=2, include.self=FALSE, all.generations=TRUE'
                 )
 
-    expect_equal( get_children_ids( id, pd
+    expect_equal( pd_get_children_ids( id, pd
                                   , ngenerations=2
                                   , include.self=TRUE
                                   , all.generations = TRUE
@@ -97,22 +101,24 @@ if(FALSE){#! @test
                 , info='ngenerations=2, include.self=TRUE, all.generations=TRUE'
                 )
 
-    expect_identical( get_children_ids(.Machine$integer.max, pd), integer(0))
-    expect_true( all(pd$id %in% get_children_ids(0, pd, Inf)))
+    expect_identical( pd_get_children_ids(.Machine$integer.max, pd), integer(0))
+    expect_true( all(pd$id %in% pd_get_children_ids(0, pd, Inf)))
 }
 
-#' @export
 get_children_pd <-
 function( id, pd
-        , ...       #< passed to <get_children_ids>.
+        , ...       #< passed to <pd_get_children_ids>.
         , .check = TRUE
         ) {
-    #' @inheritParams get_children_ids
-    #' @rdname get_children_ids
-    if(.check)
+    #' @inheritParams pd_get_children_ids
+    #' @rdname pd_get_children_ids
+    if (.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
         stopifnot( length(id) == 1L
                  , inherits(pd, 'parse-data')
                  )
+    }
     pd[pd$id %in% children( id, pd,...), ]
 }
 if(FALSE){#!@test

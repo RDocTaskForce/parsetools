@@ -4,21 +4,24 @@ assignment.opperators <- c("LEFT_ASSIGN", "RIGHT_ASSIGN", "EQ_ASSIGN")
 
 #' @export
 pd_is_assignment <-
-function( id = pd$id
-        , pd = get('pd', parent.frame())
-        ){
+function( id, pd, .check=TRUE){
     #' @title Check if it is an assignment
-    #' @inheritParams get_children_ids
+    #' @inheritParams pd_get_children_ids
     #' @description
     #'   check if the provided parse-data is an assignment expression.
-    id <- ._check_id(id)
+    if (.check) {
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+    }
     if (length(id)>1L) return(sapply(id, pd_is_assignment, pd=pd))
 
     token(id)
     token(id) == 'expr' &&
     any(token(children(id)) %in% assignment.opperators)
 }
-if(F){#! @testthat pd_is_assignment
+all_assignment_ids <- make_get_all(pd_is_assignment)
+is_assignment <- internal(pd_is_assignment)
+if(F){#@testing
     pd <- get_parse_data(parse(text="x <-  1", keep.source=TRUE))
     expect_true(pd_is_assignment(all_root_ids(pd), pd=pd))
     pd <- get_parse_data(parse(text="x <<- 1", keep.source=TRUE))
@@ -31,7 +34,6 @@ if(F){#! @testthat pd_is_assignment
     expect_true(pd_is_assignment(all_root_ids(pd), pd=pd))
 }
 
-all_assignment_ids <- make_get_all(pd_is_assignment)
 
 #' @export
 pd_get_assign_value_id <-
@@ -41,8 +43,11 @@ function( id, pd, .check = TRUE){
     #' @description
     #'    Gives the id of the value portion of the assignment, while correctly
     #'    accounting for the direction of the arrow.
-    if(.check)
+    if(.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
         stopifnot(all(pd_is_assignment(id, pd)))
+    }
     if(length(id) > 1)
         sapply(id, pd_get_assign_value_id, pd=pd)
     child.ids <- children(id, pd, 1, FALSE)
@@ -73,13 +78,18 @@ expect_equal(pd_get_assign_value_id(all_assignment_ids(pd), pd=pd), 2L)
 
 #' @export
 pd_get_assign_variable_id <-
-function( id, pd){
+function( id, pd, .check=TRUE){
     #' @title Get the variable of an assignment
     #' @inheritParams pd_is_assignment
     #' @description
     #'   Gets the id for the variable portion of an assignment expression.
     #'   This accounts for the direction of the assignment arrow.
     #'
+    if(.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+        stopifnot(all(pd_is_assignment(id, pd)))
+    }
     if(length(id) > 1)
         sapply(id, pd_get_assign_variable_id, pd=pd)
     child.ids   <- children(id, pd, 1, FALSE)

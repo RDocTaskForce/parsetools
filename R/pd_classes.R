@@ -224,21 +224,24 @@ if(FALSE){#@testing pd_class_definitions
 }
 
 #TODO pd_get_class_definition
-#' @internal
-pd_get_closest_call <-
-function( id = pd$id
-        , pd = get('pd', parent.frame())
-        , calls = NULL
-        ){
-    if (length(id) > 1L) return(sapply(id, pd_get_closest_call, pd=pd, calls=calls))
+
+pd_get_closest_call_id <-
+function( id, pd, calls = NULL, .check=TRUE){
+    if (.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+        stopifnot(is.null(calls) || is.character(calls))
+    }
+    if (length(id) > 1L) return(sapply(id, pd_get_closest_call_id, pd=pd, calls=calls))
     all.ancestors <- ancestors(id, pd, only.present=TRUE)
-    call.ancestors <- all.ancestors[pd_is_symbol_call(all.ancestors)]
+    call.ancestors <- all.ancestors[is_symbol_call(all.ancestors)]
     if (length(call.ancestors) == 0 ) return(NA_integer_)
     if (length(calls))
         call.ancestors <- call.ancestors[text(call_symbol(call.ancestors)) %in% calls]
     if (length(call.ancestors) == 0 ) return(NA_integer_)
     call.ancestors[[1]]
 }
+closest_call <- internal(pd_get_closest_call_id)
 if(FALSE){#@testing
 pd <- get_parse_data(parse(text={"
 x <- 1
@@ -264,13 +267,13 @@ testClass <-
 roots <- all_root_ids(pd)
 
 id.10 <- pd[pd$text == '10','id']
-expect_equal(text(call_symbol(pd_get_closest_call(id.10, pd=pd), pd=pd)), 'rnorm')
+expect_equal(text(call_symbol(pd_get_closest_call_id(id.10, pd=pd), pd=pd)), 'rnorm')
 
 id.hw <- pd[pd$text == "'hello world'", 'id']
 
-expect_equal(text(call_symbol(pd_get_closest_call(id.hw, pd=pd))), 'print')
-expect_equal(text(call_symbol(pd_get_closest_call(id.hw, pd=pd, 'list'))), 'list')
-expect_equal(text(call_symbol(pd_get_closest_call(id.hw, pd=pd, 'setRefClass'))), 'setRefClass')
+expect_equal(text(call_symbol(pd_get_closest_call_id(id.hw, pd=pd))), 'print')
+expect_equal(text(call_symbol(pd_get_closest_call_id(id.hw, pd=pd, 'list'))), 'list')
+expect_equal(text(call_symbol(pd_get_closest_call_id(id.hw, pd=pd, 'setRefClass'))), 'setRefClass')
 
-expect_true(is.na(pd_get_closest_call(id.hw, pd=pd, 'setClass')))
+expect_true(is.na(pd_get_closest_call_id(id.hw, pd=pd, 'setClass')))
 }

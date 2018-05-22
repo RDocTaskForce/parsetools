@@ -156,14 +156,14 @@ if(FALSE){#!@testing
 get_parse_data.srcref <-
 function( x
         , ...                               #< passe to <getParseData>
-        , ignore.groups            = TRUE   #< see <ascend_to_root>
-        , include.doc.comments     = TRUE   #< see <get_family>
-        , include.regular.comments = FALSE  #< see <get_family>
+        , ignore.groups            = TRUE
+        , include.doc.comments     = TRUE
+        , include.regular.comments = FALSE
         ){
     #' @rdname get_parse_data
     #'
     #' @inheritParams ascend_to_root
-    #' @inheritParams get_family
+    #' @inheritParams get_family_pd
     stopifnot(inherits(x, 'srcref'))
     pd <- get_parse_data.srcfile(attr(x, 'srcfile'), ...)
     id <- pd[ pd$line1 == utils::getSrcLocation(x, 'line', TRUE )
@@ -174,10 +174,10 @@ function( x
     root <- ascend_to_root(id, pd, ignore.groups=ignore.groups)
     if  (!length(root)) return(NULL)
     structure(id = id, root=root,
-    get_family( root, pd
-              , include.doc.comments     = include.doc.comments
-              , include.regular.comments = include.regular.comments
-              ))
+    get_family_pd( root, pd
+                 , include.doc.comments     = include.doc.comments
+                 , include.regular.comments = include.regular.comments
+                 ))
 }
 if(FALSE){#!@testing
     text <-{"my_function <-
@@ -422,7 +422,7 @@ function(x){
 }
 "
 }, keep.source=TRUE))
-comments <- get_comments(pd)
+comments <- nodes(all_comment_ids(pd))
 expect_is(comments, 'parse-data')
 clean.pd <- pd - comments
 

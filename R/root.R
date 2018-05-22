@@ -41,7 +41,7 @@
 #' interpreted as root.  Groupings are always interpreted as root if the
 #' parent is 0 or if the parent is a group and also a root.
 #'
-#' @inheritParams get_children_ids
+#' @inheritParams pd_get_children_ids
 #'
 #' @aliases root root-nodes root-ids
 #' @seealso see \code{\link{pd_is_grouping}} for details on what a grouping is.
@@ -49,13 +49,16 @@ list()
 
 #' @export
 pd_is_root <-
-function( id = pd$id
-        , pd = get('pd', parent.frame())
+function( id, pd
         , ignore.groups = TRUE  #< Ignore groups? see details.
+        , .check=TRUE
         ){
     #' @describeIn root Test if a node is a root node
     #' @param ignore.groups Should \link[=pd_is_grouping]{groupings} be ignored?
-    id <- ._check_id(id)
+    if (.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+    }
     if (length(id) > 1) return(sapply(id, pd_is_root, pd=pd, ignore.groups=ignore.groups))
     if (!(id %in% pd$id)) stop("id not present in pd")
     if (pd[pd$id == id,'token'] != 'expr') return(FALSE)
@@ -107,7 +110,7 @@ if(FALSE){#! @testing
     id <- max(pd[pd$token =="'{'", 'parent'])
     expect_true(pd_is_root(id, pd, ignore.groups = TRUE))
     id <- min(pd[pd$token =="'{'", 'parent'])
-    expect_equal(get_family(id, pd)[3,'text'], "# Another Grouping")
+    expect_equal(get_family_pd(id, pd)[3,'text'], "# Another Grouping")
 
     ids <- pd[pd$token =="'{'", 'parent']
     expect_equal(pd_is_root(ids, pd, ignore.groups = TRUE ), c(TRUE, FALSE, FALSE))
@@ -186,13 +189,12 @@ if(F){#!@testthat all_root_ids
     expect_equal(id, c(43, 61, 74))
 }
 
-#' @export
 all_root_nodes <-
 function( pd                    #< parse data from `<get_parse_data>`
         , include.groups = TRUE #< descend into grouped code \code{\{\}}?
         ){
     #' @title Find all root node from parse data
-    #' @inheritParams get_children_ids
+    #' @inheritParams pd_get_children_ids
     #' @param include.groups descend into grouped code \code{\{\}}?
     #'
     #' @description
@@ -226,9 +228,13 @@ ascend_to_root <-
 function( id = pd$id
         , pd = get('pd', parent.frame())
         , ignore.groups=TRUE    #< Ignore groups? see <pd_is_root>.
+        , .check=TRUE
         ) {
     #' @describeIn root ascend from id to root
-    id <- ._check_id(id)
+    if (.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+    }
     if (length(id) > 1L) return(sapply(id, ascend_to_root, pd=pd, ignore.groups=ignore.groups))
     while (TRUE) {
         if (is.na(id) || id == 0) return(0L)

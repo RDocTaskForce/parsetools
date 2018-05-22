@@ -6,27 +6,34 @@
 #'
 #' @internal
 pd_make_is_in_call <-
-function(calls = character(0), .is=pd_make_is_call(calls)){
+function(calls, .is=pd_make_is_call(calls)){
+    force(.is)
     me <-
-    function( id = pd$id
-            , pd = get('pd', parent.frame())
-            ){
+    function( id, pd, .check=TRUE){
+        if (.check){
+            pd <- ._check_parse_data(pd)
+            id <- ._check_id(id, pd)
+        }
         if (length(id) > 1) return(sapply(id, me, pd=pd))
         my.ancestors <- ancestors(id, pd, only.present=TRUE)
-        any(.is(id=my.ancestors, pd=pd))
+        any(.is(id=my.ancestors, pd=pd, .check=FALSE))
     }
 }
 #' @rdname pd_make_is_in_call
 #' @internal
 pd_make_is_call <-
-function(calls = character(0)){
-    if (length(calls) ==0)
-        pd_is_symbol_call
-    else
-        function(id, pd)
-            (pd_is_symbol_call(id, pd) & (text(call_symbol(id, pd)) %in% calls))
+function(calls){
+    stopifnot( length(calls) > 0
+             , is.character(calls)
+             )
+    function(id, pd, .check=TRUE){
+        if (.check){
+            pd <- ._check_parse_data(pd)
+            id <- ._check_id(id, pd)
+        }
+        (is_symbol_call(id, pd) & (text(call_symbol(id, pd)) %in% calls))
+    }
 }
-
 if(FALSE){#@test pd_make_is_call & pd_make_is_in_call
 pd <- get_parse_data(parse(text={"
     test <- function(msg){

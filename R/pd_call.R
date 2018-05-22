@@ -26,19 +26,22 @@
 
 #' @export
 pd_is_call <-
-function( id = all_root_ids(pd)[1]       #< id of interest
-        , pd = get('pd', parent.frame()) #< parse data of assignemnt
-        , calls = NULL
-        ){
+function( id, pd, calls = NULL, .check=TRUE){
     #' @title Is a call?
-    #' @inheritParams get_children_ids
+    #' @inheritParams pd_get_children_ids
     #' @param calls Acceptable calls, if \code{NULL} (default) all calls allowed.
     #' @description
     #'   Checks if the \code{id} identifies in \code{pd} a call expression.
+    if(.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+    }
     if (length(id)>1) return(sapply(id, pd_is_call, pd=pd))
     if (token(id) != 'expr') return(FALSE)
     token(firstborn(id)) == "'('"
 }
+all_call_ids <- make_get_all(pd_is_call)
+is_call <- internal(pd_is_call)
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
@@ -50,20 +53,21 @@ if(FALSE){#!@testing
     expect_true (pd_is_call(ids[[3]]), pd)
     expect_false(pd_is_call(ids[[1]]), pd)
     expect_equal(pd_is_call(ids, pd), c(F, F, T))
-
 }
 
 
 #' @export
 pd_is_symbol_call <-
-function( id = all_root_ids(pd)[1]       #< id of interest
-        , pd = get('pd', parent.frame()) #< parse data of assignemnt
-        ){
+function( id, pd, .check=TRUE){
     #' @title Check if the call is specifically a symbol call
     #' @inheritParams pd_is_call
     #' @description
     #'   Checks if the \code{id} identifies in \code{pd} specifically a
     #'   symbol call expression, That is a call from a symbol.
+    if(.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+    }
     if (length(id) > 1) return(sapply(id, pd_is_symbol_call, pd=pd))
     if (!pd_is_call(id, pd)) return(FALSE)
     eldest <- firstborn(id, pd)
@@ -74,6 +78,8 @@ function( id = all_root_ids(pd)[1]       #< id of interest
     token(grandchild) == 'SYMBOL_FUNCTION_CALL'
     #' @return a logical of the same length as \code{id}
 }
+all_symbol_call_ids <- make_get_all(pd_is_symbol_call)
+is_symbol_call <- internal(pd_is_symbol_call)
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
@@ -89,14 +95,17 @@ if(FALSE){#!@testing
 
 #' @export
 pd_get_call_symbol_id <-
-function( id = all_root_ids(pd)[1]       #< id of interest
-        , pd = get('pd', parent.frame()) #< parse data of assignemnt
-        ){
+function( id, pd, .check=TRUE){
     #' @title Get the symbol of the function being called.
     #' @inheritParams pd_is_symbol_call
     #' @description
     #'    Gets the id of the symbol of the call.
     #'    That is the name of the function being called.
+    if(.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+        stopifnot(all(is_symbol_call(id,pd)))
+    }
     if (length(id)>1) return(sapply(id, pd_get_call_symbol_id, pd=pd))
     if (!pd_is_symbol_call(id, pd)) return(NA_integer_)
     stopifnot(pd_is_symbol_call(id, pd))
@@ -116,12 +125,18 @@ if(FALSE){#!@testing
 
 #' @export
 pd_get_call_arg_ids <-
-function( id, pd){
+function( id, pd, .check=TRUE){
     #' @title get the arguments of a call.
     #' @inheritParams pd_is_symbol_call
     #' @description
     #'   Retrieves the arguments of a call as a list.
-    stopifnot(length(id)==1L)
+    if(.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+        stopifnot( length(id)==1L
+                 , is_call(id,pd)
+                 )
+    }
     kids <- children(id, pd)
     ix <- text(kids) %in% c('(', ',', ')')
     if (all(ix[-1])) return(integer(0))

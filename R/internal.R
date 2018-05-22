@@ -58,17 +58,37 @@ if(F){#@testing
     expect_identical(test4, expected4)
 }
 
-make_get_all <- function(fun){
+make_get_all <- function(fun, id=pd$id){
     ..fun <- substitute(fun)
-    body <- substitute(pd[..fun(id=pd$id, pd=pd), 'id'])
-    as.function( c(alist(pd=get('pd', parent.frame())), body)
+    ..id <- substitute(id)
+    flist <- formals(fun)
+    args <- list()
+    body.args <- list()
+    if ('id' %in% names(flist))
+        body.args$id <- ..id
+    if ('pd' %in% names(flist)){
+        body.args$pd <- as.name('pd')
+        args$pd <- substitute(get('pd', parent.frame()), emptyenv())
+    }
+    if (length(setdiff(names(flist), c('id', 'pd', '.check')))){
+        args <- c(args, alist(...=))
+        body.args <- c(body.args, as.name('...'))
+    }
+    if ('.check' %in% names(flist))
+        body.args$.check = FALSE
+    ..call <- as.call(c(..fun, body.args))
+
+    body <- substitute(pd[..call, 'id'])
+    as.function( c(args, body)
                , envir = topenv()
                )
 }
 if(F){
-    expect_equal( body(make_get_all(pd_is_function))
-                , substitute(pd[pd_is_function(id=pd$id, pd=pd), 'id'], emptyenv())
-                )
+    pd_is_test <- function(id, pd, n=Inf, .check=TRUE){"do something"}
+    test_all <- make_get_all(pd_is_test)
+
+    expected <- function(pd=get('pd', parent.frame()),...)pd[pd_is_test(id=pd$id, pd=pd, ..., .check=FALSE), "id"]
+    expect_equal(test_all, expected)
 }
 
 external <- function(fun){

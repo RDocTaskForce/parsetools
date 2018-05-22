@@ -25,11 +25,14 @@
 #'         either the id of the associated object or NA if it cannot be
 #'         associated.
 #' @export
-associate_relative_comments <-
-function( id = relative_comments(pd)
-        , pd = get('pd', parent.frame())
-        ){
-    if (length(id)>1L) return(sapply(id, associate_relative_comments, pd=pd))
+pd_get_relative_comment_associated_ids <-
+function( id, pd, .check=TRUE){
+    if (.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+        stopifnot( all(pd_is_relative_comment(id, pd)))
+    }
+    if (length(id)>1L) return(sapply(id, pd_get_relative_comment_associated_ids, pd=pd))
 
     sibs <- siblings(id, pd)
     possible <- sibs[token(sibs, pd) == 'SYMBOL_FORMALS']
@@ -42,6 +45,7 @@ function( id = relative_comments(pd)
     stopifnot(length(possible) == 1)
     return(possible)
 }
+relative_comment_associateds <- internal(pd_get_relative_comment_associated_ids)
 if(F){#@test function relative comments
 pd <- get_parse_data(parse(text='function( pd                    #< parse data
                                 #< continuation comment
@@ -49,7 +53,7 @@ pd <- get_parse_data(parse(text='function( pd                    #< parse data
         ){}', keep.source=TRUE))
     id <- relative_comments(pd)
 
-    value <- associate_relative_comments(pd=pd)
+    value <- pd_get_relative_comment_associated_ids(pd=pd)
     expect_identical(value[[1]], value[[2]])
     expect_identical(text(value, pd=pd), c('pd', 'pd', 'id'))
 
@@ -59,14 +63,14 @@ pd <- get_parse_data(parse(text='function( id, pd = get("pd", parent.frame()) #<
         ){}', keep.source=TRUE))
     id <- relative_comments(pd)
 
-    expect_identical(text(associate_relative_comments(id, pd), pd=pd), 'pd')
+    expect_identical(text(pd_get_relative_comment_associated_ids(id, pd), pd=pd), 'pd')
 
 pd <- get_parse_data(parse(text='function( id, #< traditional comma placement.
            pd = get("pd", parent.frame()) #< parse data
          ){}', keep.source=TRUE))
     id <- relative_comments(pd)
 
-    value <- associate_relative_comments(id, pd)
+    value <- pd_get_relative_comment_associated_ids(id, pd)
     expected <- pd[ token(pd=pd)  ==  "SYMBOL_FORMALS"
                   & text(pd=pd)  %in% c("pd", "id")
                   , 'id']

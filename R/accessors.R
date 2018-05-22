@@ -32,9 +32,9 @@
 #' here for reference.
 NULL
 
-#' @describeIn internal Extract the token
 #@internal
 token <- function(id=pd$id, pd=get('pd', parent.frame())){
+#' @describeIn internal Extract the token
     pd[match(id, pd$id), 'token']
 }
 if(FALSE){#!@testing
@@ -105,7 +105,7 @@ end_col <- function(id, pd=get('pd', parent.frame())){
 }
 
 #@internal
-filename <- function(pd){
+filename <- function(pd=get('pd', parent.frame())){
 #' @describeIn internal Extract the filename if available, otherwise return "<UNKNOWN>".
     src            <- attr(pd, 'srcfile')
     if (!is.null(src)) src$filename else "<UNKNOWN>"
@@ -178,6 +178,7 @@ expect_false(spans_multiple_lines(4, pd))
 expect_true(spans_multiple_lines(all_root_ids(pd), pd))
 }
 
+#' @internal
 terminal_ids_on_line <- function(line, pd=get('pd', parent.frame())){
 #' @describeIn internal Get the ids on a given line that are terminal nodes.
     pd$id[pd$line1 <= line & pd$line2 >= line & pd$terminal]
@@ -200,10 +201,13 @@ expect_equal(terminal_ids_on_line(2, pd), 1)
 expect_equal(terminal_ids_on_line(4, pd), integer(0))
 }
 
+#' @internal
 ids_starting_on_line <- function(line, pd=get('pd', parent.frame())){
 #' @describeIn internal Get ids for nodes that start on the given line
     pd$id[pd$line1 == line]
 }
+
+#' @internal
 ids_ending_on_line <- function(line, pd=get('pd', parent.frame())){
 #' @describeIn internal Get ids for nodes that end on the given line
     pd$id[pd$line2 == line]
@@ -221,9 +225,10 @@ expect_identical(ids_ending_on_line(4), c(26L, 23L, 24L))
 
 }
 
-get_prev_terminal_id <- function(id=pd$id, pd=get('pd', parent.frame())){
+#' @internal
+prev_terminal <- function(id=pd$id, pd=get('pd', parent.frame())){
 #' @describeIn internal Get the id for the terminal expression that is immediately prior to the one given.
-    if (length(id)>1) return (sapply(id, get_prev_terminal_id, pd=pd))
+    if (length(id)>1) return (sapply(id, prev_terminal, pd=pd))
     ix <- which( pd$line1 <= start_line(id)
                & pd$col1  <  start_col(id)
                & pd$terminal
@@ -234,19 +239,18 @@ get_prev_terminal_id <- function(id=pd$id, pd=get('pd', parent.frame())){
 if(FALSE){#@testing
 pd <- get_parse_data(parse(text="   rnorm( 10,  0,   3)", keep.source=TRUE))
     id <- 4
-    expect_equal(get_prev_terminal_id(id, pd), 2L)
+    expect_equal(prev_terminal(id, pd), 2L)
 
-    expect_equal( get_prev_terminal_id(pd=pd)
+    expect_equal( prev_terminal(pd=pd)
                 , c(NA, NA, NA, 1, rep(2, 2), 4, 6, 6, 9, 11, 11, 14)
                 )
 }
 
-#' Get the expression text
-#'
-#' If id represents a expr token reitterate on the firstborn.
-#' Throws an error if anything but an expression or text if found.
 #' @internal
 expr_text <- function(id, pd=get('pd', parent.frame())){
+#' @describeIn internal
+#' If id represents a expr token reitterate on the firstborn.
+#' Throws an error if anything but an expression or text if found.
     if (length(id)>1L) return(sapply(id, expr_text, pd=pd))
     while (token(id) == 'expr' && n_children(id) == 1L)
         id <- firstborn(id)

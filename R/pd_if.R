@@ -24,64 +24,82 @@
 }#######################################################################
 
 pd_is_if <-
-function(id = pd$id, pd = get('pd', parent.frame())){
+function(id, pd, .check=TRUE){
     #' @title Is if expression?
-    #' @inheritParams get_children_ids
+    #' @inheritParams pd_get_children_ids
     #' @description
     #'   Tests if the id(s) represent if expressions.
+    if (.check) {
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+    }
     if (length(id)>1) sapply(id, pd_is_if, pd=pd)
     (token(id) == 'expr') &&
     (token(firstborn(id)) == 'IF')
     #' @return a logical vector of same length as id.
 }
+is_if <- internal(pd_is_if)
+all_if_ids <- make_get_all(pd_is_if)
 
 #' @export
 pd_get_if_predicate_id <-
-function(id = pd$id, pd = get('pd', parent.frame())){
+function(id, pd, .check=TRUE){
     #' @title Get if predicate id
     #' @inheritParams pd_is_if
     #' @description
     #'   Returns the id of the predicate of the if statemment,
     #'   i.e. the conditional statement.
-    stopifnot(pd_is_if(id))
+    if (.check) {
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+        stopifnot(all(is_if(id,pd)))
+    }
     kids <- children(id, pd)
     if (length(kids)<5) stop("inproper if statement")
     kids[[3L]]
 }
-if_predicate <- internal(pd_get_if_predicate_id)
+if_predicate <- internal(pd_get_if_predicate_id, all_if_ids(pd))
 
 #' @export
 pd_get_if_branch_id <-
-function(id = pd$id, pd = get('pd', parent.frame())){
+function(id, pd, check=TRUE){
     #' @title Get branch of if statment.
     #' @inheritParams pd_is_if
     #' @description
     #'   Returns the id of the body of the branch executed if the predicate
     #'   evaluates to true.
-    stopifnot(pd_is_if(id))
+    if (.check) {
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+        stopifnot(all(is_if(id,pd)))
+    }
     kids <- children(id, pd)
     if (length(kids)<5) stop("inproper if statement")
     branch.id <- kids[[5L]]
     #TODO fix when a comment is in the way.
     #' @return an id integer.
 }
-if_branch <- internal(pd_get_if_branch_id)
+if_branch <- internal(pd_get_if_branch_id, all_if_ids(pd))
 
 #' @export
 pd_get_if_alternate_id <-
-function(id = pd$id, pd = get('pd', parent.frame())){
+function(id, pd, .check=TRUE){
     #' @title Get the alternate branch of if statement
     #' @inheritParams pd_is_if
     #' @description
     #'   Gets the id of the alternate branch, i.e. the else branch.
-    stopifnot(pd_is_if(id))
+    if (.check) {
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+        stopifnot(all(is_if(id,pd)))
+    }
     kids <- children(id, pd)
     if (length(kids)<7 || token(kids[[6]]) != 'ELSE')
         stop("inproper if-else statement")
     kids[[7L]]
     #' @return an id integer.
 }
-if_alternate <- internal(pd_get_if_alternate_id)
+if_alternate <- internal(pd_get_if_alternate_id, all_if_ids(pd))
 
 if(FALSE){#!@testing if structures
     pd <- get_parse_data(parse(text={"

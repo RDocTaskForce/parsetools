@@ -24,31 +24,33 @@
 }#######################################################################
 
 #' @export
-get_parent_id <- function(id=pd$id, pd=get('pd', parent.frame())) {
+pd_get_parent_id <- function(id, pd, .check=TRUE) {
     #' @title Get the parent of the expression identified by `id` in `pd`.
-    #' @inheritParams get_children_ids
+    #' @inheritParams pd_get_children_ids
     #'
     #' @description Get the parent of the expression identified by `id` in `pd`.
-    id <- ._check_id(id)
+    if (.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+    }
     pd[match(id, pd$id), 'parent']
 }
+parent <- internal(pd_get_parent_id)
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
-    expect_identical(get_parent_id(1, pd), 3L)
-    expect_is(get_parent_id(1, pd), "integer")
+    expect_identical(pd_get_parent_id(1, pd), 3L)
+    expect_is(pd_get_parent_id(1, pd), "integer")
 
-    expect_is(get_parent_id(10000, pd), "integer", info="missing parent")
-    expect_identical(get_parent_id(10000, pd), NA_integer_, info="missing parent")
+    expect_is(pd_get_parent_id(10000, pd), "integer", info="missing parent")
+    expect_identical(pd_get_parent_id(10000, pd), NA_integer_, info="missing parent")
 
-    expect_identical(get_parent_id(pd, pd), pd$parent)
-    expect_identical(get_parent_id(0L, pd), NA_integer_)
+    expect_identical(pd_get_parent_id(pd, pd), pd$parent)
+    expect_identical(pd_get_parent_id(0L, pd), NA_integer_)
 }
-#' @internal
-parent <- internal(get_parent_id)
 
 #' @export
 get_ancestor_ids <-
-function( id, pd = get('pd', parent.frame()) #< parse data
+function( id, pd
         , nancestors   = Inf  #< Number of generations to go back
         , aggregate    = TRUE #< All (T) or only final (F).
         , include.self = TRUE #< should `id` be included in list of ancestors
@@ -57,10 +59,11 @@ function( id, pd = get('pd', parent.frame()) #< parse data
                               #^ node that are present?  Most revelvent for
                               #^ when parent is zero.
         , last         = 0L   #< the last parent to consider
+        , .check = TRUE
         ){
     #' @title Get the ancestors of id in pd.
     #'
-    #' @inheritParams get_parent_id
+    #' @inheritParams pd_get_parent_id
     #' @param nancestors     Number of generations to go back
     #' @param aggregate      All (T) or only final (F).
     #' @param include.self   should `id` be included in list of ancestors
@@ -72,10 +75,14 @@ function( id, pd = get('pd', parent.frame()) #< parse data
     #' @description
     #'    Get the ancestors for \code{id}.  See argument descriptions for details.
     id <- ._check_id(id)
-    stopifnot( nancestors >= 0
-             , include.self || (nancestors >  0)
-             , length(id) == 1L
-             )
+    if (.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+        stopifnot( nancestors >= 0
+                 , include.self || (nancestors >  0)
+                 , length(id) == 1L
+                 )
+    }
     if ( include.self && only.present && !(id %in% pd$id))
             stop("only.present=TRUE and include.self=TRUE but id is not present in pd.")
     if (nancestors == 0 && include.self) return (id)

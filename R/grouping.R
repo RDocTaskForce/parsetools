@@ -25,14 +25,15 @@
 
 #' @export
 pd_is_grouping <-
-function( id = pd$id
-        , pd = get('pd', parent.frame())
-        ){
+function( id, pd, .check=TRUE){
   #' @title test if an id is a grouping element
   #' @param id id number in \code{pd}
   #' @param pd parse data to use to check \code{id}
   #'
-  id <- ._check_id(id)
+  if (.check){
+     pd <- ._check_parse_data(pd)
+     id <- ._check_id(id, pd)
+  }
   if(length(id) > 1) return(sapply(id, pd_is_grouping, pd=pd))
 
   #' @description
@@ -71,7 +72,7 @@ if(FALSE){#! @testing
 
 #' @export
 #' @title get the grouping ids
-#' @inheritParams get_children_ids
+#' @inheritParams pd_get_children_ids
 #' @description get the ids that represent the grouping nodes.
 #' @return an integer vector of ids.
 all_grouping_ids <- make_get_all(pd_is_grouping)
@@ -89,15 +90,19 @@ if(FALSE){#! @testing
 fix_grouping_comment_association <-
 function( id = all_grouping_ids(pd)
         , pd = get('pd', parent.frame())
+        , .check=TRUE
         ){
-    id <- ._check_id(id)
-    stopifnot(pd_is_grouping(id, pd))
+    if (.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+        stopifnot(pd_is_grouping(id, pd))
+    }
     for (i in id) {
         cids <- children(i, pd)
         for (cid in cids)
-            if (is_comment(pd, cid)) {
+            if (is_comment(cid, pd)) {
                 n <- next_sibling(cid)
-                while (!is.na(n) && is_comment(pd, n))
+                while (!is.na(n) && is_comment(n,pd))
                     n <- next_sibling(n)
                 if (!is.na(n))
                     pd[ pd$id == cid, 'parent'] <- -ascend_to_root(n, pd)
@@ -126,6 +131,6 @@ if(FALSE){#!@testing
     fixed <- fix_grouping_comment_association(pd=pd)
 
     expect_identical(fixed[-6], pd[-6])
-    expect_equal(get_comments(fixed)$parent, c(-38, -38, -38, 34, -56, -74))
+    expect_equal(parent(all_comment_ids(fixed), fixed), c(-38, -38, -38, 34, -56, -74))
 }
 
