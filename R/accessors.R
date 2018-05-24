@@ -22,6 +22,7 @@
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #
 }#######################################################################
+#' @include internal.R
 
 #' @name internal
 #' @title Internal Functions
@@ -175,7 +176,7 @@ pd <- get_parse_data(parse(text="'
 ' -> a.multiline.string", keep.source=TRUE))
 expect_true(spans_multiple_lines(1, pd))
 expect_false(spans_multiple_lines(4, pd))
-expect_true(spans_multiple_lines(all_root_ids(pd), pd))
+expect_true(spans_multiple_lines(pd_all_root_ids(pd), pd))
 }
 
 #' @internal
@@ -241,7 +242,7 @@ pd <- get_parse_data(parse(text="   rnorm( 10,  0,   3)", keep.source=TRUE))
     id <- 4
     expect_equal(prev_terminal(id, pd), 2L)
 
-    expect_equal( prev_terminal(pd=pd)
+    expect_equal( prev_terminal(pd$id, pd=pd)
                 , c(NA, NA, NA, 1, rep(2, 2), 4, 6, 6, 9, 11, 11, 14)
                 )
 }
@@ -266,7 +267,21 @@ if(FALSE){#@testing
             , parent(pd_find_text("'world'"))
             )
     expect_identical(expr_text(ids, pd), c("hello", "world"))
-    expect_error( expr_text(all_root_ids(pd))
+    expect_error( expr_text(pd_all_root_ids(pd))
                 , "<text>:2:9:  a string constant is expected."
                 )
 }
+
+
+#' @rdname accessors
+#' @title Accessor functions
+#'
+#' @param pd the parse data.
+#' @param id the ID of the expression
+pd_text <- external(text)
+pd_token <- external(token)
+pd_start_line <- external(start_line)
+pd_end_line <- external(end_line)
+pd_filename <- external(filename)
+pd_start_col <- external(start_col)
+pd_end_col <- external(end_col)

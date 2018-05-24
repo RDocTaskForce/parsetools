@@ -2,9 +2,6 @@
 
 #' Associate relative ducumentation comments
 #'
-#' @param id id of the expression of interest
-#' @param pd The \code{\link{parse-data}} information
-#'
 #' Relative comment created with \code{\#\<} comment tags document something
 #' designated by the location of the comment.
 #' In general, the comment documents the previous symbol.
@@ -27,6 +24,7 @@
 #' @export
 pd_get_relative_comment_associated_ids <-
 function( id, pd, .check=TRUE){
+#' @inheritParams pd_get_children_ids
     if (.check){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
@@ -49,11 +47,11 @@ relative_comment_associateds <- internal(pd_get_relative_comment_associated_ids)
 if(F){#@test function relative comments
 pd <- get_parse_data(parse(text='function( pd                    #< parse data
                                 #< continuation comment
-        , id = all_root_ids(pd) #< id number
+        , id = pd_all_root_ids(pd) #< id number
         ){}', keep.source=TRUE))
-    id <- relative_comments(pd)
+    id <- all_relative_comment_ids(pd)
 
-    value <- pd_get_relative_comment_associated_ids(pd=pd)
+    value <- pd_get_relative_comment_associated_ids(id, pd)
     expect_identical(value[[1]], value[[2]])
     expect_identical(text(value, pd=pd), c('pd', 'pd', 'id'))
 
@@ -61,30 +59,34 @@ pd <- get_parse_data(parse(text='function( pd                    #< parse data
 # it is allowed.
 pd <- get_parse_data(parse(text='function( id, pd = get("pd", parent.frame()) #< parse data
         ){}', keep.source=TRUE))
-    id <- relative_comments(pd)
+    id <- all_relative_comment_ids(pd)
 
     expect_identical(text(pd_get_relative_comment_associated_ids(id, pd), pd=pd), 'pd')
 
 pd <- get_parse_data(parse(text='function( id, #< traditional comma placement.
            pd = get("pd", parent.frame()) #< parse data
          ){}', keep.source=TRUE))
-    id <- relative_comments(pd)
+    id <- all_relative_comment_ids(pd)
 
     value <- pd_get_relative_comment_associated_ids(id, pd)
-    expected <- pd[ token(pd=pd)  ==  "SYMBOL_FORMALS"
-                  & text(pd=pd)  %in% c("pd", "id")
+    expected <- pd[ token(pd$id, pd=pd)  ==  "SYMBOL_FORMALS"
+                  & text(pd$id, pd=pd)  %in% c("pd", "id")
                   , 'id']
     expect_identical(value, expected)
 }
 if(F){#@test class members
-pd <- get_parse_data(parse(text='setClass( "testClass"
+pd <- get_parse_data(parse(text='
+    classDef <- setClass( "testClass"
          , slots = c( x="numeric" #< the x field
                     , y="matrix"  #< the y field
                     )
          )', keep.source=TRUE))
 
-    ids <- relative_comments(pd)
+    ids <- all_relative_comment_ids(pd)
     id <- ids[[1]]
 
-    pd_is_in_class_definition(id)
+    expect_true(pd_is_in_class_definition(id,pd))
+    expect_identical( pd_is_in_class_definition(ids,pd), c(TRUE, TRUE))
+
+    expect_false(pd_is_in_class_definition(pd_find_text('classDef',pd), pd))
 }

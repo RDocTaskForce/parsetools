@@ -62,7 +62,7 @@ if_predicate <- internal(pd_get_if_predicate_id, all_if_ids(pd))
 
 #' @export
 pd_get_if_branch_id <-
-function(id, pd, check=TRUE){
+function(id, pd, .check=TRUE){
     #' @title Get branch of if statment.
     #' @inheritParams pd_is_if
     #' @description
@@ -109,9 +109,9 @@ if(FALSE){#!@testing if structures
             alternate
         }
     "}, keep.source=TRUE))
-    id <- all_root_ids(pd) # 33
+    id <- roots(pd) # 33
 
-    expect_true(pd_is_if(id))
+    expect_true(pd_is_if(id,pd))
     expect_equal(pd_get_if_predicate_id(id, pd),  7L)
     expect_equal(pd_get_if_branch_id   (id, pd), 18L)
     expect_equal(pd_get_if_alternate_id(id, pd), 30L)

@@ -69,8 +69,8 @@ if(FALSE){#!@
 #' @param tag tag(s) to test for
 #' @param ... options passed on
 #' @export
-has_tag <-
-function( pd, tag, id = pd$id, ...){
+pd_has_tag <-
+function( id, pd, tag, ...){
     #' @description
     #'
     #' Check if a node of \code{parse-data} identified by \code{id}
@@ -93,7 +93,7 @@ if(FALSE){#!@testing
     }', keep.source=TRUE))
     tag <- 'tag'
     id <- pd$id
-    expect_equal(sum(has_tag(pd, tag)), 2)
+    expect_equal(sum(pd_has_tag(id, pd, tag)), 2)
 }
 
 #@ internal
@@ -144,12 +144,12 @@ if(FALSE){#! @testthat
 }
 
 #' @export
-get_tagged_comment_ids <-
+pd_get_tagged_comment_ids <-
 function( pd, tag
         , doc.only = TRUE #< Restrict to documentation comments only?
         ){
     #' @title Get tagged comment ids
-    #' @inheritParams has_tag
+    #' @inheritParams pd_has_tag
     #' @param doc.only Restrict to documentation comments only?
     #' @description
     #'   Finds all ids that are comments and contain the given '@' \code{tag}.
@@ -159,7 +159,7 @@ function( pd, tag
         all_doc_comment_ids()
     else
         all_comment_ids()
-    ids[has_tag(pd, tag, ids)]
+    ids[pd_has_tag(ids, pd, tag)]
     #' @return an integer vector of ids.
 }
 if(FALSE){#!@testing
@@ -177,8 +177,8 @@ if(FALSE){#!@testing
     tag <- 'tag'
     id  <- pd$id
 
-    expect_equal(get_tagged_comment_ids(pd, tag, TRUE ),   15L      )
-    expect_equal(get_tagged_comment_ids(pd, tag, FALSE), c(15L, 21L))
+    expect_equal(pd_get_tagged_comment_ids(pd, tag, TRUE ),   15L      )
+    expect_equal(pd_get_tagged_comment_ids(pd, tag, FALSE), c(15L, 21L))
 }
 
 

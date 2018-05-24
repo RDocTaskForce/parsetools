@@ -82,7 +82,6 @@ get_srcfile <- function(x){
 
 
 
-#' @export
 #' @aliases parse-data
 #' @title Parse Data
 #'
@@ -96,6 +95,7 @@ get_srcfile <- function(x){
 #' a cleaned up version of the parse data for a variety of objects.
 #' This version also fails less often, even reparsing text when
 #' needed.
+#' @export
 get_parse_data <- function(x, ...)UseMethod("get_parse_data")
 
 #' @export
@@ -243,7 +243,9 @@ function(x){
     #' line inside
     cat(\"hello world\")
 }}"
-eval(parse(text=grouped.text, keep.source=TRUE))
+parsed <- parse(text=grouped.text, keep.source=TRUE)
+raw.pd <- get_parse_data(parsed)
+eval(parsed)
 fun <- hw
 pd <- get_parse_data(hw)
 expect_is(pd, "parse-data")

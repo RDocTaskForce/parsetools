@@ -40,6 +40,8 @@ function( id, pd
     #' @param include.self    Should the root node (\code{id}) be included?
     #' @param all.generations Should all generations(TRUE) or only the
     #'                        the final (FALSE) generation be returned?
+    #' @param .check          Perform checks for input validation?
+    #' @param ...             arguments passed on.
     #'
     #' @description
     #'   Get all ids in `pd` that are children of \code{id}.
@@ -64,8 +66,8 @@ function( id, pd
 }
 children <- internal(pd_get_children_ids)
 if(FALSE){#! @test
-    pd       <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
-    id       <- pd[pd$parent==0, 'id']
+    pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
+    id <- pd[pd$parent==0, 'id']
     expect_equal( pd_get_children_ids(id, pd, 1, include.self = FALSE)
                 , c(3,2,5,6,9,10,12,13,16,17,19,20)
                 , info="for default values"
@@ -101,7 +103,9 @@ if(FALSE){#! @test
                 , info='ngenerations=2, include.self=TRUE, all.generations=TRUE'
                 )
 
-    expect_identical( pd_get_children_ids(.Machine$integer.max, pd), integer(0))
+    expect_error( pd_get_children_ids(.Machine$integer.max, pd)
+                , "id\\([0-9]+\\) is not present in given parse-data."
+                )
     expect_true( all(pd$id %in% pd_get_children_ids(0, pd, Inf)))
 }
 
@@ -151,6 +155,7 @@ if(FALSE){#!@test
 
 #' Count the number of children
 n_children <- function(id=pd$id, pd=get('pd', parent.frame())){
+    #' @inheritParams pd_get_children_ids
     if (length(id)>1L) sapply(id, n_children, pd=pd)
     length(children(id))
 }

@@ -6,6 +6,7 @@
 #' Convert a function to look for pd object in the `parent.frame()`,
 #' and the id to extract from the pd unless overwritten.
 internal <- function(fun, id=pd$id){
+    pd <- substitute(get('pd', parent.frame()))
     ..fun <- substitute(fun)
     ..id <- substitute(id)
 
@@ -57,7 +58,6 @@ if(F){#@testing
     environment(expected4) <- asNamespace('parsetools')
     expect_identical(test4, expected4)
 }
-
 make_get_all <- function(fun, id=pd$id){
     ..fun <- substitute(fun)
     ..id <- substitute(id)
@@ -78,7 +78,7 @@ make_get_all <- function(fun, id=pd$id){
         body.args$.check = FALSE
     ..call <- as.call(c(..fun, body.args))
 
-    body <- substitute(pd[..call, 'id'])
+    body <- substitute(pd[..call, 'id'], list(..call=..call))
     as.function( c(args, body)
                , envir = topenv()
                )

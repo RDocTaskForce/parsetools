@@ -8,7 +8,7 @@ pd <- get_parse_data(parse(text='setClass( "testClass"
                 , y="matrix"  #< the y field
                 )
      )', keep.source=TRUE))
-    expect_true(pd_is_class_definition(id = all_root_ids(pd), pd))
+    expect_true(pd_is_class_definition(id = roots(pd), pd))
 }
 
 #' @internal
@@ -24,7 +24,7 @@ setMethod("print", "testClass", function(){
 })
 ', keep.source=TRUE))
 
-    root.id <- all_root_ids(pd)
+    root.id <- roots(pd)
 
     id <- pd[pd$text=="#< the x field", 'id']
 
@@ -158,7 +158,7 @@ if(FALSE){#@testing pd_class_definitions
         my_custom_class_definer('CustomTest')
     "}, keep.source=TRUE))
 
-    roots <- all_root_ids(pd)
+    roots <- roots(pd)
 
     names.of.definers <- pd_class_definitions$names()
     expect_identical( names.of.definers
@@ -264,7 +264,7 @@ testClass <-
                )
 "}, keep.source=TRUE))
 
-roots <- all_root_ids(pd)
+roots <- roots(pd)
 
 id.10 <- pd[pd$text == '10','id']
 expect_equal(text(call_symbol(pd_get_closest_call_id(id.10, pd=pd), pd=pd)), 'rnorm')

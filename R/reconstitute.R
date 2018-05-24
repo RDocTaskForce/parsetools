@@ -62,18 +62,18 @@ reconstitute <- local({
 })
 if(F){#@testing
     pd <- get_parse_data(parse(text='rnorm(10L, mean=0, sd=1)', keep.source=TRUE))
-    id <- all_root_ids(pd)
+    id <- roots(pd)
 
     x <- substitute(rnorm(10L, mean=0, sd=1))
     expect_identical( reconstitute(id), x)
 
     pd <- get_parse_data(p <- parse(text="'pd'", keep.source=TRUE))
-    expect_identical( reconstitute(all_root_ids(pd))
+    expect_identical( reconstitute(roots(pd))
                     , substitute('pd')
                     )
 
     pd <- get_parse_data(p <- parse(text='get(\'pd\', parent.frame())', keep.source=TRUE))
-    expect_identical( reconstitute(all_root_ids(pd))
+    expect_identical( reconstitute(roots(pd))
                     , substitute(get('pd', parent.frame()), emptyenv())
                     )
 
@@ -83,7 +83,7 @@ if(F){#@testing
             reconstitute(fb)
         }
         '}, keep.source=TRUE))
-    id <- all_root_ids(pd)
+    id <- roots(pd)
 
     reconstituted <- reconstitute(id, pd)
     expect_is(reconstituted, 'call')

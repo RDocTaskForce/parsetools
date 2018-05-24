@@ -23,14 +23,21 @@
 #
 }#######################################################################
 
-._check_id <- function(id=get('id', parent.frame()), pd=get('pd', parent.frame())){
+._check_id <-
+function( id = get('id', parent.frame())
+        , pd = get('pd', parent.frame())
+        , present = TRUE #< check if the id is present in pd.
+        ){
     #! Verify and/or extract id is valid.
     if (is.numeric(id) && !is.integer(id))
         id <- as.integer(id)
     if (!is.integer(id))
         stop('id must be an object that can be coerced to an integer')
-    if (!all(id %in% pd$id))
-        stop('id is not valid for given parse-data.')
+    if (present) {
+        is.present <- id %in% pd$id
+        if (!all(is.present | id == 0))
+            stop('id(',  paste(id[!is.present], collapse=', '), ') is not present in given parse-data.')
+    }
     return(invisible(id))
 }
 if(FALSE){#!@testing
@@ -41,7 +48,10 @@ if(FALSE){#!@testing
     expect_identical(._check_id(1)  , 1L  , info="convert numeric to integer")
     expect_identical(._check_id(1.1), 1L  , info="convert numeric to integer")
     expect_error(._check_id(TRUE)         , info="passing logical that cannot be converted.")
-    expect_error(._check_id(1000, pd),'id is not valid for given parse-data.', info="passing logical that cannot be converted.")
+    expect_error( ._check_id(1000, pd)
+                , 'id\\(1000\\) is not present in given parse-data.'
+                , info="passing logical that cannot be converted."
+                )
 }
 
 ._check_parse_data <- function(pd){

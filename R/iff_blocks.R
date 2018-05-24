@@ -64,6 +64,7 @@ function( id, pd
     #' @return A logical vector of same length as id indicating if the id
     #'      represents a \code{if(FALSE)} block.
 }
+is_iff_block <- internal(pd_is_iff_block, roots(pd))
 if(FALSE){#!@testing
     pd <- get_parse_data(parse(text={"
         if(FALSE){# an if(FALSE) block
@@ -74,14 +75,14 @@ if(FALSE){#!@testing
         {# not an if(F)block
         }
     "}, keep.source=TRUE))
-    id <- all_root_ids(pd)
+    id <- roots(pd)
 
     expect_true (pd_is_iff_block(id[[1]], pd))
     expect_true (pd_is_iff_block(id[[2]], pd))
     expect_false(pd_is_iff_block(id[[2]], pd, FALSE))
     expect_false(pd_is_iff_block(id[[3]], pd))
     expect_equal(pd_is_iff_block(id, pd), c(TRUE, TRUE, FALSE))
-    expect_equal(pd_is_iff_block(pd=pd), c(TRUE, TRUE, FALSE))
+    expect_equal(   is_iff_block(pd=pd), c(TRUE, TRUE, FALSE))
 }
 
 #' @export
@@ -107,7 +108,7 @@ function( pd
     #' @return an integer vector of all ids identifying
     #'   \code{\link[=iff-blocks]{if(FALSE)}}\link[=iff-blocks]{ blocks}.
     pd <- ._check_parse_data(pd)
-    id <- if (root.only) all_root_ids(pd, !ignore.groups) else pd$id
+    id <- if (root.only) roots(pd, !ignore.groups) else pd$id
     if (!length(id)) return(integer(0))
     is.iff <- pd_is_iff_block(id, pd, ...)
     id[is.iff]
@@ -142,23 +143,23 @@ if(FALSE){#!@testing
 }
 
 #' @export
-iff_is_tagged <-
-function( id, tag, pd = get('pd', parent.frame())
+pd_is_tagged_iff <-
+function( id, tag, pd
         , doc.only = TRUE
         , ...
         ){
     #' @title Test tagged \code{if(FALSE)} blocks.
-    #' @inheritParams has_tag
+    #' @inheritParams pd_has_tag
     #' @param doc.only  Should comments be restricted to documentation style
     #'                  comments only?
     #'
-    #' @seealso \code{\link{pd_is_iff_block}}, \code{\link{has_tag}}
+    #' @seealso \code{\link{pd_is_iff_block}}, \code{\link{pd_has_tag}}
     #' @description
     #'   This functions tests if an id is: \enumerate{
     #'
     #'
     if (length(id) > 1)
-        return(sapply(id, iff_is_tagged, pd=pd, tag=tag, doc.only=doc.only))
+        return(sapply(id, pd_is_tagged_iff, pd=pd, tag=tag, doc.only=doc.only))
     #'   \item an \code{if(FALSE)} block.
     if (!pd_is_iff_block(id, pd)) return(FALSE)
     #'   \item is a curly braced group of code.
@@ -169,7 +170,7 @@ function( id, tag, pd = get('pd', parent.frame())
     #'   \item and that it's a documentation comment if doc.only is true.
     if (doc.only && !is_doc_comment(.)) return(FALSE)
     #'   \item and finally that the comment contains the identified \code{tag(s)}.
-    return(has_tag(pd, tag, .))
+    return(pd_has_tag(., pd, tag))
     #'   }
     #' @return a logical vector indicating if the \code{id} in \code{pd}
     #'      identifies an \code{\link[=iff-blocks]{if(FALSE)}}
@@ -193,51 +194,51 @@ if(FALSE){#!@testing
         }
         "}, keep.source=TRUE))
     tag <- 'tag'
-    id  <- all_root_ids(pd)
+    id  <- roots(pd)
     expect_equal(length(id), 6)
-    expect_true (iff_is_tagged(id[[1]], tag, pd))
-    expect_true (iff_is_tagged(id[[3]], tag, pd, FALSE))
-    expect_false(iff_is_tagged(id[[3]], tag, pd, TRUE ))
-    expect_false(iff_is_tagged(id[[6]], tag, pd))
-    expect_equal(iff_is_tagged(id, tag, pd)
+    expect_true (pd_is_tagged_iff(id[[1]], tag, pd))
+    expect_true (pd_is_tagged_iff(id[[3]], tag, pd, FALSE))
+    expect_false(pd_is_tagged_iff(id[[3]], tag, pd, TRUE ))
+    expect_false(pd_is_tagged_iff(id[[6]], tag, pd))
+    expect_equal(pd_is_tagged_iff(id, tag, pd)
                 , c(T,T,F,F,F,F))
-    expect_equal(iff_is_tagged(id, tag, pd, FALSE)
+    expect_equal(pd_is_tagged_iff(id, tag, pd, FALSE)
                 , c(T,T,T,F,F,F))
 
     pd <- get_parse_data(parse(text='rnorm(1)', keep.source=TRUE))
-    expect_false(iff_is_tagged(all_root_ids(pd), tag, pd))
+    expect_false(pd_is_tagged_iff(roots(pd), tag, pd))
 
     pd <- get_parse_data(parse(text='if(F)#!@tag not in block\nF', keep.source=TRUE))
-    expect_false(iff_is_tagged(all_root_ids(pd), tag, pd))
+    expect_false(pd_is_tagged_iff(roots(pd), tag, pd))
 
     pd <- get_parse_data(parse(text='if(F){FALSE}', keep.source=TRUE))
-    expect_false(iff_is_tagged(all_root_ids(pd), tag, pd))
+    expect_false(pd_is_tagged_iff(roots(pd), tag, pd))
 
     pd <- get_parse_data(parse(text='if(F){# @tag\nF\n}', keep.source=TRUE))
-    expect_false(iff_is_tagged(all_root_ids(pd), tag, pd))
+    expect_false(pd_is_tagged_iff(roots(pd), tag, pd))
 
     pd <- get_parse_data(parse(text='if(F){#@tag\nF\n}', keep.source=TRUE))
-    expect_true(iff_is_tagged(all_root_ids(pd), tag, pd))
+    expect_true(pd_is_tagged_iff(roots(pd), tag, pd))
 }
 
 #' @export
 all_tagged_iff_ids <-
 function(pd, tag, doc.only=TRUE){
     #' @title Find all tagged \code{if(FALSE)} blocks.
-    #' @inheritParams iff_is_tagged
+    #' @inheritParams pd_is_tagged_iff
     #' @description
     #'   Retrieves all ids identifying \code{\link[=iff-blocks]{if(FALSE)}}
     #'   blocks that are also tagged with \code{tag}.
-    #'   See \code{\link{iff_is_tagged}} for details.
+    #'   See \code{\link{pd_is_tagged_iff}} for details.
     #'
-    #' @seealso \code{\link{pd_is_iff_block}}, \code{\link{iff_is_tagged}},
-    #'          \code{\link{has_tag}}
+    #' @seealso \code{\link{pd_is_iff_block}}, \code{\link{pd_is_tagged_iff}},
+    #'          \code{\link{pd_has_tag}}
     #' @return an integer vector giving the ids in \code{pd} that identify
     #'      \code{\link[=iff-blocks]{if(FALSE)}}\link[=iff-blocks]{ blocks}
     #'      that are also tagged with \code{tag}.
     id <- all_iff_ids(pd)
     if (!length(id)) return(id)
-    is.tagged <- iff_is_tagged(id=id, tag=tag, pd=pd, doc.only=doc.only)
+    is.tagged <- pd_is_tagged_iff(id=id, tag=tag, pd=pd, doc.only=doc.only)
     id[is.tagged]
 }
 if(FALSE){#!@testing
@@ -262,7 +263,7 @@ if(FALSE){#!@testing
         }
         "}, keep.source=TRUE))
     tag <- 'tag'
-    id  <- all_root_ids(pd)
+    id  <- roots(pd)
     tagged.iff.ids <- all_tagged_iff_ids(pd, tag)
 
     pd  <- get_parse_data(parse(text={"
@@ -318,7 +319,7 @@ function(id, pd, .check=TRUE){
         #' the assignment is chosen as the name.
         value.id <- assign_value(prev.id)
         structure( utils::getParseText(pd, assign_variable(prev.id))
-                 , type = if (pd_is_function(value.id)) "function_assignment"
+                 , type = if (is_function(value.id)) "function_assignment"
                           else "assignment"
                  )
         #' An attribute 'type' is also set on the return value.

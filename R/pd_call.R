@@ -48,10 +48,10 @@ if(FALSE){#!@testing
         y <- runif(10)
         plot(x, y)
     "}, keep.source=TRUE))
-    ids <- all_root_ids(pd)
+    ids <- roots(pd)
     id <- ids[[3]]
-    expect_true (pd_is_call(ids[[3]]), pd)
-    expect_false(pd_is_call(ids[[1]]), pd)
+    expect_true (pd_is_call(ids[[3]], pd))
+    expect_false(pd_is_call(ids[[1]], pd))
     expect_equal(pd_is_call(ids, pd), c(F, F, T))
 }
 
@@ -86,7 +86,7 @@ if(FALSE){#!@testing
         y <- runif(10)
         plot(x, y)
     "}, keep.source=TRUE))
-    ids <- all_root_ids(pd)
+    ids <- roots(pd)
     id <- ids[[3]]
     expect_true (pd_is_symbol_call(id, pd))
     expect_false(pd_is_symbol_call(ids[[1]], pd))
@@ -118,7 +118,7 @@ if(FALSE){#!@testing
         y <- runif(10)
         plot(x, y)
     "}, keep.source=TRUE))
-    ids <- all_root_ids(pd)
+    ids <- roots(pd)
     id <- ids[[3]]
     expect_equal(pd_get_call_symbol_id(id, pd), 45L)
 }
@@ -165,16 +165,16 @@ function( id, pd, .check=TRUE){
     return(val)
     #' @return a named list where each element is the id for the 'expr' element of the argument.
 }
-call_args <- internal(pd_get_call_arg_ids, all_root_ids(pd))
+call_args <- internal(pd_get_call_arg_ids, roots(pd))
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
-    test.object <- pd_get_call_arg_ids(all_root_ids(pd), pd=pd)
+    test.object <- pd_get_call_arg_ids(roots(pd), pd=pd)
 
     expect_is(test.object, 'integer')
     expect_equal(names(test.object), c('', 'mean', 'sd'))
     expect_identical(test.object, c(5L, mean=12L, sd=19L))
     pd <- get_parse_data(parse(text='alist(x, y=z, ...=)', keep.source=TRUE))
-    expect_identical( call_args(pd=pd)
+    expect_identical( call_args(all_call_ids(pd), pd=pd)
                     , c( parent(pd_find_text('x'))
                        , y = parent(pd_find_text('z'))
                        , '...'=NA_integer_))
@@ -182,14 +182,11 @@ if(FALSE){#! @testing
 
 cumand <- function(a)Reduce('&&', a, right=TRUE, accumulate = TRUE)
 pd_call_arg_text <- function(args, arg.name, which=1L, pd=get('pd', parent.frame())) {
-    # args[[ifelse('signature' %in% names(args), 'signature', 2L)]]
+    stop('Not implimented')
 
-    # arg.is.named <- if(is.name)
-
-
-    arg <- args[[match(arg.name, names(args), which)]]
-    while (token(fname.arg) == 'expr') fname.arg <- firstborn(fname.arg)
-    if (token(fname.arg) == 'STR_CONST') unquote(text(fname.arg)) else
-        line_error(prev.id, "Cannot infer method name for setMethod.")
+    # arg <- args[[match(arg.name, names(args), which)]]
+    # while (token(fname.arg) == 'expr') fname.arg <- firstborn(fname.arg)
+    # if (token(fname.arg) == 'STR_CONST') unquote(text(fname.arg)) else
+    #     line_error(prev.id, "Cannot infer method name for setMethod.")
 }
 

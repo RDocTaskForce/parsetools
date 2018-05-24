@@ -67,11 +67,12 @@ function( id, pd
     if (ignore.groups && pd_is_grouping(parent, pd)) return(TRUE)
     return(FALSE)
 }
+is_root <- internal(pd_is_root)
 if(FALSE){#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     expect_true (pd_is_root(23, pd))
     expect_false(pd_is_root( 1, pd))
-    expect_equal(sum(pd_is_root(pd=pd)), 1)
+    expect_equal(sum(pd_is_root(pd$id, pd=pd)), 1)
 
 
     pd <- get_parse_data(parse(text={'{
@@ -81,7 +82,7 @@ if(FALSE){#! @testing
     }'}, keep.source=TRUE))
     expect_true(pd_is_root(68, pd), info="Grouping root")
     expect_true(pd_is_root(30, pd), info="Root within grouping.")
-    expect_equal(sum(pd_is_root(pd=pd)), 4)
+    expect_equal(sum(pd_is_root(pd$id, pd=pd)), 4)
     expect_equal(sum(pd_is_root(c(68, 30, 46, 62), pd)), 4)
     expect_false(pd_is_root(66, pd))
 
@@ -126,7 +127,7 @@ if(FALSE){#! @testing
 
 .excluded.root.tokens <- c("'{'", "'}'", comment.classes$class, "NORMAL_COMMENT")
 #' @export
-all_root_ids <-
+pd_all_root_ids <-
 function( pd                    #< parse data from `<get_parse_data>`
         , include.groups = TRUE #< Include groups as root nodes (T)
                                 #^ or descend into [groups](is.grouped) for roots?
@@ -147,7 +148,8 @@ function( pd                    #< parse data from `<get_parse_data>`
     }
     return(roots)
 }
-if(F){#!@testthat all_root_ids
+roots <- internal(pd_all_root_ids)
+if(F){#@testing
     pd <- get_parse_data(parse(text={"a <- 1
         {# section 1
         b <- 2
@@ -158,9 +160,9 @@ if(F){#!@testthat all_root_ids
         }# end of section 2
         e <- 5
     "}, keep.source=TRUE))
-    expect_equal(all_root_ids(pd, TRUE), c(7, 52, 63))
+    expect_equal(pd_all_root_ids(pd, TRUE), c(7, 52, 63))
 
-    roots <- all_root_ids(pd, FALSE)
+    roots <- pd_all_root_ids(pd, FALSE)
     expect_equal(roots, c(7, 19, 31, 47, 63))
     expect_equal(getParseText(pd, roots), c('a <- 1','b <- 2', 'c <- 3', 'd <- 4', 'e <- 5'))
 
@@ -168,7 +170,7 @@ if(F){#!@testthat all_root_ids
         # a comment
         an_expression()
     ", keep.source=TRUE))
-    expect_equal( all_root_ids(pd), -pd[1,'parent'])
+    expect_equal( pd_all_root_ids(pd), -pd[1,'parent'])
 
     pd <- utils::getParseData(parse(text={"
     {# grouped code
@@ -185,7 +187,7 @@ if(F){#!@testthat all_root_ids
     # Comment 3
     4+5
     "}, keep.source=TRUE))
-    id <- all_root_ids(pd)
+    id <- pd_all_root_ids(pd)
     expect_equal(id, c(43, 61, 74))
 }
 
@@ -202,7 +204,7 @@ function( pd                    #< parse data from `<get_parse_data>`
     #'   source file a function definition.
     #'   when discussing a subset it is any expression that does not have
     #'   a parent in the subset.
-    pd[pd$id %in% all_root_ids(pd, include.groups=include.groups), ]
+    pd[pd$id %in% pd_all_root_ids(pd, include.groups=include.groups), ]
     #' @return \code{\link{parse-data}} with for the root nodes.
 }
 if(FALSE){#!@testing
@@ -258,6 +260,19 @@ if(FALSE){#@testing
         #' comment after
     "}, keep.source=TRUE))
     expect_equal(ascend_to_root(3, pd), 34)
+    expect_equal(ascend_to_root(pd$id, pd=pd), c(rep(34, 20), 0))
 
-    expect_equal(ascend_to_root(pd=pd), c(rep(34, 20), 0))
+    pd <- get_parse_data(parse(text={"
+    {   #' hello world
+        hw <- function(){
+            #! title
+            print('hello world!')
+        }
+        #' comment after
+    }"}, keep.source=TRUE))
+
+    ascend_to_root(pd_find_text('hw'), pd)
+
+    next_sibling(pd_find_text("#' hello world")) %>%
+    is_root()
 }

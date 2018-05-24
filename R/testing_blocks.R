@@ -216,7 +216,7 @@ if(FALSE){#!@testing
             expect_true(T)
         }
     "}))
-    expect_equal( extract_test_block(all_root_ids(pd), pd)
+    expect_equal( extract_test_block(roots(pd), pd)
                 , structure(c( "#line 2 \"<text>\""
                              , "test_that('An info string', {#@testing An info string"
                              , "            expect_true(T)"

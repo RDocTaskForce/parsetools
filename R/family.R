@@ -45,8 +45,8 @@ function( id, pd
     kids <- children(id, pd, include.self=include.self, ngenerations=ngenerations, ...)
     cids <-
         if (include.doc.comments || include.regular.comments){
-            if (pd_is_grouping(parent <- parent(id, pd), pd)) {
-                pd <- fix_grouping_comment_association(parent, pd, .check=FALSE)
+            if (!is_root(id, ignore.groups=FALSE) && is_grouping(parent(id))) {
+                pd <- fix_grouping_comment_association(parent(id), pd, .check=FALSE)
             }
             pd[ pd$token %in% c( if (include.doc.comments    ) comment.classes$class
                                , if (include.regular.comments) 'NORMAL_COMMENT'
@@ -98,9 +98,9 @@ if(FALSE){#!@testing
             print('hello world')
         }
     }"}, keep.source=TRUE))
-    group.id <- all_root_ids(pd)
+    group.id <- roots(pd)
     expect_true(pd_is_grouping(group.id, pd))
-    id <- expr.id <- all_root_ids(pd, FALSE)
+    id <- expr.id <- roots(pd, FALSE)
 
     fam <- get_family_pd(expr.id, pd, include.doc.comments=FALSE, include.regular.comments=FALSE)
     expect_equal(fam[1,'text'], 'hw')
@@ -113,22 +113,26 @@ if(FALSE){#!@testing
 }
 
 #' @export
-get_sibling_ids <- function(id, pd=get('pd', parent.frame())){
+pd_get_sibling_ids <- function(id, pd, .check=TRUE){
     #' @title Identify siblings.
     #' @inheritParams pd_get_children_ids
-    #' @description \subsection{get_sibling_ids}{
+    #' @description \subsection{pd_get_sibling_ids}{
     #'   A convenience function for identifying siblings of the given id.
     #'   Siblings are nodes with the same parent.
     #' }
-    if (length(id) > 1) return(lapply(id, get_sibling_ids, pd=pd))
+    if (.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+        stopifnot(length(id) == 1)
+    }
     children(parent(id, pd), pd)
 }
-siblings <- internal(get_sibling_ids)
+siblings <- internal(pd_get_sibling_ids)
 
 #' @export
 pd_get_next_sibling_id <-
 function(id, pd, .check=TRUE){
-    #' @rdname get_sibling_ids
+    #' @rdname pd_get_sibling_ids
     #' @description \subsection{pd_get_next_sibling_id}{
     #'   gives the id of the next youngest sibling of the current id.
     #' }
@@ -136,15 +140,31 @@ function(id, pd, .check=TRUE){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
     }
+    if (length(id) > 1L) return(sapply(id, pd_get_next_sibling_id, pd=pd, .check=FALSE))
     sids <- siblings(id, pd)
     . <- which(sids>id)
-    if (length(.)) sids[min(.)] else NA_integer_
+    if (length(.)) min(sids[.]) else NA_integer_
 }
 next_sibling <- internal(pd_get_next_sibling_id)
+if(FALSE){#@testing
+    pd <- get_parse_data(parse(text='a+b'))
+    id <- parent(pd_find_text('a'))
+    expect_equal( pd_get_next_sibling_id(id,pd)
+                , parent(pd_find_text('b'))
+                )
+    expect_identical( pd_get_next_sibling_id(pd_find_text('a', pd), pd), NA_integer_)
+    expect_identical( pd_get_next_sibling_id(pd_find_text('+', pd), pd)
+                    , parent(pd_find_text('a', pd))
+                    )
+    expect_length(pd_get_next_sibling_id(pd$id, pd), nrow(pd))
+    expect_error(pd_get_next_sibling_id(1e9L, pd))
+    expect_error(pd_get_next_sibling_id(id, id))
+}
+
 
 #' @export
 pd_get_prev_sibling_id <- function(id, pd, .check=TRUE){
-    #' @rdname get_sibling_ids
+    #' @rdname pd_get_sibling_ids
     #' @description \subsection{pd_get_prev_sibling_id}{
     #'   gives the id of the next older sibling of the current id.
     #' }
@@ -152,12 +172,25 @@ pd_get_prev_sibling_id <- function(id, pd, .check=TRUE){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
     }
-
+    if (length(id) > 1L) return(sapply(id, pd_get_prev_sibling_id, pd=pd, .check=FALSE))
     sibs <- siblings(id, pd)
     . <- which(sibs<id)
-    if (length(.)) sibs[max(.)] else NA_integer_
+    if (length(.)) max(sibs[.]) else NA_integer_
 }
 prev_sibling <- internal(pd_get_prev_sibling_id)
+if(FALSE){#@testing
+    pd <- get_parse_data(parse(text='a+b'))
+    id <- parent(pd_find_text('b'))
+    expect_equal( pd_get_prev_sibling_id(id,pd)
+                , parent(pd_find_text('a'))
+                )
+    expect_identical( pd_get_prev_sibling_id(pd_find_text('b', pd), pd), NA_integer_)
+    expect_identical( pd_get_prev_sibling_id(parent(pd_find_text('a', pd)), pd)
+                    , pd_find_text('+', pd))
+    expect_length(pd_get_prev_sibling_id(pd$id, pd), nrow(pd))
+    expect_error(pd_get_prev_sibling_id(1e9L, pd))
+    expect_error(pd_get_prev_sibling_id(id, id))
+}
 
 #' @export
 #' @title Test if id is the firstborn.
