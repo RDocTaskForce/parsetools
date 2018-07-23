@@ -41,7 +41,6 @@ function(id, pd, .check=TRUE){
 is_if <- internal(pd_is_if)
 all_if_ids <- make_get_all(pd_is_if)
 
-#' @export
 pd_get_if_predicate_id <-
 function(id, pd, .check=TRUE){
     #' @title Get if predicate id
@@ -60,7 +59,6 @@ function(id, pd, .check=TRUE){
 }
 if_predicate <- internal(pd_get_if_predicate_id, all_if_ids(pd))
 
-#' @export
 pd_get_if_branch_id <-
 function(id, pd, .check=TRUE){
     #' @title Get branch of if statment.
@@ -81,7 +79,6 @@ function(id, pd, .check=TRUE){
 }
 if_branch <- internal(pd_get_if_branch_id, all_if_ids(pd))
 
-#' @export
 pd_get_if_alternate_id <-
 function(id, pd, .check=TRUE){
     #' @title Get the alternate branch of if statement

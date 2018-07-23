@@ -23,7 +23,6 @@
 #
 }#######################################################################
 
-#' @export
 pd_get_parent_id <- function(id, pd, .check=TRUE) {
     #' @title Get the parent of the expression identified by `id` in `pd`.
     #' @inheritParams pd_get_children_ids
@@ -48,7 +47,6 @@ if(FALSE){#! @testing
     expect_identical(pd_get_parent_id(0L, pd), NA_integer_)
 }
 
-#' @export
 pd_get_ancestor_ids <-
 function( id, pd
         , nancestors   = Inf  #< Number of generations to go back

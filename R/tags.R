@@ -68,7 +68,6 @@ if(FALSE){#!@
 #' @inheritParams pd_get_children_ids
 #' @param tag tag(s) to test for
 #' @param ... options passed on
-#' @export
 pd_has_tag <-
 function( id, pd, tag, ...){
     #' @description
@@ -114,7 +113,6 @@ if(FALSE){#!@testing
                 )
 }
 
-#' @export
 strip_tag <-
 function( x     #< text to strip from
         , tag   #< tag to remove
@@ -143,7 +141,6 @@ if(FALSE){#! @testthat
                 , "@@tag should not be removed.")
 }
 
-#' @export
 pd_get_tagged_comment_ids <-
 function( pd, tag
         , doc.only = TRUE #< Restrict to documentation comments only?

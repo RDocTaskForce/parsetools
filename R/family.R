@@ -57,7 +57,7 @@ function( id, pd
     pd[pd$id %in% c(kids, cids), ]
     #' @return a subset of the \code{\link{parse-data}} \code{pd}.
 }
-if(FALSE){#!@testing
+if(FALSE){#@testing
     pd <- get_parse_data(parse(text={"a <- 1
         {# section 1
         b <- 2
@@ -112,7 +112,7 @@ if(FALSE){#!@testing
 
 }
 
-#' @export
+
 pd_get_sibling_ids <- function(id, pd, .check=TRUE){
     #' @title Identify siblings.
     #' @inheritParams pd_get_children_ids
@@ -129,7 +129,7 @@ pd_get_sibling_ids <- function(id, pd, .check=TRUE){
 }
 siblings <- internal(pd_get_sibling_ids)
 
-#' @export
+
 pd_get_next_sibling_id <-
 function(id, pd, .check=TRUE){
     #' @rdname pd_get_sibling_ids
@@ -162,7 +162,7 @@ if(FALSE){#@testing
 }
 
 
-#' @export
+
 pd_get_prev_sibling_id <- function(id, pd, .check=TRUE){
     #' @rdname pd_get_sibling_ids
     #' @description \subsection{pd_get_prev_sibling_id}{
@@ -192,7 +192,7 @@ if(FALSE){#@testing
     expect_error(pd_get_prev_sibling_id(id, id))
 }
 
-#' @export
+
 #' @title Test if id is the firstborn.
 pd_is_firstborn <- function(id, pd, .check=TRUE){
     #' @inheritParams pd_get_children_ids
@@ -205,7 +205,7 @@ pd_is_firstborn <- function(id, pd, .check=TRUE){
     id == firstborn(parent(id, pd), pd)
 }
 
-#' @export
+
 #' @title get the firstborn child.
 pd_get_firstborn_id <-
 function(id, pd, .check=TRUE){
@@ -222,6 +222,6 @@ function(id, pd, .check=TRUE){
     if (length(kids)==0 ) return(NA_integer_)
     else min(kids)
 }
-#' @internal
+#@internal
 firstborn <- internal(pd_get_firstborn_id)
 

@@ -2,11 +2,6 @@
 
 #' @title Test for Class Definitions
 #'
-#' @description
-#' These function manage adding class defining functions and
-#' testing if an id is associated with a class definintion or
-#' if is contained in the class definition.
-#'
 #' @usage
 #'     pd_class_definitions
 #' @param name name of the class defining function
@@ -22,39 +17,81 @@
 #' @param pd         parse data which contains id.
 #' @param .check     should the id, and pd be checked?
 #'
-#' @section Methods
-#' \subsection{\preformatted{pd_class_definitions$has(name)}}{
-#'     check if a class defining function has
+#' @description
+#' These function manage adding class defining functions and
+#' testing if an id is associated with a class definintion or
+#' if is contained in the class definition.
+#'
+#' @details
+#'
+#' \subsection{\code{pd_class_definitions$has}}{
+#'     \subsection{Usage}{\preformatted{
+#'         pd_class_definitions$has(name)
+#'     }}
+#'     Check if a class defining function has
 #'     'is' and 'in' function defined for it.
 #' }
-# pd_class_definitions$add(name, .exists)
-# pd_class_definitions$add_definition(name, test.is, test.in, .exists, .overwrite)
-# pd_class_definitions$rm(name)
-#     pd_class_definitions$names()
-#     pd_class_definitions$test_is(id, pd, .check=TRUE)
-#     pd_class_definitions$test_is_in(id, pd, .check=TRUE)
-#     pd_class_definitions$which(id, pd, .check=TRUE)
-#     pd_class_definitions$in_which()
-#
-# @details
-# \enumerate{
-#     \item \strong{\code{$has}}
-#     \item \strong{\code{$add}} Add a def with default
-#           'is' and 'in' functions defined.
-#     \item \strong{\code{$add_definition}} Add a class defining function with
-#            custom 'is' and 'in' functions defined.
-#     \item \strong{\code{$rm}} Remove the testing functions for the class.
-#     \item \strong{\code{names}} Return a vector of the classed for which tests are defined.
-#     \item \strong{\code{test_is}} test if \code{id} is associated with each of
-#           defined class definitions.
-#     \item \strong{\code{test_is_in}} test if \code{id} is contained within each of
-#           defined class definitions.
-#     \item \strong{\code{which}} Return the name of the class, if any,
-#           which \code{id} corressponds to.
-#     \item \strong{\code{in_which}} Returns a vector of the classes, if any,
-#           of the classes which \code{id} is contained in.
-# }
-#
+#' \subsection{\code{pd_class_definitions$add} or \code{pd_add_class}}{
+#' \subsection{Usage}{\preformatted{
+#' pd_class_definitions$add(name, .exists=TRUE, .overwrite=FALSE)
+#'
+#' pd_add_class(name, .exists=TRUE, .overwrite=FALSE)
+#' }}
+#'     Add a def with default 'is' and 'in' functions defined.
+#' }
+#' \subsection{\code{pd_class_definitions$add_definition} or \code{pd_add_class_definition}}{
+#' \subsection{Usage}{\preformatted{
+#' pd_class_definitions$add_definition(name, test.is, test.in, .exists=TRUE, .overwrite=FALSE)
+#'
+#' pd_add_class_definition(name, test.is, test.in, .exists=TRUE, .overwrite=FALSE)
+#' }}
+#'     Add a class defining function with custom 'is' and 'in' functions defined.
+#' }
+#' \subsection{\code{pd_class_definitions$rm}}{
+#' \subsection{Usage}{\preformatted{
+#' pd_class_definitions$rm(name)
+#' }}
+#'     Remove the testing functions for the class.
+#' }
+#' \subsection{\code{pd_class_definitions$names}}{
+#' \subsection{Usage}{\preformatted{
+#' pd_class_definitions$names()
+#' }}
+#'     Return a vector of the classed for which tests are defined.
+#' }
+#' \subsection{\code{pd_class_definitions$test_is}}{
+#' \subsection{Usage}{\preformatted{
+#' pd_class_definitions$test_is(id, pd, check=TRUE)
+#' }}
+#'     Test if \code{id} is associated with each of
+#'     defined class definitions.
+#' }
+#' \subsection{\code{pd_class_definitions$test_is_in}}{
+#' \subsection{Usage}{\preformatted{
+#' pd_class_definitions$test_is_in(id, pd, check=TRUE)
+#' }}
+#'     Test if \code{id} is contained within each of
+#'     defined class definitions.
+#' }
+#' \subsection{\code{pd_class_definitions$which}}{
+#' \subsection{Usage}{\preformatted{
+#' pd_class_definitions$which(id, pd, check=TRUE)
+#' }}
+#'     Return the name of the class, if any,
+#'     which \code{id} corressponds to.
+#' }
+#' \subsection{\code{pd_class_definitions$in_which}}{
+#' \subsection{Usage}{\preformatted{
+#' pd_class_definitions$in_which(id, pd, check=TRUE)
+#' }}
+#'     Returns a vector of the classes, if any,
+#'     of the classes which \code{id} is contained in.
+#' }
+#' \subsection{\code{pd_is_class_definition}}{
+#'     Returns \code{TRUE} if the id corresponds to any of the
+#'     class defining calls.
+#' }
+#'
 pd_class_definitions <- new.env(hash=TRUE)
 local(envir=pd_class_definitions, {
 .is    <- new.env(hash=TRUE, parent=emptyenv())

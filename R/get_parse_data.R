@@ -46,7 +46,7 @@ function( x, ...){
     rownames(x) <- x$id
     x
 }
-if(FALSE){#!@testing
+if(FALSE){#@testing
     if(F)
         debug(as.data.frame.parseData)
     p <- parse(text={"
@@ -111,7 +111,7 @@ function( x
         else stop("could not retrieve parse-data for ", deparse(substitute(x)))
     structure(as_parse_data(df), srcfile = x)
 }
-if(FALSE){#!@testing
+if(FALSE){#@testing
     text <- "    my_function <- function(object #< An object to do something with
             ){
         #' A title
@@ -179,7 +179,7 @@ function( x
                  , include.regular.comments = include.regular.comments
                  ))
 }
-if(FALSE){#!@testing
+if(FALSE){#@testing
     text <-{"my_function <-
         function( object #< An object to do something with
                 ){
@@ -307,7 +307,7 @@ function( x, ...){
             stop(deparse(substitute(x)), " does not have a valid srcref.")
     }
 }
-if(FALSE){#!@testing
+if(FALSE){#@testing
     x <-
     exprs <- parse(text=c('x <- rnorm(10, mean=0, sd=1)'
                          ,'y <- mean(x)'
@@ -396,7 +396,7 @@ if(FALSE){#@testing
     else
         result
 }
-if(FALSE){#!@testing
+if(FALSE){#@testing
     pd       <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     expect_is(pd, 'parse-data')
     expect_is(pd[pd$parent==0, ], 'parse-data')
@@ -412,7 +412,7 @@ if(FALSE){#!@testing
              )
     subset(e1, !(e1$id %in% e2$id))
 }
-if(FALSE){#! @test `-.parse-data`
+if(FALSE){#@test `-.parse-data`
 pd <- get_parse_data(parse(text={
 "{# Section Block
 #' Roxygen Line Beore
@@ -466,7 +466,7 @@ function( df ){
     if (!all(.pd.expected.names %in% names(df))) return("names of data do not conform.")
     return(TRUE)
 }
-if(F){#!@test
+if(F){#@testing
     df <- utils::getParseData(parse(text="rnorm(10,0,1)", keep.source=TRUE))
     expect_true (valid_parse_data(df), 'parse-data')
     expect_equal(valid_parse_data(datasets::iris      ), "names of data do not conform.")
@@ -489,7 +489,7 @@ as_parse_data <- function(df){
                   , class=c( 'parse-data', 'data.frame')
                   ))
 }
-if(FALSE){#!@testing
+if(FALSE){#@testing
     df <- utils::getParseData(parse(text="rnorm(10,0,1)", keep.source=TRUE))
     expect_is   (as_parse_data(df), 'parse-data')
     expect_error(as_parse_data(datasets::iris), "Cannot convert to parse-data: names of data do not conform.")

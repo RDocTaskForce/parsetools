@@ -23,7 +23,6 @@
 #
 }#######################################################################
 
-#' @export
 pd_is_grouping <-
 function( id, pd, .check=TRUE){
   #' @title test if an id is a grouping element
@@ -48,7 +47,7 @@ function( id, pd, .check=TRUE){
   #! @return a logical indicating if the root node(s) is a grouping node or not
 }
 is_grouping <- internal(pd_is_grouping)
-if(FALSE){#! @testing
+if(FALSE){#@testing
     pd <- get_parse_data(parse(text='{
         this(is+a-grouping)
     }', keep.source=TRUE))
@@ -70,13 +69,12 @@ if(FALSE){#! @testing
     expect_equal(sum(pd_is_grouping(pd$id, pd=pd)), 2)
 }
 
-#' @export
 #' @title get the grouping ids
 #' @inheritParams pd_get_children_ids
 #' @description get the ids that represent the grouping nodes.
 #' @return an integer vector of ids.
 all_grouping_ids <- make_get_all(pd_is_grouping)
-if(FALSE){#! @testing
+if(FALSE){#@testing
     pd <- get_parse_data(parse(text='{
         this(is+a-grouping)
     }', keep.source=TRUE))
@@ -113,7 +111,7 @@ function( id = all_grouping_ids(pd)
     }
     return(pd)
 }
-if(FALSE){#!@testing
+if(FALSE){#@testing
     pd <- get_parse_data(parse(text={"
     {# grouped code
         # normal comment

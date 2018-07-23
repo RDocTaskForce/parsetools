@@ -45,7 +45,7 @@ classify_comment.character <- function(x){
                   , "")
           , "")
 }
-if(FALSE){#! @testing
+if(FALSE){#@testing
     expect_equal(classify_comment.character("## normal comment       "), "NORMAL_COMMENT")
     expect_equal(classify_comment.character("#' Roxygen comment      "), "ROXYGEN_COMMENT")
     expect_equal(classify_comment.character("#! Documentation comment"), "DOC_COMMENT")
@@ -61,7 +61,7 @@ classify_comment.data.frame <- function(x){
     x[idx, "token"] <- classify_comment.character(x[idx, "text"])
     structure(x, class=c("parse-data", "data.frame"))
 }
-if(FALSE){#! @testing
+if(FALSE){#@testing
     x <-
     df <- utils::getParseData(parse(text="{
         ## normal comment
@@ -82,7 +82,7 @@ if(FALSE){#! @testing
                 )
 }
 classify_comment <- function(x)UseMethod("classify_comment")
-if(FALSE){#! @testing
+if(FALSE){#@testing
     df <- utils::getParseData(parse(text="{
         ## normal comment
         #' Roxygen comment
@@ -102,7 +102,7 @@ if(FALSE){#! @testing
                 )
 }
 
-#' @export
+
 #' @title Is this a comment?
 #' @description
 #'   \subsection{pd_is_comment}{
@@ -137,7 +137,7 @@ if(FALSE){#!@testing
     expect_equal( all_comment_ids(pd), (1:6)*3L)
 }
 
-#' @export
+
 #' @rdname pd_is_comment
 #' @description
 #'   \subsection{pd_is_relative_comment}{
@@ -151,7 +151,7 @@ pd_is_relative_comment <- function(id, pd, .check=TRUE){
     token(id, pd) == "RELATIVE_COMMENT"
 }
 all_relative_comment_ids <- make_get_all(pd_is_relative_comment)
-#' @export
+
 #' @rdname pd_is_comment
 #' @description
 #'   \subsection{pd_all_relative_comment_ids}{
@@ -176,7 +176,7 @@ if(F){#@testing
 }
 
 
-#' @export
+
 #' @rdname pd_is_comment
 #' @description
 #'   \subsection{pd_is_doc_comment}{
@@ -191,7 +191,7 @@ pd_is_doc_comment <- function(id, pd, .check=TRUE){
 }
 all_doc_comment_ids <- make_get_all(pd_is_doc_comment)
 is_doc_comment <- internal(pd_is_doc_comment)
-if(FALSE){#! @testing
+if(FALSE){#@testing
     pd <- get_parse_data(parse(text="{
         ## normal comment
         #' Roxygen comment
@@ -224,7 +224,7 @@ strip_doc_comment_leads.character <- function(comment, rm.space=TRUE){
     if(rm.space) comment <- trimws(comment)
     comment
 }
-if(FALSE){#! @testing
+if(FALSE){#@testing
     expect_equal(strip_doc_comment_leads.character("#  normal comment       "), "#  normal comment")
     expect_equal(strip_doc_comment_leads.character("#' Roxygen comment      "), "Roxygen comment")
     expect_equal(strip_doc_comment_leads.character("#! Documentation comment"), "Documentation comment")
@@ -240,7 +240,7 @@ strip_doc_comment_leads.data.frame <- function(comment, rm.space=TRUE){
     pd$text <- strip_doc_comment_leads.character(pd$text, rm.space=rm.space)
     pd
 }
-if(FALSE){#! @testing
+if(FALSE){#@testing
     pd <- get_parse_data(parse(text="{
         ## normal comment
         #' Roxygen comment
@@ -272,7 +272,7 @@ strip_doc_comment_leads <-
 function( comment, rm.space = TRUE)
     UseMethod("strip_doc_comment_leads")
 
-if(FALSE){#! @testing
+if(FALSE){#@testing
     expect_equal(strip_doc_comment_leads("#  normal comment       "), "#  normal comment")
     expect_equal(strip_doc_comment_leads("#' Roxygen comment      "), "Roxygen comment")
     expect_equal(strip_doc_comment_leads("#! Documentation comment"), "Documentation comment")

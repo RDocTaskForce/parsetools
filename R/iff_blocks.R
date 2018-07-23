@@ -30,7 +30,6 @@ unquote <- function(x){
     gsub("^('|\")(.*)\\1$", "\\2",x)
 }
 
-#' @export
 pd_is_iff_block <-
 function( id, pd
         , allow.short=TRUE      #< Should `F` be interpreted as FALSE.
@@ -85,7 +84,6 @@ if(FALSE){#!@testing
     expect_equal(   is_iff_block(pd=pd), c(TRUE, TRUE, FALSE))
 }
 
-#' @export
 all_iff_ids <-
 function( pd
         , root.only=TRUE        #< only root blocks(`TRUE`) or all block (`FALSE`)
@@ -142,7 +140,6 @@ if(FALSE){#!@testing
     expect_equal(length(iff.ids), 4)
 }
 
-#' @export
 pd_is_tagged_iff <-
 function( id, tag, pd
         , doc.only = TRUE
@@ -221,7 +218,6 @@ if(FALSE){#!@testing
     expect_true(pd_is_tagged_iff(roots(pd), tag, pd))
 }
 
-#' @export
 all_tagged_iff_ids <-
 function(pd, tag, doc.only=TRUE){
     #' @title Find all tagged \code{if(FALSE)} blocks.

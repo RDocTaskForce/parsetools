@@ -4,7 +4,7 @@
 #' @param calls The tokens to test against
 #' @param .is A function to test if a specific id is a valid
 #'
-#' @internal
+#@internal
 pd_make_is_in_call <-
 function(calls, .is=pd_make_is_call(calls)){
     force(.is)
@@ -20,7 +20,7 @@ function(calls, .is=pd_make_is_call(calls)){
     }
 }
 #' @rdname pd_make_is_in_call
-#' @internal
+#@internal
 pd_make_is_call <-
 function(calls){
     stopifnot( length(calls) > 0

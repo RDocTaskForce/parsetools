@@ -25,7 +25,6 @@
 
 #' @include internal.R
 
-#' @export
 #' @title Get all nodes that are children of `id`.
 pd_get_children_ids <-
 function( id, pd

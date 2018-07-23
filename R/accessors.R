@@ -178,7 +178,7 @@ expect_false(spans_multiple_lines(4, pd))
 expect_true(spans_multiple_lines(pd_all_root_ids(pd), pd))
 }
 
-#' @internal
+#@internal
 terminal_ids_on_line <- function(line, pd=get('pd', parent.frame())){
 #' @describeIn internal Get the ids on a given line that are terminal nodes.
     pd$id[pd$line1 <= line & pd$line2 >= line & pd$terminal]
@@ -201,13 +201,13 @@ expect_equal(terminal_ids_on_line(2, pd), 1)
 expect_equal(terminal_ids_on_line(4, pd), integer(0))
 }
 
-#' @internal
+#@internal
 ids_starting_on_line <- function(line, pd=get('pd', parent.frame())){
 #' @describeIn internal Get ids for nodes that start on the given line
     pd$id[pd$line1 == line]
 }
 
-#' @internal
+#@internal
 ids_ending_on_line <- function(line, pd=get('pd', parent.frame())){
 #' @describeIn internal Get ids for nodes that end on the given line
     pd$id[pd$line2 == line]
@@ -225,7 +225,7 @@ expect_identical(ids_ending_on_line(4), c(26L, 23L, 24L))
 
 }
 
-#' @internal
+#@internal
 prev_terminal <- function(id=pd$id, pd=get('pd', parent.frame())){
 #' @describeIn internal Get the id for the terminal expression that is immediately prior to the one given.
     if (length(id)>1) return (sapply(id, prev_terminal, pd=pd))
@@ -246,7 +246,7 @@ pd <- get_parse_data(parse(text="   rnorm( 10,  0,   3)", keep.source=TRUE))
                 )
 }
 
-#' @internal
+#@internal
 expr_text <- function(id, pd=get('pd', parent.frame())){
 #' @describeIn internal
 #' If id represents a expr token reitterate on the firstborn.
@@ -291,5 +291,5 @@ pd_start_col <- external(start_col)
 pd_end_col <- external(end_col)
 
 
-#' @internal
+#@internal
 cumand <- function(a)Reduce('&&', a, right=TRUE, accumulate = TRUE)

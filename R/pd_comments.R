@@ -21,7 +21,6 @@
 #' @return Returns a vector of the same length as id.  Where the value is
 #'         either the id of the associated object or NA if it cannot be
 #'         associated.
-#' @export
 pd_get_relative_comment_associated_ids <-
 function( id, pd, .check=TRUE){
 #' @inheritParams pd_get_children_ids

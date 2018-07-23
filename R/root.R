@@ -47,7 +47,6 @@
 #' @seealso see \code{\link{pd_is_grouping}} for details on what a grouping is.
 list()
 
-#' @export
 pd_is_root <-
 function( id, pd
         , ignore.groups = TRUE  #< Ignore groups? see details.
@@ -68,7 +67,7 @@ function( id, pd
     return(FALSE)
 }
 is_root <- internal(pd_is_root)
-if(FALSE){#! @testing
+if(FALSE){#@testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     expect_true (pd_is_root(23, pd))
     expect_false(pd_is_root( 1, pd))
@@ -126,7 +125,6 @@ if(FALSE){#! @testing
 
 
 .excluded.root.tokens <- c("'{'", "'}'", comment.classes$class, "NORMAL_COMMENT")
-#' @export
 pd_all_root_ids <-
 function( pd                    #< parse data from `<get_parse_data>`
         , include.groups = TRUE #< Include groups as root nodes (T)
@@ -149,7 +147,7 @@ function( pd                    #< parse data from `<get_parse_data>`
     return(roots)
 }
 roots <- internal(pd_all_root_ids)
-if(F){#@testing
+if(FALSE){#@testing
     pd <- get_parse_data(parse(text={"a <- 1
         {# section 1
         b <- 2
