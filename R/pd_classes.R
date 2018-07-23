@@ -1,42 +1,60 @@
 #' @include pd_make_is_in.R
 
-.class.defining.functions <- c('setClass', 'setRefClass', 'R6Class')
-pd_is_class_definition <- pd_make_is_call(.class.defining.functions)
-if(FALSE){#@test
-pd <- get_parse_data(parse(text='setClass( "testClass"
-     , slots = c( x="numeric" #< the x field
-                , y="matrix"  #< the y field
-                )
-     )', keep.source=TRUE))
-    expect_true(pd_is_class_definition(id = roots(pd), pd))
-}
-
-#' @internal
-pd_is_in_class_definition <- pd_make_is_in_call(.class.defining.functions)
-if(FALSE){#@test object in setClass
-pd <- get_parse_data(parse(text='setClass( "testClass"
-     , slots = c( x="numeric" #< the x field
-                , y="matrix"  #< the y field
-                )
-     )
-setMethod("print", "testClass", function(){
-    cat("This is just a test.")
-})
-', keep.source=TRUE))
-
-    root.id <- roots(pd)
-
-    id <- pd[pd$text=="#< the x field", 'id']
-
-    expect_true(pd_is_in_class_definition(id, pd))
-
-    id2 <- pd[pd$text=='"This is just a test."', 'id']
-    expect_false(pd_is_in_class_definition(id2, pd))
-
-    expect_identical(pd_is_in_class_definition(c(id, id2), pd), c(TRUE, FALSE))
-}
-
-
+#' @title Test for Class Definitions
+#'
+#' @description
+#' These function manage adding class defining functions and
+#' testing if an id is associated with a class definintion or
+#' if is contained in the class definition.
+#'
+#' @usage
+#'     pd_class_definitions
+#' @param name name of the class defining function
+#' @param .exists    require the function to exists to add.
+#' @param .overwrite if TRUE allows for overwriting existing test functions.
+#' @param test.is    function accepting arguments `id` and `pd` which
+#'                   tests if given `id` is associated with the defined
+#'                   class defining functions.
+#' @param test.in    function accepting arguments `id` and `pd` which
+#'                   tests if given `id` is contained in the defined
+#'                   class defining functions.
+#' @param id         id(s) to test.
+#' @param pd         parse data which contains id.
+#' @param .check     should the id, and pd be checked?
+#'
+#' @section Methods
+#' \subsection{\preformatted{pd_class_definitions$has(name)}}{
+#'     check if a class defining function has
+#'     'is' and 'in' function defined for it.
+#' }
+# pd_class_definitions$add(name, .exists)
+# pd_class_definitions$add_definition(name, test.is, test.in, .exists, .overwrite)
+# pd_class_definitions$rm(name)
+#     pd_class_definitions$names()
+#     pd_class_definitions$test_is(id, pd, .check=TRUE)
+#     pd_class_definitions$test_is_in(id, pd, .check=TRUE)
+#     pd_class_definitions$which(id, pd, .check=TRUE)
+#     pd_class_definitions$in_which()
+#
+# @details
+# \enumerate{
+#     \item \strong{\code{$has}}
+#     \item \strong{\code{$add}} Add a def with default
+#           'is' and 'in' functions defined.
+#     \item \strong{\code{$add_definition}} Add a class defining function with
+#            custom 'is' and 'in' functions defined.
+#     \item \strong{\code{$rm}} Remove the testing functions for the class.
+#     \item \strong{\code{names}} Return a vector of the classed for which tests are defined.
+#     \item \strong{\code{test_is}} test if \code{id} is associated with each of
+#           defined class definitions.
+#     \item \strong{\code{test_is_in}} test if \code{id} is contained within each of
+#           defined class definitions.
+#     \item \strong{\code{which}} Return the name of the class, if any,
+#           which \code{id} corressponds to.
+#     \item \strong{\code{in_which}} Returns a vector of the classes, if any,
+#           of the classes which \code{id} is contained in.
+# }
+#
 pd_class_definitions <- new.env(hash=TRUE)
 local(envir=pd_class_definitions, {
 .is    <- new.env(hash=TRUE, parent=emptyenv())
@@ -51,7 +69,7 @@ has <- function(name){
         return(sapply(name, has))
     exists(name, envir=.is, mode='function', inherits=FALSE)
 }
-add <- function(name, .exists=TRUE, .overwrite=FALSE){
+add <- function( name, .exists=TRUE, .overwrite=FALSE){
     if (length(name) > 1L)
         return(invisible(structure( lapply( name, add
                                           , .exists=.exists
@@ -75,12 +93,16 @@ add_definition <- function(name, test.is, test.in, .exists=TRUE, .overwrite=FALS
     if (!.overwrite && has(name)) stop("`", name, "` already has a testing function defined.")
     if (!inherits(test.is, 'function')) stop("test.is must be a function.")
     if (!inherits(test.in, 'function')) stop("test.in must be a function.")
-    if (!identical(base::names(formals(test.is)), c('id', 'pd')))
-        stop(paste( "test.is function must have two and only two arguments"
-                  , "titled 'id' and 'pd', exclusively in that order"))
-    if (!identical(base::names(formals(test.in)), c('id', 'pd')))
-        stop(paste( "test.in function must have two and only two arguments"
-                  , "titled 'id' and 'pd', exclusively in that order"))
+    if (!identical(match(c('id', 'pd'), base::names(formals(test.is))), 1:2))
+        stop(paste( "test.is function must accept arguments 'id' and 'pd'"
+                  , "as the first two arguments."))
+    if (!('.check' %in% base::names(formals(test.is)) || "..." %in% base::names(formals(test.is))))
+        stop( "test.is function must accept argument .check or extra arguments `...`")
+    if (!identical(match(c('id', 'pd'), base::names(formals(test.in))), 1:2))
+        stop(paste( "test.in function must accept arguments 'id' and 'pd'"
+                  , "as the first two arguments."))
+    if (!('.check' %in% base::names(formals(test.in)) || "..." %in% base::names(formals(test.in))))
+        stop( "test.in function must accept argument .check or extra arguments `...`")
     assign(name, test.is, envir = .is)
     assign(name, test.in, envir = .is_in)
     return(invisible(TRUE))
@@ -89,10 +111,11 @@ rm <- function(name){
     base::rm(list=name, envir=.is   , inherits = FALSE)
     base::rm(list=name, envir=.is_in, inherits = FALSE)
 }
-test_is <-
-    function( id = pd$id
-            , pd = get('pd', parent.frame())
-            ){
+test_is <- function( id, pd, .check=TRUE){
+        if (.check) {
+            pd <- ._check_parse_data(pd)
+            id <- ._check_id(id, pd)
+        }
         if (length(id) == 0) return(logical(0)) else
         if (length(id) > 1L) {
             value <- sapply(id, test_is, pd=pd)
@@ -100,12 +123,13 @@ test_is <-
                             , dimnames = list(id = id, rownames(value))
                             ))
         } else
-        sapply(.is, .call_test, id=id, pd=pd)
+        sapply(.is, .call_test, id=id, pd=pd, .check=FALSE)[names()]
     }
-test_is_in <-
-    function( id = pd$id
-            , pd = get('pd', parent.frame())
-            ){
+test_is_in <- function( id, pd, .check=TRUE){
+        if (.check) {
+            pd <- ._check_parse_data(pd)
+            id <- ._check_id(id, pd)
+        }
         if (length(id) == 0) return(logical(0)) else
         if (length(id) > 1L){
             value <- sapply(id, test_is_in, pd=pd)
@@ -113,30 +137,34 @@ test_is_in <-
                             , dimnames = list(id = id, rownames(value))
                             ))
         } else
-        sapply(.is_in, .call_test, id=id, pd=pd)
+        sapply(.is_in, .call_test, id=id, pd=pd, .check=FALSE)[names()]
     }
-names <- function(sorted=TRUE)objects(.is, sorted=sorted)
-which <-
-    function( id = pd$id
-            , pd = get('pd', parent.frame())
-            , all = FALSE
-            ){
-
-
-        i <- test_is_in(id=id, pd=pd)
-
-
-
+names <- function(sorted=TRUE) objects(.is, sorted=sorted)
+which <- function( id, pd, .check = TRUE){
+        if (.check) {
+            pd <- ._check_parse_data(pd)
+            id <- ._check_id(id, pd)
+        }
+        stopifnot(length(id) == 1L)
+        base::names(base::which(test_is(id=id, pd=pd, .check=FALSE)))
     }
-
-
-
-
+in_which <- function( id, pd, .check = TRUE){
+        if (.check) {
+            pd <- ._check_parse_data(pd)
+            id <- ._check_id(id, pd)
+        }
+        stopifnot(length(id) == 1L)
+        base::names(base::which(test_is_in(id=id, pd=pd, .check=FALSE)))
+    }
 })
+lockEnvironment(pd_class_definitions, TRUE)
+
 pd_class_definitions$add(c('setClass', 'setRefClass'))
 if(FALSE){#@testing pd_class_definitions
     expect_identical(pd_class_definitions$has(), logical(0))
     expect_true(pd_class_definitions$has('setClass'))
+    expect_true(pd_class_definitions$has('setRefClass'))
+    expect_false(pd_class_definitions$has('DefineANewClass'))
     expect_identical( pd_class_definitions$has(c('setClass', 'setRefClass'))
                     , c('setClass'=TRUE, 'setRefClass'=TRUE)
                     )
@@ -175,6 +203,19 @@ if(FALSE){#@testing pd_class_definitions
     expect_equal(rownames(results.is), as.character(roots) )
     expect_equal(sort(colnames(results.is)), sort(names.of.definers))
 
+
+    expect_true(pd_class_definitions$test_is_in(.find_text("'S4Test'", pd), pd)['setClass'])
+    expect_false(all(pd_class_definitions$test_is_in(.find_text("'S4Test'", pd), pd)))
+
+    expect_true(pd_class_definitions$test_is_in(.find_text("'CustomTest'", pd), pd)['my_custom_class_definer'])
+    expect_false(all(pd_class_definitions$test_is_in(.find_text("'CustomTest'", pd), pd)))
+
+    expect_identical(pd_class_definitions$which(roots[[1]], pd), "setClass")
+    expect_identical(pd_class_definitions$which(.find_text("'S4Test'", pd), pd), character(0))
+
+    expect_identical(pd_class_definitions$in_which(roots[[1]], pd), "setClass")
+    expect_identical(pd_class_definitions$in_which(.find_text("'S4Test'", pd), pd), "setClass")
+
     expect_null(pd_class_definitions$rm('my_custom_class_definer'))
     expect_false( pd_class_definitions$has('my_custom_class_definer'))
     expect_warning( pd_class_definitions$rm('my_custom_class_definer')
@@ -201,21 +242,41 @@ if(FALSE){#@testing pd_class_definitions
                         , test.is = function(){}
                         , test.in = function(){}
                         , .exists=FALSE)
-                , paste( "test.is function must have two and only two arguments"
-                       , "titled 'id' and 'pd', exclusively in that order"
+                , paste( "test.is function must accept arguments 'id' and 'pd'"
+                       , "as the first two arguments."
                        )
                 )
     expect_error( pd_class_definitions$add_definition('another_custom'
-                        , test.is = function(id, pd){return(TRUE)}
+                        , test.is = function(id, pd){}
                         , test.in = function(){}
                         , .exists=FALSE)
-                , paste( "test.in function must have two and only two arguments"
-                       , "titled 'id' and 'pd', exclusively in that order"
+                , "test.is function must accept argument .check or extra arguments `...`"
+                )
+    expect_error( pd_class_definitions$add_definition('another_custom'
+                        , test.is = function(){}
+                        , test.in = function(){}
+                        , .exists=FALSE)
+                , paste( "test.is function must accept arguments 'id' and 'pd'"
+                       , "as the first two arguments."
+                       )
+                )
+    expect_error( pd_class_definitions$add_definition('another_custom'
+                        , test.is = function(id, pd, ...){return(TRUE)}
+                        , test.in = function(id, pd){}
+                        , .exists=FALSE)
+                , "test.in function must accept argument .check or extra arguments `...`"
+                )
+    expect_error( pd_class_definitions$add_definition('another_custom'
+                        , test.is = function(id, pd, ...){return(TRUE)}
+                        , test.in = function(){}
+                        , .exists=FALSE)
+                , paste( "test.in function must accept arguments 'id' and 'pd'"
+                       , "as the first two arguments."
                        )
                 )
     expect_true( pd_class_definitions$add_definition('another_custom'
-                        , test.is = function(id, pd){return(TRUE)}
-                        , test.in = function(id, pd){return(TRUE)}
+                        , test.is = function(id, pd, ...){return(TRUE)}
+                        , test.in = function(id, pd, ...){return(TRUE)}
                         , .exists=FALSE)
                 )
     expect_true(pd_class_definitions$has('another_custom'))
@@ -223,8 +284,98 @@ if(FALSE){#@testing pd_class_definitions
     expect_false(pd_class_definitions$has('another_custom'))
 }
 
-#TODO pd_get_class_definition
+pd_is_class_definition <- function(id, pd, .check=TRUE){
+    #' @rdname pd_class_definitions
+    if (.check) {
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+    }
+    if (length(id) > 1L)
+        return(sapply(id, pd_is_class_definition, pd=pd, .check=FALSE))
+    any(pd_class_definitions$test_is(id, pd))
+}
+if(FALSE){#@test
+    pd <- get_parse_data(parse(text='
+                setClass( "testClass"
+                        , slots = c( x="numeric" #< the x field
+                                   , y="matrix"  #< the y field
+                                   )
+                        )
+            ', keep.source=TRUE))
+    expect_true(pd_is_class_definition(id = roots(pd), pd))
+    expect_false(pd_is_class_definition(id = .find_text('"testClass"', pd), pd))
 
+    pd <- get_parse_data(parse(text='
+        setRefClass("mEdit",
+                   fields = list( data = "matrix",
+                   edits = "list"))
+        ', keep.source=TRUE))
+    expect_true(pd_is_class_definition(id = roots(pd), pd))
+    expect_false(pd_is_class_definition(.find_text("fields", pd), pd))
+    expect_identical( pd_is_class_definition(c(roots(pd), .find_text("fields", pd)), pd)
+                    , c(TRUE, FALSE)
+                    )
+}
+
+pd_is_in_class_definition <- function(id, pd, .check = TRUE){
+    #' @rdname pd_class_definitions
+    if (.check) {
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+    }
+    if (length(id) > 1L)
+        return(sapply(id, pd_is_in_class_definition, pd=pd, .check=FALSE))
+    any(pd_class_definitions$test_is_in(id, pd))
+}
+if(FALSE){#@test object in setClass
+    pd <- get_parse_data(parse(text='
+                setClass( "testClass"
+                        , slots = c( x="numeric" #< the x field
+                                   , y="matrix"  #< the y field
+                                   )
+                        )
+                setMethod("print", "testClass", function(){
+                    cat("This is just a test.")
+                })
+            ', keep.source=TRUE))
+
+    root.id <- roots(pd)
+
+    id <- .find_text("#< the x field")
+
+    pd_class_definitions$test_is_in(id, pd)
+
+    expect_true(pd_is_in_class_definition(id, pd))
+
+    id2 <- .find_text('"This is just a test."')
+
+    expect_false(pd_is_in_class_definition(id2, pd))
+
+    pd_class_definitions$test_is_in(c(id, id2), pd)
+
+    expect_identical(pd_is_in_class_definition(c(id, id2), pd), c(TRUE, FALSE))
+}
+
+pd_add_class_definition <-
+    function(name, test.is, test.in, .exists=TRUE, .overwrite=FALSE){
+    #' @rdname pd_class_definitions
+    pd_class_definitions$add_definition( name=name, test.is=test.is, test.in=test.in
+                                       , .exists=.exists, .overwrite=.overwrite)
+}
+
+pd_add_class <- function(name, .exists=TRUE, .overwrite=FALSE){
+    #' @rdname pd_class_definitions
+    pd_class_definitions$add(name=name, .exists=.exists, .overwrite=.overwrite)
+}
+
+
+#' @title Get the closest call ID.
+#' @inheritParams pd_is_symbol_call
+#' @param calls optional calls to limit consideration to.
+#' @description
+#' Get the id of the call that is closest to the \code{id} given.
+#' Closest is defined as the innermost call that contains the \code{id}.
+#'
 pd_get_closest_call_id <-
 function( id, pd, calls = NULL, .check=TRUE){
     if (.check){

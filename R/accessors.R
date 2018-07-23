@@ -78,7 +78,6 @@ if(FALSE){#!@testing
     expect_equal(nodes(pd$id, pd), pd)
     expect_equal(nodes(pd$id), pd)
     expect_equal(nodes(c(45,3, 58), pd), pd[c('45', '3', '58'), ])
-
 }
 
 #@internal
@@ -262,9 +261,9 @@ expr_text <- function(id, pd=get('pd', parent.frame())){
 if(FALSE){#@testing
     pd <- get_parse_data(parse(text="
         signature(x='hello', y='world')
-    "))
-    ids <- c( parent(pd_find_text("'hello'"))
-            , parent(pd_find_text("'world'"))
+    ", keep.source=TRUE))
+    ids <- c( parent(.find_text("'hello'"))
+            , parent(.find_text("'world'"))
             )
     expect_identical(expr_text(ids, pd), c("hello", "world"))
     expect_error( expr_text(pd_all_root_ids(pd))
@@ -278,6 +277,11 @@ if(FALSE){#@testing
 #'
 #' @param pd the parse data.
 #' @param id the ID of the expression
+#' @description
+#'   This collection of function can be used to easily access elements of
+#'   the parse data information.
+#'
+#' @aliases pd_text pd_token pd_start_line pd_end_line pd_filename pd_start_col pd_end_col
 pd_text <- external(text)
 pd_token <- external(token)
 pd_start_line <- external(start_line)
@@ -285,3 +289,7 @@ pd_end_line <- external(end_line)
 pd_filename <- external(filename)
 pd_start_col <- external(start_col)
 pd_end_col <- external(end_col)
+
+
+#' @internal
+cumand <- function(a)Reduce('&&', a, right=TRUE, accumulate = TRUE)

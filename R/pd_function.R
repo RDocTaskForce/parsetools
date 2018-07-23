@@ -23,7 +23,6 @@
 #
 }#######################################################################
 
-#' @export
 pd_is_function <-
 function( id, pd, .check=TRUE){
     #' @title test if a function
@@ -51,14 +50,13 @@ if(F){#! @testthat pd_is_function
 
 }
 
-pd_is_in_function <-
+.pd_is_in_function <-
 function( id, pd, .check=TRUE){
     stop("Not implimented")
 }
 
 
 #' @describeIn pd_is_function Obtain the body of a function
-#' @export
 pd_get_function_body_id <-
 function( id, pd, .check=TRUE){
     if(.check){
@@ -77,11 +75,11 @@ pd <- get_parse_data(parse(text="hello_world <- function(){
 ", keep.source=TRUE))
 
     id <- all_function_ids(pd)
-    expect_equal(pd_get_function_body_id(id, pd), parent(pd_find_text('{')))
+    expect_equal(pd_get_function_body_id(id, pd), parent(.find_text('{')))
 
     pd <- get_parse_data(parse(text='function(l,r)paste(l,r)', keep.source=TRUE))
     expect_identical( pd_get_function_body_id(all_function_ids(pd), pd=pd)
-                    , parent(parent(pd_find_text('paste')), pd)
+                    , parent(parent(.find_text('paste')), pd)
                     )
 }
 
@@ -113,7 +111,7 @@ function( pd                    #< parse data
 }
 
 #' Retrieve the variable for a function argument
-#' @export
+#' @inheritParams pd_get_function_arg_ids
 pd_get_function_arg_variable_ids <-
 function( id, pd, .check = TRUE){
     if(.check){
@@ -138,13 +136,13 @@ function( pd                    #< parse data
     expect_error(pd_get_function_arg_variable_ids(roots(pd), pd))
 }
 
-#' @export
 #' @rdname pd_get_function_arg_variable_ids
 pd_get_function_arg_variable_text <-
     function(id, pd, .check=TRUE)
         pd_get_function_arg_variable_ids(id=id, pd=pd, .check=.check)
 
 
+#' @rdname pd_get_function_arg_variable_ids
 pd_is_function_arg <-
 function(id, pd, .check=TRUE){
     if(.check){
@@ -168,16 +166,15 @@ if(F){#@testing
         cat("hello world")
     }', keep.source=TRUE))
 
-    id <- pd_find_text('a')
+    id <- .find_text('a')
     expect_true(pd_is_function_arg(id, pd))
-    expect_false(pd_is_function_arg(pd_find_text('"hello world"'), pd))
+    expect_false(pd_is_function_arg(.find_text('"hello world"'), pd))
 
     expect_length(is_function_arg(pd$id, pd), nrow(pd))
     expect_equal(sum(is_function_arg(pd$id, pd)), 4)
 }
 
-#' @export
-#' @rdname
+#' @rdname pd_get_function_arg_variable_ids
 pd_get_function_arg_associated_comment_ids <-
 function( id, pd, .check = TRUE){
     if (.check){

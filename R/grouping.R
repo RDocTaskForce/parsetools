@@ -66,7 +66,7 @@ if(FALSE){#! @testing
             "expression in double nested group"
         }
         }
-        '))
+        ', keep.source=TRUE))
     expect_equal(sum(pd_is_grouping(pd$id, pd=pd)), 2)
 }
 
@@ -133,8 +133,8 @@ if(FALSE){#!@testing
     ids <- all_grouping_ids(pd)
     fixed <- fix_grouping_comment_association(ids, pd)
 
-    expect_identical( -parent(pd_find_text("#' Documenation before", fixed), fixed)
-                    , parent(pd_find_text('<-'))
+    expect_identical( -parent(.find_text("#' Documenation before", fixed), fixed)
+                    , parent(.find_text('<-'))
                     )
 
     expect_identical(fixed[-6], pd[-6])
@@ -157,7 +157,7 @@ if(FALSE){#@test fix_grouping_comment_association Special case
     expect_equal(nrow(pd), nrow(fixed))
     expect_identical(pd$id, fixed$id)
 
-    cid <- pd_find_text("#' Documenation before")
+    cid <- .find_text("#' Documenation before")
     expect_true( parent(cid, fixed) !=  parent(cid, pd))
 
     expect_true(is_assignment(abs(parent(cid, fixed)), fixed))

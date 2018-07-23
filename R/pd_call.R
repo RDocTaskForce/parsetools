@@ -24,7 +24,6 @@
 }#######################################################################
 
 
-#' @export
 pd_is_call <-
 function( id, pd, calls = NULL, .check=TRUE){
     #' @title Is a call?
@@ -56,7 +55,6 @@ if(FALSE){#!@testing
 }
 
 
-#' @export
 pd_is_symbol_call <-
 function( id, pd, .check=TRUE){
     #' @title Check if the call is specifically a symbol call
@@ -93,7 +91,6 @@ if(FALSE){#!@testing
     expect_equal(pd_is_symbol_call(ids, pd), c(F, F, T))
 }
 
-#' @export
 pd_get_call_symbol_id <-
 function( id, pd, .check=TRUE){
     #' @title Get the symbol of the function being called.
@@ -123,13 +120,12 @@ if(FALSE){#!@testing
     expect_equal(pd_get_call_symbol_id(id, pd), 45L)
 }
 
-#' @export
 pd_get_call_arg_ids <-
 function( id, pd, .check=TRUE){
-    #' @title get the arguments of a call.
+    #' @title get ids of the arguments of a call.
     #' @inheritParams pd_is_symbol_call
     #' @description
-    #'   Retrieves the arguments of a call as a list.
+    #'   Retrieves the ids of the arguments of a call as an integer vector.
     if(.check){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
@@ -175,18 +171,8 @@ if(FALSE){#! @testing
     expect_identical(test.object, c(5L, mean=12L, sd=19L))
     pd <- get_parse_data(parse(text='alist(x, y=z, ...=)', keep.source=TRUE))
     expect_identical( call_args(all_call_ids(pd), pd=pd)
-                    , c( parent(pd_find_text('x'))
-                       , y = parent(pd_find_text('z'))
+                    , c( parent(.find_text('x'))
+                       , y = parent(.find_text('z'))
                        , '...'=NA_integer_))
-}
-
-cumand <- function(a)Reduce('&&', a, right=TRUE, accumulate = TRUE)
-pd_call_arg_text <- function(args, arg.name, which=1L, pd=get('pd', parent.frame())) {
-    stop('Not implimented')
-
-    # arg <- args[[match(arg.name, names(args), which)]]
-    # while (token(fname.arg) == 'expr') fname.arg <- firstborn(fname.arg)
-    # if (token(fname.arg) == 'STR_CONST') unquote(text(fname.arg)) else
-    #     line_error(prev.id, "Cannot infer method name for setMethod.")
 }
 

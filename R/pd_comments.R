@@ -88,5 +88,5 @@ pd <- get_parse_data(parse(text='
     expect_true(pd_is_in_class_definition(id,pd))
     expect_identical( pd_is_in_class_definition(ids,pd), c(TRUE, TRUE))
 
-    expect_false(pd_is_in_class_definition(pd_find_text('classDef',pd), pd))
+    expect_false(pd_is_in_class_definition(.find_text('classDef',pd), pd))
 }

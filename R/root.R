@@ -271,8 +271,8 @@ if(FALSE){#@testing
         #' comment after
     }"}, keep.source=TRUE))
 
-    ascend_to_root(pd_find_text('hw'), pd)
+    ascend_to_root(.find_text('hw'), pd)
 
-    next_sibling(pd_find_text("#' hello world")) %>%
+    next_sibling(.find_text("#' hello world")) %>%
     is_root()
 }

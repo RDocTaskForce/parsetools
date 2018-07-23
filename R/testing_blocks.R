@@ -215,7 +215,7 @@ if(FALSE){#!@testing
         if(FALSE){#@testing An info string
             expect_true(T)
         }
-    "}))
+    "}, keep.source = TRUE))
     expect_equal( extract_test_block(roots(pd), pd)
                 , structure(c( "#line 2 \"<text>\""
                              , "test_that('An info string', {#@testing An info string"
@@ -249,7 +249,7 @@ function( file ){
     #'    Convenience function for extracting all tests from a file.
     #'    This parses the file and passes the work to
     #'    \code{\link{extract_test_block}}.
-    pd <- get_parse_data(parse(file=file))
+    pd <- get_parse_data(parse(file=file, keep.source = TRUE))
     extract_test_blocks_parse_data(pd)
 }
 if(FALSE){#! @testthat

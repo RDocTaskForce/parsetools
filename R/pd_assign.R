@@ -109,6 +109,6 @@ pd <- get_parse_data(parse(text="hello_world <- function(){
 
     expect_true(pd_is_assignment(roots(pd), pd=pd))
     expect_equal( pd_get_assign_variable_id(roots(pd), pd=pd)
-                , parent(pd_find_text("hello_world")))
+                , parent(.find_text("hello_world")))
 }
 

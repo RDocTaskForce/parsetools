@@ -42,7 +42,7 @@ pd <- get_parse_data(parse(text={"
         cat('test message:', msg, '\n')
     }
     test('my message')
-"}))
+"}, keep.source=TRUE))
 
     is_in_test <- pd_make_is_in_call('test')
     .is <- environment(is_in_test)[['.is']]

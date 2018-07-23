@@ -133,8 +133,8 @@ setClass( "testClass"
  }', keep.source=TRUE))
 
     root.id <- roots(pd)
-    body.id <- parent(pd_find_text('{'))
-    id <- pd_find_text("#< the x field")
+    body.id <- parent(.find_text('{'))
+    id <- .find_text("#< the x field")
 
     expect_true(root.id %in% pd_get_ancestor_ids(id, pd))
     expect_false(root.id %in% pd_get_ancestor_ids(id, pd, last=body.id))
