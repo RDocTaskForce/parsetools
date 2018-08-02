@@ -152,6 +152,54 @@ if(FALSE){#@testing
     unlink(tmp)
 }
 
+#' Get the ID for an object
+#'
+#' Identify in pd the id for the object given.
+#'
+#' @export
+pd_identify <-
+function( pd       #< parse data
+        , object   #< srcref object to identify
+        ) UseMethod('pd_identify', object)
+
+#' @export
+pd_identify.default <-
+function( pd, object) pd_identify(pd=pd, utils::getSrcref(object))
+
+#' @export
+pd_identify.srcref <-
+function( pd, object){
+    stopifnot( inherits(object, 'srcref')
+             , inherits(pd, 'parse-data')
+             )
+    pd[ pd$line1 == utils::getSrcLocation(object, 'line', TRUE )
+      & pd$line2 == utils::getSrcLocation(object, 'line', FALSE)
+      & pd$col1  == utils::getSrcLocation(object, 'col' , TRUE)
+      & pd$col2  == utils::getSrcLocation(object, 'col' , FALSE)
+      , 'id' ]
+}
+if(FALSE){#@testing
+    text <-{"my_function <-
+        function( object #< An object to do something with
+                ){
+            #' A title
+            #'
+            #' A Description
+            print('It Works!')
+            #< A return value.
+        }
+        another_f <- function(){}
+        if(F){}
+    "}
+    source(file = textConnection(text), local=TRUE, keep.source = TRUE )
+    parsed <- parse(text=text, keep.source=TRUE)
+    pd <- get_parse_data(parsed)
+
+    id <- pd_identify(pd, my_function)
+    expect_equal(id, 40)
+}
+
+
 #' @export
 get_parse_data.srcref <-
 function( x
@@ -166,11 +214,7 @@ function( x
     #' @inheritParams get_family_pd
     stopifnot(inherits(x, 'srcref'))
     pd <- get_parse_data.srcfile(attr(x, 'srcfile'), ...)
-    id <- pd[ pd$line1 == utils::getSrcLocation(x, 'line', TRUE )
-            & pd$line2 == utils::getSrcLocation(x, 'line', FALSE)
-            & pd$col1  == utils::getSrcLocation(x, 'col' , FALSE)
-            & pd$col2  == utils::getSrcLocation(x, 'col' , FALSE)
-            , 'id' ]
+    id <- pd_identify(pd, x)
     root <- ascend_to_root(id, pd, ignore.groups=ignore.groups)
     if  (!length(root)) return(NULL)
     structure(id = id, root=root,
