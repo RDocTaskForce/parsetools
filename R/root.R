@@ -110,7 +110,7 @@ if(FALSE){#@testing
     id <- max(pd[pd$token =="'{'", 'parent'])
     expect_true(pd_is_root(id, pd, ignore.groups = TRUE))
     id <- min(pd[pd$token =="'{'", 'parent'])
-    expect_equal(get_family_pd(id, pd)[3,'text'], "# Another Grouping")
+    expect_equal(pd_get_family(id, pd)[3,'text'], "# Another Grouping")
 
     ids <- pd[pd$token =="'{'", 'parent']
     expect_equal(pd_is_root(ids, pd, ignore.groups = TRUE ), c(TRUE, FALSE, FALSE))

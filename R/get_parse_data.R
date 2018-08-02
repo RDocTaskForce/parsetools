@@ -166,6 +166,9 @@ function( pd       #< parse data
 pd_identify.default <-
 function( pd, object) pd_identify(pd=pd, utils::getSrcref(object))
 
+pd_identify.NULL <-
+function( pd, object) stop("Invalid object.")
+
 #' @export
 pd_identify.srcref <-
 function( pd, object){
@@ -211,14 +214,14 @@ function( x
     #' @rdname get_parse_data
     #'
     #' @inheritParams ascend_to_root
-    #' @inheritParams get_family_pd
+    #' @inheritParams pd_get_family
     stopifnot(inherits(x, 'srcref'))
     pd <- get_parse_data.srcfile(attr(x, 'srcfile'), ...)
     id <- pd_identify(pd, x)
     root <- ascend_to_root(id, pd, ignore.groups=ignore.groups)
     if  (!length(root)) return(NULL)
     structure(id = id, root=root,
-    get_family_pd( root, pd
+    pd_get_family( root, pd
                  , include.doc.comments     = include.doc.comments
                  , include.regular.comments = include.regular.comments
                  ))
