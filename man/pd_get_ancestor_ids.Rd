@@ -5,7 +5,8 @@
 \title{Get the ancestors of id in pd.}
 \usage{
 pd_get_ancestor_ids(id, pd, nancestors = Inf, aggregate = TRUE,
-  include.self = TRUE, only.present = FALSE, last = 0L, .check = TRUE)
+  include.self = TRUE, only.present = FALSE, last = 0L,
+  .check = TRUE)
 }
 \arguments{
 \item{id}{id of the expression of interest}

@@ -156,6 +156,10 @@ if(FALSE){#@testing
 #'
 #' Identify in pd the id for the object given.
 #'
+#' @param pd the parse data.
+#' @param object an object that originated in pd,
+#'               for which to obtain the ID.
+#'
 #' @export
 pd_identify <-
 function( pd       #< parse data
@@ -163,13 +167,17 @@ function( pd       #< parse data
         ) UseMethod('pd_identify', object)
 
 #' @export
+#' @describeIn pd_identify Default method identifies by [srcref](=base:srcref).
 pd_identify.default <-
 function( pd, object) pd_identify(pd=pd, utils::getSrcref(object))
 
+#' @export
+#' @describeIn pd_identify Passing a NULL object will result in an error.
 pd_identify.NULL <-
 function( pd, object) stop("Invalid object.")
 
 #' @export
+#' @describeIn pd_identify Identify by explicit srcref.
 pd_identify.srcref <-
 function( pd, object){
     stopifnot( inherits(object, 'srcref')
@@ -200,6 +208,8 @@ if(FALSE){#@testing
 
     id <- pd_identify(pd, my_function)
     expect_equal(id, 40)
+
+    expect_error(pd_identify(pd, NULL))
 }
 
 

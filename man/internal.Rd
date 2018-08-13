@@ -2,7 +2,6 @@
 % Please edit documentation in R/internal.R, R/accessors.R
 \name{internal}
 \alias{internal}
-\alias{internal}
 \alias{token}
 \alias{text}
 \alias{nodes}
