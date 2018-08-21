@@ -390,6 +390,28 @@ function(id, pd, .check=TRUE){
                     }
                     structure(fname, type='setGeneric')
                 }
+              , setAs = {#coerce,call,usage
+                    #' \code{\link{setAs}} infers coerce methods.
+                    #' \code{type="setAs"}.
+                    args <- call_args(prev.id)
+                    line_error_if(length(args) < 2, prev.id,
+                        "setAs must be called with arguments.")
+                    fname <- 'coerce'
+                    from <- {
+                        fname.arg <- args[[ifelse('from' %in% names(args), 'from', 1L)]]
+                        while (token(fname.arg) == 'expr') fname.arg <- firstborn(fname.arg)
+                        if (token(fname.arg) == 'STR_CONST') unquote(text(fname.arg)) else
+                            line_error(prev.id, "Cannot infer from class for setAs")
+                    }
+                    to <- {
+                        fname.arg <- args[[ifelse('to' %in% names(args), 'to', 2L)]]
+                        while (token(fname.arg) == 'expr') fname.arg <- firstborn(fname.arg)
+                        if (token(fname.arg) == 'STR_CONST') unquote(text(fname.arg)) else
+                            line_error(prev.id, "Cannot infer to argument for setAs")
+                    }
+                    structure( paste0(paste(fname, from, to, sep=','), '-method')
+                             , from=from, to=to, type='setAs')
+                }
               , NULL#' if not specified above the function returns \code{\link{NULL}}.
               )
     }
@@ -447,6 +469,11 @@ if(FALSE){#!@testing
     if(F){#!@testing
         #testing a setMethod with multiple signature elements.
     }
+
+    setAs("class1", "class2", function(from){new(from[[1]], "class2")})
+    if(F){#!@testing
+        #testing setAs
+    }
     '}, keep.source=TRUE))
     iff.ids <- all_tagged_iff_ids(pd, c('testing', 'testthat', 'test'))
 
@@ -474,6 +501,10 @@ if(FALSE){#!@testing
     expect_equal( pd_get_iff_associated_name_id(iff.ids[[9L]], pd)
                 , structure("fun,A,B-method", type = "setMethod")
                 , info="iff after other iff")
+    expect_equal( pd_get_iff_associated_name_id(iff.ids[[10L]], pd)
+                , structure("coerce,class1,class2-method", type = "setAs"
+                           , from='class1', to='class2' )
+                , info="setAs")
 }
 
 

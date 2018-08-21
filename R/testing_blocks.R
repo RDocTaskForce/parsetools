@@ -80,6 +80,8 @@ function( id = all_tagged_iff_ids(pd, .testing.tags)
             paste0("setGeneric(\"", name, "\", ...)")
         else if(attr(name, 'type') == 'setClass')
             paste0("setClass(\"", name, "\", ...)")
+        else if(attr(name, 'type') == 'setAs')
+            deparse(call("as", as.name(attr(name, 'from')), attr(name,"to")))
         else
             name
     }
@@ -142,6 +144,11 @@ if(FALSE){#!@testing
     rnorm(10)
     if(F){#!@testing
         # no previous name
+    }
+
+    setAs("class1", "class2", function(from){new(from[[1]], "class2")})
+    if(F){#!@testing
+        #testing setAs
     }
     '}, keep.source=TRUE))
     iff.ids <- all_tagged_iff_ids(pd, c('testing', 'testthat', 'test'))
@@ -224,6 +231,16 @@ if(FALSE){#!@testing
                              )
                            , name = "An info string")
                 , info = "using text string")
+
+    expect_equal( extract_test_block(iff.ids[9], pd)
+                , structure(c( '#line 47 "<text>"'
+                             , 'test_that(\'as(class1, "class2")\', {#!@testing'
+                             , '        #testing setAs'
+                             , '    })'
+                             )
+                           , name = c("as(class1, \"class2\")")
+                           )
+                , info = "setAs")
 }
 
 
