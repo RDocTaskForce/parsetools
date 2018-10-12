@@ -362,7 +362,7 @@ function(id, pd, .check=TRUE){
                     #' the signature will be collapsed, separated by commas.
                     signature <- {
                         # args[[ifelse('signature' %in% names(args), 'signature', 2L)]]
-                        sig.arg <- args[[ifelse('signature' %in% names(args), 'f', 2L)]]
+                        sig.arg <- args[[ifelse('signature' %in% names(args), 'signature', 2L)]]
                         if (is_symbol_call(sig.arg,pd)) {
                             if (!(text(call_symbol(sig.arg)) %in% c('signature', 'c')))
                                 line_error(sig.arg, 'Cannot infer signature for setMethod.')
