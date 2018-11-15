@@ -1,8 +1,8 @@
-#! This file was automatically produced by the documentation package.
+#! This file was automatically produced by the testextra package.
 #! Changes will be overwritten.
 
 context('tests extracted from file `get_parse_data.R`')
-#line 49 "/rdtf/parsetools/R/get_parse_data.R"
+#line 49 "R/get_parse_data.R"
 test_that('as.data.frame.parseData', {#@testing
     if(F)
         debug(as.data.frame.parseData)
@@ -21,7 +21,7 @@ test_that('as.data.frame.parseData', {#@testing
     df1 <- as.data.frame.parseData(x, srcfile=srcfile)
     expect_true(valid_parse_data(df1))
 })
-#line 114 "/rdtf/parsetools/R/get_parse_data.R"
+#line 114 "R/get_parse_data.R"
 test_that('get_parse_data.srcfile', {#@testing
     text <- "    my_function <- function(object #< An object to do something with
             ){
@@ -62,7 +62,7 @@ test_that('get_parse_data.srcfile', {#@testing
 
     unlink(tmp)
 })
-#line 192 "/rdtf/parsetools/R/get_parse_data.R"
+#line 192 "R/get_parse_data.R"
 test_that('pd_identify.srcref', {#@testing
     text <-{"my_function <-
         function( object #< An object to do something with
@@ -85,7 +85,7 @@ test_that('pd_identify.srcref', {#@testing
 
     expect_error(pd_identify(pd, NULL))
 })
-#line 239 "/rdtf/parsetools/R/get_parse_data.R"
+#line 239 "R/get_parse_data.R"
 test_that('get_parse_data.srcref', {#@testing
     text <-{"my_function <-
         function( object #< An object to do something with
@@ -111,7 +111,7 @@ test_that('get_parse_data.srcref', {#@testing
     expect_is(pd, 'parse-data')
     expect_identical(attr(pd, 'srcfile'), srcfile)
 })
-#line 279 "/rdtf/parsetools/R/get_parse_data.R"
+#line 279 "R/get_parse_data.R"
 test_that('get_parse_data.function basic', {#@test get_parse_data.function basic
 test.text <-
 "#' Roxygen Line Before
@@ -128,7 +128,7 @@ pd.regular <- get_parse_data(hw)
 expect_that(pd.regular, is_a("data.frame"))
 expect_that(pd.regular[1,"text"], equals("#' Roxygen Line Before"))
 })
-#line 295 "/rdtf/parsetools/R/get_parse_data.R"
+#line 295 "R/get_parse_data.R"
 test_that('get_parse_data.function grouped', {#@test get_parse_data.function grouped
 grouped.text <-
 "{#' Roxygen Line Before
@@ -145,7 +145,7 @@ pd <- get_parse_data(hw)
 expect_is(pd, "parse-data")
 expect_that(pd[1,"text"], equals("#' Roxygen Line Before"))
 })
-#line 311 "/rdtf/parsetools/R/get_parse_data.R"
+#line 311 "R/get_parse_data.R"
 test_that('get_parse_data.function nested', {#@test get_parse_data.function nested
 nested.text <-{
 "{# Section Block
@@ -166,7 +166,7 @@ expect_is(pd, "parse-data")
 # pd <- get_parse_data(function(){})
 # expect_that(pd, is_a("data.frame"))
 })
-#line 331 "/rdtf/parsetools/R/get_parse_data.R"
+#line 331 "R/get_parse_data.R"
 test_that('get_parse_data.function S4 Generic', {#@test get_parse_data.function S4 Generic
     # Note that testthat:::test_code will strip comments from code
     # this requires a parse & eval statement.
@@ -185,7 +185,7 @@ test_that('get_parse_data.function S4 Generic', {#@test get_parse_data.function 
     pd <- get_parse_data(my_generic)
     expect_is(pd, 'parse-data')
 })
-#line 367 "/rdtf/parsetools/R/get_parse_data.R"
+#line 367 "R/get_parse_data.R"
 test_that('get_parse_data.default', {#@testing
     x <-
     exprs <- parse(text=c('x <- rnorm(10, mean=0, sd=1)'
@@ -194,24 +194,27 @@ test_that('get_parse_data.default', {#@testing
     pd <- get_parse_data(exprs, keep.source=TRUE)
     expect_is(pd, 'parse-data', info = "get_parse_datwa.default with srcfile")
 })
-#line 410 "/rdtf/parsetools/R/get_parse_data.R"
+#line 415 "R/get_parse_data.R"
 test_that('fix_eq_assign', {#! @testthat
-pd <- utils::getParseData(parse(text="a=1", keep.source=TRUE))
-fixed.pd <- fix_eq_assign(pd)
-expect_true(nrow(pd)+1 == nrow(fixed.pd))
-expect_that(sum(fixed.pd$parent==0), equals(1))
+    pd <- utils::getParseData(parse(text="a=1", keep.source=TRUE))
+    fixed.pd <- fix_eq_assign(pd)
+    expect_true('equal_assign'%in% fixed.pd$token)
+    expect_true('EQ_ASSIGN'%in% fixed.pd$token)
+    expect_that(sum(fixed.pd$parent==0), equals(1))
 
-pd <- utils::getParseData(parse(text="a=1\nb<-2\nc=3\nd<<-4", keep.source=TRUE))
-fixed.pd <- fix_eq_assign(pd)
-expect_true(nrow(pd)+2 == nrow(fixed.pd))
-expect_that(sum(fixed.pd$parent==0), equals(4))
+    pd <- utils::getParseData(parse(text="a=1\nb<-2\nc=3\nd<<-4", keep.source=TRUE))
+    fixed.pd <- fix_eq_assign(pd)
+    expect_true('equal_assign'%in% fixed.pd$token)
+    expect_true('EQ_ASSIGN'%in% fixed.pd$token)
+    expect_that(sum(fixed.pd$parent==0), equals(4))
 
-pd <- utils::getParseData(parse(text="a=b=1", keep.source=TRUE))
-fixed.pd <- fix_eq_assign(pd)
-expect_true(nrow(pd)+2 == nrow(fixed.pd))
-expect_that(sum(fixed.pd$parent==0), equals(1))
+    pd <- utils::getParseData(parse(text="a=b=1", keep.source=TRUE))
+    fixed.pd <- fix_eq_assign(pd)
+    expect_true('equal_assign'%in% fixed.pd$token)
+    expect_true('EQ_ASSIGN'%in% fixed.pd$token)
+    expect_that(sum(fixed.pd$parent==0), equals(1))
 })
-#line 430 "/rdtf/parsetools/R/get_parse_data.R"
+#line 438 "R/get_parse_data.R"
 test_that('`subset.parse-data`', {#@testing
     pd <- get_parse_data(parse(text={
     "{# Section Block
@@ -229,14 +232,14 @@ test_that('`subset.parse-data`', {#@testing
     expect_is(pd2, 'parse-data')
     expect_equal(min(pd2$line1), 4)
 })
-#line 456 "/rdtf/parsetools/R/get_parse_data.R"
+#line 464 "R/get_parse_data.R"
 test_that('`[.parse-data`', {#@testing
     pd       <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     expect_is(pd, 'parse-data')
     expect_is(pd[pd$parent==0, ], 'parse-data')
     expect_false(methods::is(pd[pd$parent==0, 'id'], 'parse-data'))
 })
-#line 472 "/rdtf/parsetools/R/get_parse_data.R"
+#line 480 "R/get_parse_data.R"
 test_that('`-.parse-data`', {#@test `-.parse-data`
 pd <- get_parse_data(parse(text={
 "{# Section Block
@@ -256,14 +259,14 @@ clean.pd <- pd - comments
 expect_is(clean.pd, 'parse-data')
 expect_true(!any(comments$id %in% clean.pd$id))
 })
-#line 526 "/rdtf/parsetools/R/get_parse_data.R"
+#line 534 "R/get_parse_data.R"
 test_that('valid_parse_data', {#@testing
     df <- utils::getParseData(parse(text="rnorm(10,0,1)", keep.source=TRUE))
     expect_true (valid_parse_data(df), 'parse-data')
     expect_equal(valid_parse_data(datasets::iris      ), "names of data do not conform.")
     expect_equal(valid_parse_data(stats::rnorm(10,0,1)), "Not a data.frame object")
 })
-#line 549 "/rdtf/parsetools/R/get_parse_data.R"
+#line 557 "R/get_parse_data.R"
 test_that('as_parse_data', {#@testing
     df <- utils::getParseData(parse(text="rnorm(10,0,1)", keep.source=TRUE))
     expect_is   (as_parse_data(df), 'parse-data')

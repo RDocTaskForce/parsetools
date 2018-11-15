@@ -1,8 +1,8 @@
-#! This file was automatically produced by the documentation package.
+#! This file was automatically produced by the testextra package.
 #! Changes will be overwritten.
 
 context('tests extracted from file `testing_blocks.R`')
-#line 101 "/rdtf/parsetools/R/testing_blocks.R"
+#line 103 "R/testing_blocks.R"
 test_that('extract_test_block', {#!@testing
     pd <- get_parse_data(parse(text={'
     if(F){#!@testing
@@ -47,6 +47,11 @@ test_that('extract_test_block', {#!@testing
     rnorm(10)
     if(F){#!@testing
         # no previous name
+    }
+
+    setAs("class1", "class2", function(from){new(from[[1]], "class2")})
+    if(F){#!@testing
+        #testing setAs
     }
     '}, keep.source=TRUE))
     iff.ids <- all_tagged_iff_ids(pd, c('testing', 'testthat', 'test'))
@@ -115,7 +120,18 @@ test_that('extract_test_block', {#!@testing
                            , start.locations = c(1, 5)
                            )
                 , info = "multiple ids")
-
+    expect_equal( extract_test_block(iff.ids[9], pd)
+                , structure(c( '#line 47 "<text>"'
+                             , 'test_that(\'as(class1, "class2")\', {#!@testing'
+                             , '        #testing setAs'
+                             , '    })'
+                             )
+                           , name = c("as(class1, \"class2\")")
+                           )
+                , info = "setAs")
+})
+#line 230 "R/testing_blocks.R"
+test_that('Extraction with block tag.', {#@testing Extraction with block tag.
     pd <- get_parse_data(parse(text={"
         if(FALSE){#@testing An info string
             expect_true(T)
@@ -130,7 +146,7 @@ test_that('extract_test_block', {#!@testing
                            , name = "An info string")
                 , info = "using text string")
 })
-#line 255 "/rdtf/parsetools/R/testing_blocks.R"
+#line 271 "R/testing_blocks.R"
 test_that('extract_test_blocks', {#! @testthat
 text <- {'hello_world <- function(){
     print("hello world")

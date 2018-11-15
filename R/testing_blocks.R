@@ -217,7 +217,17 @@ if(FALSE){#!@testing
                            , start.locations = c(1, 5)
                            )
                 , info = "multiple ids")
-
+    expect_equal( extract_test_block(iff.ids[9], pd)
+                , structure(c( '#line 47 "<text>"'
+                             , 'test_that(\'as(class1, "class2")\', {#!@testing'
+                             , '        #testing setAs'
+                             , '    })'
+                             )
+                           , name = c("as(class1, \"class2\")")
+                           )
+                , info = "setAs")
+}
+if(FALSE){#@testing Extraction with block tag.
     pd <- get_parse_data(parse(text={"
         if(FALSE){#@testing An info string
             expect_true(T)
@@ -231,18 +241,7 @@ if(FALSE){#!@testing
                              )
                            , name = "An info string")
                 , info = "using text string")
-
-    expect_equal( extract_test_block(iff.ids[9], pd)
-                , structure(c( '#line 47 "<text>"'
-                             , 'test_that(\'as(class1, "class2")\', {#!@testing'
-                             , '        #testing setAs'
-                             , '    })'
-                             )
-                           , name = c("as(class1, \"class2\")")
-                           )
-                , info = "setAs")
 }
-
 
 #@internal
 extract_test_blocks_parse_data <-

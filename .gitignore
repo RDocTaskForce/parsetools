@@ -1,4 +1,4 @@
-man
 .Rproj.user
-parsetools.Rproj
-inst/doc
+.Rhistory
+.RData
+.Ruserdata

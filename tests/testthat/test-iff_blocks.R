@@ -1,8 +1,8 @@
-#! This file was automatically produced by the documentation package.
+#! This file was automatically produced by the testextra package.
 #! Changes will be overwritten.
 
 context('tests extracted from file `iff_blocks.R`')
-#line 67 "/rdtf/parsetools/R/iff_blocks.R"
+#line 67 "R/iff_blocks.R"
 test_that('is_iff_block', {#!@testing
     pd <- get_parse_data(parse(text={"
         if(FALSE){# an if(FALSE) block
@@ -22,7 +22,7 @@ test_that('is_iff_block', {#!@testing
     expect_equal(pd_is_iff_block(id, pd), c(TRUE, TRUE, FALSE))
     expect_equal(   is_iff_block(pd=pd), c(TRUE, TRUE, FALSE))
 })
-#line 114 "/rdtf/parsetools/R/iff_blocks.R"
+#line 114 "R/iff_blocks.R"
 test_that('all_iff_ids', {#!@testing
     pd <- get_parse_data(parse(text={"
         if(FALSE){# an if(FALSE) block
@@ -51,7 +51,7 @@ test_that('all_iff_ids', {#!@testing
     iff.ids <- all_iff_ids(pd, root.only=FALSE, ignore.groups = FALSE)
     expect_equal(length(iff.ids), 4)
 })
-#line 177 "/rdtf/parsetools/R/iff_blocks.R"
+#line 177 "R/iff_blocks.R"
 test_that('pd_is_tagged_iff', {#!@testing
     pd  <- get_parse_data(parse(text={"
         if(FALSE){#!@tag
@@ -95,7 +95,7 @@ test_that('pd_is_tagged_iff', {#!@testing
     pd <- get_parse_data(parse(text='if(F){#@tag\nF\n}', keep.source=TRUE))
     expect_true(pd_is_tagged_iff(roots(pd), tag, pd))
 })
-#line 240 "/rdtf/parsetools/R/iff_blocks.R"
+#line 240 "R/iff_blocks.R"
 test_that('all_tagged_iff_ids', {#!@testing
     pd  <- get_parse_data(parse(text={"
         if(FALSE){#!@tag
@@ -128,7 +128,7 @@ test_that('all_tagged_iff_ids', {#!@testing
     tagged.iff.ids <- all_tagged_iff_ids(pd, tag)
     expect_identical(tagged.iff.ids, integer(0))
 })
-#line 398 "/rdtf/parsetools/R/iff_blocks.R"
+#line 420 "R/iff_blocks.R"
 test_that('iff_associated_name', {#!@testing
     pd <- get_parse_data(parse(text={'
     if(F){#!@testing
@@ -181,6 +181,11 @@ test_that('iff_associated_name', {#!@testing
     if(F){#!@testing
         #testing a setMethod with multiple signature elements.
     }
+
+    setAs("class1", "class2", function(from){new(from[[1]], "class2")})
+    if(F){#!@testing
+        #testing setAs
+    }
     '}, keep.source=TRUE))
     iff.ids <- all_tagged_iff_ids(pd, c('testing', 'testthat', 'test'))
 
@@ -208,4 +213,8 @@ test_that('iff_associated_name', {#!@testing
     expect_equal( pd_get_iff_associated_name_id(iff.ids[[9L]], pd)
                 , structure("fun,A,B-method", type = "setMethod")
                 , info="iff after other iff")
+    expect_equal( pd_get_iff_associated_name_id(iff.ids[[10L]], pd)
+                , structure("coerce,class1,class2-method", type = "setAs"
+                           , from='class1', to='class2' )
+                , info="setAs")
 })

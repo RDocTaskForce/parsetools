@@ -15,23 +15,22 @@ function( id, pd, .check=TRUE){
     }
     if (length(id)>1L) return(sapply(id, pd_is_assignment, pd=pd))
 
-    token(id)
-    token(id) == 'expr' &&
+    token(id) %in% c('expr', 'equal_assign') &&
     any(token(children(id)) %in% assignment.opperators)
 }
 all_assignment_ids <- make_get_all(pd_is_assignment)
 is_assignment <- internal(pd_is_assignment)
 if(F){#@testing
-    pd <- get_parse_data(parse(text="x <-  1", keep.source=TRUE))
-    expect_true(pd_is_assignment(roots(pd), pd=pd))
-    pd <- get_parse_data(parse(text="x <<- 1", keep.source=TRUE))
-    expect_true(pd_is_assignment(roots(pd), pd=pd))
-    pd <- get_parse_data(parse(roots(pd), text="1 ->  x", keep.source=TRUE))
-    expect_true(pd_is_assignment(roots(pd), pd=pd))
-    pd <- get_parse_data(parse(text="1 ->> x", keep.source=TRUE))
-    expect_true(pd_is_assignment(roots(pd), pd=pd))
-    pd <- get_parse_data(parse(text="x = 1", keep.source=TRUE))
-    expect_true(pd_is_assignment(roots(pd), pd=pd))
+    pd1 <- get_parse_data(parse(text="x <-  1", keep.source=TRUE))
+    expect_true(pd_is_assignment(roots(pd1), pd=pd1))
+    pd2 <- get_parse_data(parse(text="x <<- 1", keep.source=TRUE))
+    expect_true(pd_is_assignment(roots(pd2), pd=pd2))
+    pd3 <- get_parse_data(parse(roots(pd), text="1 ->  x", keep.source=TRUE))
+    expect_true(pd_is_assignment(roots(pd3), pd=pd3))
+    pd4 <- get_parse_data(parse(text="1 ->> x", keep.source=TRUE))
+    expect_true(pd_is_assignment(roots(pd4), pd=pd4))
+    pd5 <- get_parse_data(parse(text="x = 1", keep.source=TRUE))
+    expect_true(pd_is_assignment(roots(pd5), pd=pd5))
 }
 
 
