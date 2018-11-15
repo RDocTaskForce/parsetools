@@ -11,12 +11,13 @@ Maintainer: Andrew Redd <andrew.redd@hsc.utah.edu>
 License: GPL-2
 Imports:
     methods,
-    utils, 
-    tools
+    tools,
+    utils 
 Suggests:
-    testthat, covr,
+    covr,
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat
 Description: Tools and utilities for dealing with parse data. 
     parse data represents the parse tree as a data frame with location and type
     information.  This package provides functions for navigating the parse 
@@ -46,6 +47,6 @@ Collate:
     'tags.R'
     'testing_blocks.R'
     'zzz.R'
-RoxygenNote: 6.0.1.9000
+RoxygenNote: 6.1.0.9000
 VignetteBuilder: knitr
 KeepSource: yes

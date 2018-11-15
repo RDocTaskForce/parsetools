@@ -60,4 +60,6 @@ the type attribute will be set to \code{"setMethod"}.
 \code{\link{setGeneric}} can also be used with the name
 of the generic function the inferred name and
 \code{type="setGeneric"}.
+\code{\link{setAs}} infers coerce methods.
+\code{type="setAs"}.
 }
