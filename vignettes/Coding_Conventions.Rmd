@@ -1,0 +1,113 @@
+---
+title: "Parsetools Coding Conventions"
+author: "Andrew Redd"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Parsetools Coding Conventions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Coding Convertions for the `parsetools` package
+===============================================
+
+Functions
+---------
+
+All the functions in `parsetools` are concerned with `parse-data` objects.
+Functions either obtain the `parse-data`, such as `get_parse_data()`;
+convert or transform the parse data, such as `classify_comments()`;
+identify elements of the parse data tree, such as `pd_id_function()`; 
+or navigate the tree, such as `get_parent_id()`.
+
+### Arguments ###
+
+With the exception of obtaining functions and manipulation functions,
+all function will either take an argument `pd` as a stand alone argument
+which expects a `parse-data` object, or will take the combination of 
+an `id` and a `pd`, exclusively in that order. The `id` argument is 
+expected to be an integer of values that exist in `pd$id` which denotes
+the node or nodes of interest.  Whether id is a singleton or vector
+is differentiated by function naming conventions described in the 
+following sections.  If there is a need for additional function arguments 
+they must occure after the `id` and `pd` arguments.
+
+
+### Naming Conventions Overview ###
+
+Function names should follow the underscore standard with appropriate prefixes and suffixes, 
+and conform to proper plurality.
+
+form          Meaning                   Accepts     Returns                     Exported
+------------- ------------------------- ----------  --------------------------- ------------
+pd_is_*       Logical test function     id vector   logical 1:1 for input id    Yes
+pd_get_*_id   Navigation function       id vector   id integer 1:1 for input    Yes
+pd_get_*_ids  Set identification        single id   id vector many:1 for input  Yes
+get_*_pd      Subsetting                id(1)+pd    subsetted parse-data        No
+all_*_ids     Get list of ids           parse-data  id vector many:1 for input  No
+pd_*          Other action function     id+pd       Depending                   
+
+
+
+### Logical Test Functions ###
+Functions of the form `pd_is_<name>` test if the specified id satisfies the 
+criteria for `<name>`.  For example, `pd_is_function(id,pd)` tests if the 
+id identifies a function expression, namely the token for id is `expr`,
+and the token for the firstborn, i.e. child with minimum id, is `FUNCTION`.
+These also appear in the form `pd_is_in_<name>`.
+Example, `pd_is_in_class_definition` tests if the expression is nested inside
+any defined class definition.
+
+### Navigation Functions ###
+
+functions that get a single id relative to the current id should follow the format 
+`pd_get_<name>_id`, where  and should accept
+
+
+### Set Identification Functions ###
+
+
+
+## Shortcut functions
+
+There are several functions that are shortcuts for internal expressions.
+These should not be exported but may use the shortcut of defining the function 
+to infer the `pd` argument from the parent function environment,
+`pd=get('pd', parent.frame())`.
+
+Exported functions should not utilize this shortcut.  The shortcut functions
+are renamed with the following conventions:
+
+- `pd_is_<name>` &rightarrow; `is_<name>`
+- `pd_get_<name>_id` &rightarrow; `<name>`
+- `pd_get_<name>_ids` &rightarrow; `<name>s` or the appropriate plural form.
+
+
+## Error Checking
+
+Exported functions should perform error checking on arguments.
+This can be made optional by the .check argument, and when used internally
+the checking should be turned off.
+
+## Tests
+
+In testing code blocks results of output should be directly in the `expect_*` 
+function, or stored in an object called `test.object`.
+
+## Vectorization
+
+Functions that return a single id value for each input should vectorize over input.
+When possible keep the shortest form, if explicit vectorization is needed use:
+
+    if (length(id) > 1L) return(sapply(id, <function_name>, pd=pd, <other arguments>, .check=FALSE))
+
+Those that return multiple values for each input id accept only only singleton ids.
+These functions should check that the input is of length 1.
