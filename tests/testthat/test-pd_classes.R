@@ -1,4 +1,4 @@
-#! This file was automatically produced by the documentation package.
+#! This file was automatically produced by the testextra package.
 #! Changes will be overwritten.
 
 context('tests extracted from file `pd_classes.R`')
@@ -178,7 +178,7 @@ test_that('object in setClass', {#@test object in setClass
 
     expect_identical(pd_is_in_class_definition(c(id, id2), pd), c(TRUE, FALSE))
 })
-#line 433 "/rdtf/parsetools/R/pd_classes.R"
+#line 462 "/rdtf/parsetools/R/pd_classes.R"
 test_that('closest_call', {#@testing
 pd <- get_parse_data(parse(text={"
 x <- 1

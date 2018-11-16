@@ -51,7 +51,7 @@ test_that('all_iff_ids', {#!@testing
     iff.ids <- all_iff_ids(pd, root.only=FALSE, ignore.groups = FALSE)
     expect_equal(length(iff.ids), 4)
 })
-#line 177 "R/iff_blocks.R"
+#line 182 "R/iff_blocks.R"
 test_that('pd_is_tagged_iff', {#!@testing
     pd  <- get_parse_data(parse(text={"
         if(FALSE){#!@tag
@@ -71,31 +71,31 @@ test_that('pd_is_tagged_iff', {#!@testing
     tag <- 'tag'
     id  <- roots(pd)
     expect_equal(length(id), 6)
-    expect_true (pd_is_tagged_iff(id[[1]], tag, pd))
-    expect_true (pd_is_tagged_iff(id[[3]], tag, pd, FALSE))
-    expect_false(pd_is_tagged_iff(id[[3]], tag, pd, TRUE ))
-    expect_false(pd_is_tagged_iff(id[[6]], tag, pd))
-    expect_equal(pd_is_tagged_iff(id, tag, pd)
+    expect_true (pd_is_tagged_iff(id[[1]], pd, tag))
+    expect_true (pd_is_tagged_iff(id[[3]], pd, tag, FALSE))
+    expect_false(pd_is_tagged_iff(id[[3]], pd, tag, TRUE ))
+    expect_false(pd_is_tagged_iff(id[[6]], pd, tag))
+    expect_equal(pd_is_tagged_iff(id, pd, tag)
                 , c(T,T,F,F,F,F))
-    expect_equal(pd_is_tagged_iff(id, tag, pd, FALSE)
+    expect_equal(pd_is_tagged_iff(id, pd, tag, FALSE)
                 , c(T,T,T,F,F,F))
 
     pd <- get_parse_data(parse(text='rnorm(1)', keep.source=TRUE))
-    expect_false(pd_is_tagged_iff(roots(pd), tag, pd))
+    expect_false(pd_is_tagged_iff(roots(pd), pd, tag))
 
     pd <- get_parse_data(parse(text='if(F)#!@tag not in block\nF', keep.source=TRUE))
-    expect_false(pd_is_tagged_iff(roots(pd), tag, pd))
+    expect_false(pd_is_tagged_iff(roots(pd), pd, tag))
 
     pd <- get_parse_data(parse(text='if(F){FALSE}', keep.source=TRUE))
-    expect_false(pd_is_tagged_iff(roots(pd), tag, pd))
+    expect_false(pd_is_tagged_iff(roots(pd), pd, tag))
 
     pd <- get_parse_data(parse(text='if(F){# @tag\nF\n}', keep.source=TRUE))
-    expect_false(pd_is_tagged_iff(roots(pd), tag, pd))
+    expect_false(pd_is_tagged_iff(roots(pd), pd, tag))
 
     pd <- get_parse_data(parse(text='if(F){#@tag\nF\n}', keep.source=TRUE))
-    expect_true(pd_is_tagged_iff(roots(pd), tag, pd))
+    expect_true(pd_is_tagged_iff(roots(pd), pd, tag))
 })
-#line 240 "R/iff_blocks.R"
+#line 245 "R/iff_blocks.R"
 test_that('all_tagged_iff_ids', {#!@testing
     pd  <- get_parse_data(parse(text={"
         if(FALSE){#!@tag
@@ -128,7 +128,7 @@ test_that('all_tagged_iff_ids', {#!@testing
     tagged.iff.ids <- all_tagged_iff_ids(pd, tag)
     expect_identical(tagged.iff.ids, integer(0))
 })
-#line 420 "R/iff_blocks.R"
+#line 425 "R/iff_blocks.R"
 test_that('iff_associated_name', {#!@testing
     pd <- get_parse_data(parse(text={'
     if(F){#!@testing

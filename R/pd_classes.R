@@ -399,10 +399,39 @@ pd_add_class_definition <-
     pd_class_definitions$add_definition( name=name, test.is=test.is, test.in=test.in
                                        , .exists=.exists, .overwrite=.overwrite)
 }
+if(FALSE){
+    setTestClass <- function(name, ...){
+        setRefClass(name=paste0(name, "-Test"), ...)
+    }
+    test.is <- pd_make_is_call('setTestClass')
+    test.in <- pd_make_is_in_call('setTestClass', .is = test.is)
+    pd_add_class_definition('setTestClass', test.is, test.in)
+
+    pd <- get_parse_data(parse(text='
+                setTestClass( MyClass, ...)
+            ', keep.source=TRUE))
+    expect_true(pd_is_class_definition(id = roots(pd), pd))
+    expect_false(pd_is_class_definition(id = .find_text('MyClass', pd), pd))
+    pd_class_definitions$rm('setTestClass')
+}
 
 pd_add_class <- function(name, .exists=TRUE, .overwrite=FALSE){
     #' @rdname pd_class_definitions
     pd_class_definitions$add(name=name, .exists=.exists, .overwrite=.overwrite)
+}
+if(FALSE){
+    setAnotherClass <- function(name, ...){
+        setRefClass(name=paste0(name, "-Another"), ...)
+    }
+    pd_add_class('setAnotherClass')
+
+    pd <- get_parse_data(parse(text='
+                setAnotherClass( "testAnotherClass", ...)
+            ', keep.source=TRUE))
+    expect_true(pd_is_class_definition(id = roots(pd), pd))
+    expect_false(pd_is_class_definition(id = .find_text('"testAnotherClass"', pd), pd))
+
+    pd_class_definitions$rm('setAnotherClass')
 }
 
 

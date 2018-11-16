@@ -1,8 +1,8 @@
-#! This file was automatically produced by the documentation package.
+#! This file was automatically produced by the testextra package.
 #! Changes will be overwritten.
 
 context('tests extracted from file `internal.R`')
-#line 35 "/rdtf/parsetools/R/internal.R"
+#line 35 "R/internal.R"
 test_that('internal', {#@testing
     external_test <- function(id, pd){"do something"}
 
@@ -29,7 +29,15 @@ test_that('internal', {#@testing
     environment(expected4) <- asNamespace('parsetools')
     expect_identical(test4, expected4)
 })
-#line 117 "/rdtf/parsetools/R/internal.R"
+#line 86 "R/internal.R"
+test_that('make_get_all', {#@test
+    pd_is_test <- function(id, pd, n=Inf, .check=TRUE){"do something"}
+    test_all <- make_get_all(pd_is_test)
+
+    expected <- function(pd=get('pd', parent.frame()),...)pd[pd_is_test(id=pd$id, pd=pd, ..., .check=FALSE), "id"]
+    expect_equal(test_all, expected)
+})
+#line 117 "R/internal.R"
 test_that('external', {#@testing
     internal_test <- function(id=pd$id, pd=get('pd', parent.frame())){"do something"}
     test <- external(internal_test)

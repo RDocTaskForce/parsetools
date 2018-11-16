@@ -1,7 +1,7 @@
 Package: parsetools
 Type: Package
 Title: Parse Tools
-Version: 0.1
+Version: 0.1.0
 Date: 2016-12-13
 Authors@R: c(
     person("Andrew", "Redd", , "andrew.redd@hsc.utah.edu", c("aut", "cre")),
@@ -9,6 +9,7 @@ Authors@R: c(
     )
 Maintainer: Andrew Redd <andrew.redd@hsc.utah.edu>
 License: GPL-2
+Language: en-US
 Imports:
     methods,
     tools,

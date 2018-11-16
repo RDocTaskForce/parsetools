@@ -1,10 +1,9 @@
+#! This file was automatically produced by the testextra package.
+#! Changes will be overwritten.
 
-#' @exportPattern ^pd_.*
-list()
-utils::globalVariables(c('id', 'pd'))
-formal_arg_is_missing <- function(x)identical(x, alist(x=)$x)
-
-if(FALSE){#! @test export compliance
+context('tests extracted from file `zzz.R`')
+#line 7 "R/zzz.R"
+test_that('export compliance', {#! @test export compliance
     grep('^all_', getNamespaceExports('parsetools'), value=TRUE) %>%
         grep('_ids', ., value=TRUE, invert=TRUE)
 
@@ -51,4 +50,4 @@ if(FALSE){#! @test export compliance
             fail(paste0('if argument `pd` is present argument `.check` is required to be present'
                        , " for exported function '", names.pd_is_[[i]], "'."))
     }
-}
+})

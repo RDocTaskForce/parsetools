@@ -1,8 +1,8 @@
-#! This file was automatically produced by the documentation package.
+#! This file was automatically produced by the testextra package.
 #! Changes will be overwritten.
 
 context('tests extracted from file `pd_comments.R`')
-#line 46 "/rdtf/parsetools/R/pd_comments.R"
+#line 46 "R/pd_comments.R"
 test_that('function relative comments', {#@test function relative comments
 pd <- get_parse_data(parse(text='function( pd                    #< parse data
                                 #< continuation comment
@@ -33,7 +33,7 @@ pd <- get_parse_data(parse(text='function( id, #< traditional comma placement.
                   , 'id']
     expect_identical(value, expected)
 })
-#line 76 "/rdtf/parsetools/R/pd_comments.R"
+#line 76 "R/pd_comments.R"
 test_that('class members', {#@test class members
 pd <- get_parse_data(parse(text='
     classDef <- setClass( "testClass"

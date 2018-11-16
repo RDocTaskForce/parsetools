@@ -83,7 +83,7 @@ make_get_all <- function(fun, id=pd$id){
                , envir = topenv()
                )
 }
-if(F){
+if(FALSE){#@test
     pd_is_test <- function(id, pd, n=Inf, .check=TRUE){"do something"}
     test_all <- make_get_all(pd_is_test)
 
