@@ -48,7 +48,7 @@ function( id, pd, .check = TRUE){
         stopifnot(all(pd_is_assignment(id, pd)))
     }
     if(length(id) > 1)
-        sapply(id, pd_get_assign_value_id, pd=pd)
+        sapply(id, pd_get_assign_value_id, pd=pd) #nocov
     child.ids <- children(id, pd, 1, FALSE)
     type <- pd[pd$id %in% child.ids & pd$token %in% assignment.opperators, 'token']
     switch( type
@@ -90,7 +90,7 @@ function( id, pd, .check=TRUE){
         stopifnot(all(pd_is_assignment(id, pd)))
     }
     if(length(id) > 1)
-        sapply(id, pd_get_assign_variable_id, pd=pd)
+        sapply(id, pd_get_assign_variable_id, pd=pd) #nocov
     child.ids   <- children(id, pd, 1, FALSE)
     assign.pd   <- pd[pd$id %in% child.ids & pd$token %in% assignment.opperators, ]
     switch( assign.pd$token
@@ -109,5 +109,11 @@ pd <- get_parse_data(parse(text="hello_world <- function(){
     expect_true(pd_is_assignment(roots(pd), pd=pd))
     expect_equal( pd_get_assign_variable_id(roots(pd), pd=pd)
                 , parent(.find_text("hello_world")))
+}
+if(F){#@test right_assign
+    pd <- get_parse_data(parse(text="'hello_world' -> hw", keep.source=TRUE))
+    expect_true(pd_is_assignment(roots(pd), pd))
+    expect_equal( pd_get_assign_variable_id(roots(pd), pd=pd)
+                , parent(.find_text("hw")))
 }
 

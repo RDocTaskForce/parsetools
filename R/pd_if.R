@@ -33,7 +33,7 @@ function(id, pd, .check=TRUE){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
     }
-    if (length(id)>1) sapply(id, pd_is_if, pd=pd)
+    if (length(id)>1) sapply(id, pd_is_if, pd=pd) #nocov
     (token(id) == 'expr') &&
     (token(firstborn(id)) == 'IF')
     #' @return a logical vector of same length as id.
@@ -54,7 +54,7 @@ function(id, pd, .check=TRUE){
         stopifnot(all(is_if(id,pd)))
     }
     kids <- children(id, pd)
-    if (length(kids)<5) stop("inproper if statement")
+    if (length(kids)<5) stop("inproper if statement") #nocov
     kids[[3L]]
 }
 if_predicate <- internal(pd_get_if_predicate_id, all_if_ids(pd))
@@ -72,7 +72,7 @@ function(id, pd, .check=TRUE){
         stopifnot(all(is_if(id,pd)))
     }
     kids <- children(id, pd)
-    if (length(kids)<5) stop("inproper if statement")
+    if (length(kids)<5) stop("inproper if statement") #nocov
     branch.id <- kids[[5L]]
     #TODO fix when a comment is in the way.
     #' @return an id integer.
@@ -92,7 +92,7 @@ function(id, pd, .check=TRUE){
     }
     kids <- children(id, pd)
     if (length(kids)<7 || token(kids[[6]]) != 'ELSE')
-        stop("inproper if-else statement")
+        stop("inproper if-else statement") #nocov
     kids[[7L]]
     #' @return an id integer.
 }

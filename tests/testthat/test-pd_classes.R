@@ -178,7 +178,32 @@ test_that('object in setClass', {#@test object in setClass
 
     expect_identical(pd_is_in_class_definition(c(id, id2), pd), c(TRUE, FALSE))
 })
-#line 462 "/rdtf/parsetools/R/pd_classes.R"
+#line 402 "/rdtf/parsetools/R/pd_classes.R"
+test_that('pd_add_class_definition', {#@testing
+    test.is <- pd_make_is_call('setTestClass')
+    test.in <- pd_make_is_in_call('setTestClass', .is = test.is)
+    pd_add_class_definition('setTestClass', test.is, test.in, FALSE, TRUE)
+
+    pd <- get_parse_data(parse(text='
+                setTestClass( MyClass, ...)
+            ', keep.source=TRUE))
+    expect_true(pd_is_class_definition(id = roots(pd), pd))
+    expect_false(pd_is_class_definition(id = .find_text('MyClass', pd), pd))
+    pd_class_definitions$rm('setTestClass')
+})
+#line 419 "/rdtf/parsetools/R/pd_classes.R"
+test_that('pd_add_class', {#@testing
+    pd_add_class('setAnotherClass', FALSE, TRUE)
+
+    pd <- get_parse_data(parse(text='
+                setAnotherClass( "testAnotherClass", ...)
+            ', keep.source=TRUE))
+    expect_true(pd_is_class_definition(id = roots(pd), pd))
+    expect_false(pd_is_class_definition(id = .find_text('"testAnotherClass"', pd), pd))
+
+    pd_class_definitions$rm('setAnotherClass')
+})
+#line 456 "/rdtf/parsetools/R/pd_classes.R"
 test_that('closest_call', {#@testing
 pd <- get_parse_data(parse(text={"
 x <- 1

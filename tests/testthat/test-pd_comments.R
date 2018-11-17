@@ -50,3 +50,17 @@ pd <- get_parse_data(parse(text='
 
     expect_false(pd_is_in_class_definition(.find_text('classDef',pd), pd))
 })
+#line 92 "R/pd_comments.R"
+test_that('no possible relative.', {#@test no possible relative.
+    pd <- get_parse_data(parse(text='
+        #< not a valid relative comment.
+        function(  #< also not valid
+                  pd #< continuation comment
+                , id = pd_all_root_ids(pd) #< id number
+                ){}', keep.source=TRUE))
+    id <- all_relative_comment_ids(pd)[[1]]
+    expect_true(is.na(pd_get_relative_comment_associated_ids(id, pd)))
+
+    id <- all_relative_comment_ids(pd)[[2]]
+    expect_true(is.na(pd_get_relative_comment_associated_ids(id, pd)))
+})

@@ -1,8 +1,8 @@
-#! This file was automatically produced by the documentation package.
+#! This file was automatically produced by the testextra package.
 #! Changes will be overwritten.
 
 context('tests extracted from file `pd_if.R`')
-#line 101 "/rdtf/parsetools/R/pd_if.R"
+#line 101 "R/pd_if.R"
 test_that('if structures', {#!@testing if structures
     pd <- get_parse_data(parse(text={"
         if(predicate){

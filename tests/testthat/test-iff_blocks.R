@@ -2,7 +2,29 @@
 #! Changes will be overwritten.
 
 context('tests extracted from file `iff_blocks.R`')
-#line 67 "R/iff_blocks.R"
+#line 68 "/rdtf/parsetools/R/iff_blocks.R"
+test_that('is_iff', {#!@testing
+    pd <- get_parse_data(parse(text={"
+        if(FALSE){# an if(FALSE) block
+
+        }
+        if(F){# also an if(FALSE) block
+        }
+        {# not an if(F)block
+        }
+        if(FALSE) expect_true(TRUE) #< IFF but not a block
+    "}, keep.source=TRUE))
+
+    expect_true (pd_is_iff(roots(pd)[[1]], pd))
+    expect_true (pd_is_iff(roots(pd)[[2]], pd))
+    expect_false(pd_is_iff(roots(pd)[[2]], pd, FALSE))
+    expect_false(pd_is_iff(roots(pd)[[3]], pd))
+    expect_true (pd_is_iff(roots(pd)[[4]], pd))
+
+    expect_equal(pd_is_iff(roots(pd), pd), c(TRUE, TRUE, FALSE, TRUE))
+    expect_equal(   is_iff(pd=pd), c(TRUE, TRUE, FALSE, TRUE))
+})
+#line 109 "/rdtf/parsetools/R/iff_blocks.R"
 test_that('is_iff_block', {#!@testing
     pd <- get_parse_data(parse(text={"
         if(FALSE){# an if(FALSE) block
@@ -12,17 +34,19 @@ test_that('is_iff_block', {#!@testing
         }
         {# not an if(F)block
         }
+        if(FALSE) expect_true(TRUE) #< IFF but not a block
     "}, keep.source=TRUE))
-    id <- roots(pd)
 
-    expect_true (pd_is_iff_block(id[[1]], pd))
-    expect_true (pd_is_iff_block(id[[2]], pd))
-    expect_false(pd_is_iff_block(id[[2]], pd, FALSE))
-    expect_false(pd_is_iff_block(id[[3]], pd))
-    expect_equal(pd_is_iff_block(id, pd), c(TRUE, TRUE, FALSE))
-    expect_equal(   is_iff_block(pd=pd), c(TRUE, TRUE, FALSE))
+    expect_true (pd_is_iff_block(roots(pd)[[1]], pd))
+    expect_true (pd_is_iff_block(roots(pd)[[2]], pd))
+    expect_false(pd_is_iff_block(roots(pd)[[2]], pd, FALSE))
+    expect_false(pd_is_iff_block(roots(pd)[[3]], pd))
+    expect_false(pd_is_iff_block(roots(pd)[[4]], pd))
+    expect_equal(pd_is_iff_block(roots(pd), pd), c(TRUE, TRUE, FALSE, FALSE))
+    expect_equal(pd_is_iff_block(roots(pd), pd, FALSE), c(TRUE, FALSE, FALSE, FALSE))
+    expect_equal(   is_iff_block(pd=pd), c(TRUE, TRUE, FALSE, FALSE))
 })
-#line 114 "R/iff_blocks.R"
+#line 158 "/rdtf/parsetools/R/iff_blocks.R"
 test_that('all_iff_ids', {#!@testing
     pd <- get_parse_data(parse(text={"
         if(FALSE){# an if(FALSE) block
@@ -51,7 +75,7 @@ test_that('all_iff_ids', {#!@testing
     iff.ids <- all_iff_ids(pd, root.only=FALSE, ignore.groups = FALSE)
     expect_equal(length(iff.ids), 4)
 })
-#line 182 "R/iff_blocks.R"
+#line 226 "/rdtf/parsetools/R/iff_blocks.R"
 test_that('pd_is_tagged_iff', {#!@testing
     pd  <- get_parse_data(parse(text={"
         if(FALSE){#!@tag
@@ -67,18 +91,21 @@ test_that('pd_is_tagged_iff', {#!@testing
         }
         {# @tag
         }
+        if(FALSE)#@tag not valid
+            FALSE
         "}, keep.source=TRUE))
     tag <- 'tag'
     id  <- roots(pd)
-    expect_equal(length(id), 6)
+    expect_equal(length(id), 7)
     expect_true (pd_is_tagged_iff(id[[1]], pd, tag))
     expect_true (pd_is_tagged_iff(id[[3]], pd, tag, FALSE))
     expect_false(pd_is_tagged_iff(id[[3]], pd, tag, TRUE ))
     expect_false(pd_is_tagged_iff(id[[6]], pd, tag))
+    expect_false(pd_is_tagged_iff(id[[7]], pd, tag))
     expect_equal(pd_is_tagged_iff(id, pd, tag)
-                , c(T,T,F,F,F,F))
+                , c(T,T,F,F,F,F,F))
     expect_equal(pd_is_tagged_iff(id, pd, tag, FALSE)
-                , c(T,T,T,F,F,F))
+                , c(T,T,T,F,F,F,F))
 
     pd <- get_parse_data(parse(text='rnorm(1)', keep.source=TRUE))
     expect_false(pd_is_tagged_iff(roots(pd), pd, tag))
@@ -95,7 +122,7 @@ test_that('pd_is_tagged_iff', {#!@testing
     pd <- get_parse_data(parse(text='if(F){#@tag\nF\n}', keep.source=TRUE))
     expect_true(pd_is_tagged_iff(roots(pd), pd, tag))
 })
-#line 245 "R/iff_blocks.R"
+#line 292 "/rdtf/parsetools/R/iff_blocks.R"
 test_that('all_tagged_iff_ids', {#!@testing
     pd  <- get_parse_data(parse(text={"
         if(FALSE){#!@tag
@@ -128,7 +155,7 @@ test_that('all_tagged_iff_ids', {#!@testing
     tagged.iff.ids <- all_tagged_iff_ids(pd, tag)
     expect_identical(tagged.iff.ids, integer(0))
 })
-#line 425 "R/iff_blocks.R"
+#line 472 "/rdtf/parsetools/R/iff_blocks.R"
 test_that('iff_associated_name', {#!@testing
     pd <- get_parse_data(parse(text={'
     if(F){#!@testing

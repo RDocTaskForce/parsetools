@@ -37,7 +37,10 @@ function( id, pd, calls = NULL, .check=TRUE){
     }
     if (length(id)>1) return(sapply(id, pd_is_call, pd=pd))
     if (token(id) != 'expr') return(FALSE)
-    token(firstborn(id)) == "'('"
+    fb <- firstborn(id)
+    if (token(fb) == "'('") return(TRUE)
+    if (token(fb) == "expr" && token(next_sibling(fb)) == "'('") return(TRUE)
+    return(FALSE)
 }
 all_call_ids <- make_get_all(pd_is_call)
 is_call <- internal(pd_is_call)
@@ -52,6 +55,12 @@ if(FALSE){#!@testing
     expect_true (pd_is_call(ids[[3]], pd))
     expect_false(pd_is_call(ids[[1]], pd))
     expect_equal(pd_is_call(ids, pd), c(F, F, T))
+}
+if(FALSE){#@test non-symbol calls
+    text <- 'getAnywhere(rnorm)[1](1)'
+    pd <- get_parse_data(parse(text=text, keep.source = TRUE))
+    id <- roots(pd)
+    expect_true(pd_is_call(id, pd))
 }
 
 
@@ -68,9 +77,7 @@ function( id, pd, .check=TRUE){
     }
     if (length(id) > 1) return(sapply(id, pd_is_symbol_call, pd=pd))
     if (!pd_is_call(id, pd)) return(FALSE)
-    eldest <- firstborn(id, pd)
-    if (token(eldest) != "'('") return(FALSE)
-    second <- next_sibling(eldest, pd)
+    second <- next_sibling(firstborn(id, pd), pd)
     if (token(second) != "expr") return(FALSE)
     grandchild <- firstborn(second, pd)
     token(grandchild) == 'SYMBOL_FUNCTION_CALL'
@@ -89,6 +96,16 @@ if(FALSE){#!@testing
     expect_true (pd_is_symbol_call(id, pd))
     expect_false(pd_is_symbol_call(ids[[1]], pd))
     expect_equal(pd_is_symbol_call(ids, pd), c(F, F, T))
+
+    expect_false(pd_is_symbol_call(ids[[1]], pd))
+}
+if(FALSE){#@test non-symbol call
+    pd <- get_parse_data(parse(text={"
+        (function()cat('hello world!'))()
+    "}, keep.source=TRUE))
+    id <- roots(pd)
+    expect_true(pd_is_call(id, pd))
+    expect_false(pd_is_symbol_call(id, pd))
 }
 
 pd_get_call_symbol_id <-

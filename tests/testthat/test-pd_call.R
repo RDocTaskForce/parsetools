@@ -1,8 +1,8 @@
-#! This file was automatically produced by the documentation package.
+#! This file was automatically produced by the testextra package.
 #! Changes will be overwritten.
 
 context('tests extracted from file `pd_call.R`')
-#line 44 "/rdtf/parsetools/R/pd_call.R"
+#line 47 "/rdtf/parsetools/R/pd_call.R"
 test_that('is_call', {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
@@ -15,7 +15,14 @@ test_that('is_call', {#!@testing
     expect_false(pd_is_call(ids[[1]], pd))
     expect_equal(pd_is_call(ids, pd), c(F, F, T))
 })
-#line 81 "/rdtf/parsetools/R/pd_call.R"
+#line 59 "/rdtf/parsetools/R/pd_call.R"
+test_that('non-symbol calls', {#@test non-symbol calls
+    text <- 'getAnywhere(rnorm)[1](1)'
+    pd <- get_parse_data(parse(text=text, keep.source = TRUE))
+    id <- roots(pd)
+    expect_true(pd_is_call(id, pd))
+})
+#line 88 "/rdtf/parsetools/R/pd_call.R"
 test_that('is_symbol_call', {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
@@ -27,8 +34,19 @@ test_that('is_symbol_call', {#!@testing
     expect_true (pd_is_symbol_call(id, pd))
     expect_false(pd_is_symbol_call(ids[[1]], pd))
     expect_equal(pd_is_symbol_call(ids, pd), c(F, F, T))
+
+    expect_false(pd_is_symbol_call(ids[[1]], pd))
 })
-#line 112 "/rdtf/parsetools/R/pd_call.R"
+#line 102 "/rdtf/parsetools/R/pd_call.R"
+test_that('non-symbol call', {#@test non-symbol call
+    pd <- get_parse_data(parse(text={"
+        (function()cat('hello world!'))()
+    "}, keep.source=TRUE))
+    id <- roots(pd)
+    expect_true(pd_is_call(id, pd))
+    expect_false(pd_is_symbol_call(id, pd))
+})
+#line 129 "/rdtf/parsetools/R/pd_call.R"
 test_that('call_symbol', {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
@@ -39,7 +57,7 @@ test_that('call_symbol', {#!@testing
     id <- ids[[3]]
     expect_equal(pd_get_call_symbol_id(id, pd), 45L)
 })
-#line 165 "/rdtf/parsetools/R/pd_call.R"
+#line 182 "/rdtf/parsetools/R/pd_call.R"
 test_that('call_args', {#! @testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     test.object <- pd_get_call_arg_ids(roots(pd), pd=pd)

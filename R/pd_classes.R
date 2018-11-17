@@ -399,13 +399,10 @@ pd_add_class_definition <-
     pd_class_definitions$add_definition( name=name, test.is=test.is, test.in=test.in
                                        , .exists=.exists, .overwrite=.overwrite)
 }
-if(FALSE){
-    setTestClass <- function(name, ...){
-        setRefClass(name=paste0(name, "-Test"), ...)
-    }
+if(FALSE){#@testing
     test.is <- pd_make_is_call('setTestClass')
     test.in <- pd_make_is_in_call('setTestClass', .is = test.is)
-    pd_add_class_definition('setTestClass', test.is, test.in)
+    pd_add_class_definition('setTestClass', test.is, test.in, FALSE, TRUE)
 
     pd <- get_parse_data(parse(text='
                 setTestClass( MyClass, ...)
@@ -419,11 +416,8 @@ pd_add_class <- function(name, .exists=TRUE, .overwrite=FALSE){
     #' @rdname pd_class_definitions
     pd_class_definitions$add(name=name, .exists=.exists, .overwrite=.overwrite)
 }
-if(FALSE){
-    setAnotherClass <- function(name, ...){
-        setRefClass(name=paste0(name, "-Another"), ...)
-    }
-    pd_add_class('setAnotherClass')
+if(FALSE){#@testing
+    pd_add_class('setAnotherClass', FALSE, TRUE)
 
     pd <- get_parse_data(parse(text='
                 setAnotherClass( "testAnotherClass", ...)
@@ -449,10 +443,10 @@ function( id, pd, calls = NULL, .check=TRUE){
         id <- ._check_id(id, pd)
         stopifnot(is.null(calls) || is.character(calls))
     }
-    if (length(id) > 1L) return(sapply(id, pd_get_closest_call_id, pd=pd, calls=calls))
+    if (length(id) > 1L) return(sapply(id, pd_get_closest_call_id, pd=pd, calls=calls)) # nocov
     all.ancestors <- ancestors(id, pd, only.present=TRUE)
     call.ancestors <- all.ancestors[is_symbol_call(all.ancestors)]
-    if (length(call.ancestors) == 0 ) return(NA_integer_)
+    if (length(call.ancestors) == 0 ) return(NA_integer_) # nocov
     if (length(calls))
         call.ancestors <- call.ancestors[text(call_symbol(call.ancestors)) %in% calls]
     if (length(call.ancestors) == 0 ) return(NA_integer_)

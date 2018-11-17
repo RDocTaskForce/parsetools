@@ -43,7 +43,7 @@ function( id, pd, .check=TRUE){
     return(possible)
 }
 relative_comment_associateds <- internal(pd_get_relative_comment_associated_ids)
-if(F){#@test function relative comments
+if(FALSE){#@test function relative comments
 pd <- get_parse_data(parse(text='function( pd                    #< parse data
                                 #< continuation comment
         , id = pd_all_root_ids(pd) #< id number
@@ -73,7 +73,7 @@ pd <- get_parse_data(parse(text='function( id, #< traditional comma placement.
                   , 'id']
     expect_identical(value, expected)
 }
-if(F){#@test class members
+if(FALSE){#@test class members
 pd <- get_parse_data(parse(text='
     classDef <- setClass( "testClass"
          , slots = c( x="numeric" #< the x field
@@ -88,4 +88,17 @@ pd <- get_parse_data(parse(text='
     expect_identical( pd_is_in_class_definition(ids,pd), c(TRUE, TRUE))
 
     expect_false(pd_is_in_class_definition(.find_text('classDef',pd), pd))
+}
+if(FALSE){#@test no possible relative.
+    pd <- get_parse_data(parse(text='
+        #< not a valid relative comment.
+        function(  #< also not valid
+                  pd #< continuation comment
+                , id = pd_all_root_ids(pd) #< id number
+                ){}', keep.source=TRUE))
+    id <- all_relative_comment_ids(pd)[[1]]
+    expect_true(is.na(pd_get_relative_comment_associated_ids(id, pd)))
+
+    id <- all_relative_comment_ids(pd)[[2]]
+    expect_true(is.na(pd_get_relative_comment_associated_ids(id, pd)))
 }

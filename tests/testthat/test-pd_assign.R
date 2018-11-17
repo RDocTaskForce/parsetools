@@ -43,3 +43,10 @@ pd <- get_parse_data(parse(text="hello_world <- function(){
     expect_equal( pd_get_assign_variable_id(roots(pd), pd=pd)
                 , parent(.find_text("hello_world")))
 })
+#line 113 "R/pd_assign.R"
+test_that('right_assign', {#@test right_assign
+    pd <- get_parse_data(parse(text="'hello_world' -> hw", keep.source=TRUE))
+    expect_true(pd_is_assignment(roots(pd), pd))
+    expect_equal( pd_get_assign_variable_id(roots(pd), pd=pd)
+                , parent(.find_text("hw")))
+})
