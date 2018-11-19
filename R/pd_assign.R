@@ -2,13 +2,28 @@
 
 assignment.opperators <- c("LEFT_ASSIGN", "RIGHT_ASSIGN", "EQ_ASSIGN")
 
-#' @export
+#' @name assignments
+#' @title Assignment Node Navigation.
+#' @description
+#' These function help identify and navigate assignments in parse data.
+#'
+#' @details
+#' These functions only deal with assignment operators.
+#' Using [base::assign()] or [base::delayedAssign()] are considered
+#' calls in terms of parse data.
+#'
+#' There are five assignment operators grouped into three categories.
+#'
+#' * Left assignment, the [base::assignOps](`<-`) and [base::assignOps](`<<-`),
+#' * right assignment, [base::assignOps](`->`) and the rarely used [base::assignOps](`->>`)
+#' * and the equals assignment [base::assignOps](`=`).
+#'
+#' @inheritParams pd_get_children_ids
+NULL
+
+#' @describeIn assignments Check if the node is an assignment expression.
 pd_is_assignment <-
 function( id, pd, .check=TRUE){
-    #' @title Check if it is an assignment
-    #' @inheritParams pd_get_children_ids
-    #' @description
-    #'   check if the provided parse-data is an assignment expression.
     if (.check) {
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
@@ -19,8 +34,9 @@ function( id, pd, .check=TRUE){
     any(token(children(id)) %in% assignment.opperators)
 }
 all_assignment_ids <- make_get_all(pd_is_assignment)
+pd_all_assignment_ids <- external(all_assignment_ids)
 is_assignment <- internal(pd_is_assignment)
-if(F){#@testing
+if(FALSE){#@testing
     pd1 <- get_parse_data(parse(text="x <-  1", keep.source=TRUE))
     expect_true(pd_is_assignment(roots(pd1), pd=pd1))
     pd2 <- get_parse_data(parse(text="x <<- 1", keep.source=TRUE))
@@ -34,10 +50,9 @@ if(F){#@testing
 }
 
 
-#' @export
+#' @describeIn assignments Get the id for the value portion of an assignment.
 pd_get_assign_value_id <-
 function( id, pd, .check = TRUE){
-    #' @title Get the id for the value portion of an assignment
     #' @inheritParams pd_is_assignment
     #' @description
     #'    Gives the id of the value portion of the assignment, while correctly
@@ -75,15 +90,9 @@ pd <- get_parse_data(parse(text="1->>x", keep.source=TRUE))
 expect_equal(pd_get_assign_value_id(all_assignment_ids(pd), pd=pd), 2L)
 }
 
-#' @export
+#' @describeIn assignments Get the variable of an assignment.
 pd_get_assign_variable_id <-
 function( id, pd, .check=TRUE){
-    #' @title Get the variable of an assignment
-    #' @inheritParams pd_is_assignment
-    #' @description
-    #'   Gets the id for the variable portion of an assignment expression.
-    #'   This accounts for the direction of the assignment arrow.
-    #'
     if(.check){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
@@ -97,7 +106,6 @@ function( id, pd, .check=TRUE){
           , RIGHT_ASSIGN = max(child.ids)
           , min(setdiff(child.ids, assign.pd$id))
           )
-    #' @return an id integer, typically pointing to an `expr` node in pd.
 }
 assign_variable <- internal(pd_get_assign_variable_id, all_assignment_ids(pd))
 if(F){#!@testthat

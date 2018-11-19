@@ -1,36 +1,49 @@
-{#######################################################################
-# pd_call.R
-# This file is part of the R package `parsetools`.
-#
-# Author: Andrew Redd
-# Copyright: 2017 University of Utah
-#
-# LICENSE
-# ========
-# The R package `parsetools` is free software:
-# you can redistribute it and/or modify it under the terms of the
-# GNU General Public License as published by the Free Software
-# Foundation, either version 3 of the License, or (at your option)
-# any later version.
-#
-# This software is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program. If not, see http://www.gnu.org/licenses/.
-#
-}#######################################################################
+# pd_call.R ###########################################################
+#                                                                     #
+# This file is part of the R package `parsetools`.                    #
+#                                                                     #
+# Author: Andrew Redd                                                 #
+# Copyright: 2018 The R Consortium                                    #
+#                                                                     #
+# LICENSE                                                             #
+# ========                                                            #
+# The R package `parsetools` is free software:                        #
+# you can redistribute it and/or modify it under the terms of the     #
+# GNU General Public License as published by the Free Software        #
+# Foundation, either version 3 of the License, or (at your option)    #
+# any later version.                                                  #
+#                                                                     #
+# This software is distributed in the hope that it will be useful,    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of      #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the        #
+# GNU General Public License for more details.                        #
+#                                                                     #
+# You should have received a copy of the GNU General Public License   #
+# along with this program. If not, see http://www.gnu.org/licenses/.  #
+#_____________________________________________________________________#
+#' @include internal.R
 
 
+#' @name calls
+#' @title Call nodes
+#' @description
+#' Call nodes represent function calls.
+#'
+#' @details
+#' The traditional call of
+#' `function_name(arguments)` is a symbol call as `function_name`
+#' is the symbol directly referencing the function to call.
+#' Other calls may exists such as `function_array[[1]]()` which
+#' first indexes the `function_array` then calls the returned function.
+#' This qualifies as a call expression but not a symbol call expression.
+#' We are often only concerned with symbol calls and not the anonymous
+#' version.
+#'
+NULL
+
+#' @describeIn calls Test if the node is a call expression.
 pd_is_call <-
 function( id, pd, calls = NULL, .check=TRUE){
-    #' @title Is a call?
-    #' @inheritParams pd_get_children_ids
-    #' @param calls Acceptable calls, if \code{NULL} (default) all calls allowed.
-    #' @description
-    #'   Checks if the \code{id} identifies in \code{pd} a call expression.
     if(.check){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
@@ -57,20 +70,16 @@ if(FALSE){#!@testing
     expect_equal(pd_is_call(ids, pd), c(F, F, T))
 }
 if(FALSE){#@test non-symbol calls
+    text <- 'function_array[[1]](1)'
     text <- 'getAnywhere(rnorm)[1](1)'
     pd <- get_parse_data(parse(text=text, keep.source = TRUE))
     id <- roots(pd)
     expect_true(pd_is_call(id, pd))
 }
 
-
+#' @describeIn calls Test if the node is specifically a symbol call expression.
 pd_is_symbol_call <-
 function( id, pd, .check=TRUE){
-    #' @title Check if the call is specifically a symbol call
-    #' @inheritParams pd_is_call
-    #' @description
-    #'   Checks if the \code{id} identifies in \code{pd} specifically a
-    #'   symbol call expression, That is a call from a symbol.
     if(.check){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
@@ -108,13 +117,9 @@ if(FALSE){#@test non-symbol call
     expect_false(pd_is_symbol_call(id, pd))
 }
 
+#' @describeIn calls Get the symbol, i.e. the name of the function, being called.
 pd_get_call_symbol_id <-
 function( id, pd, .check=TRUE){
-    #' @title Get the symbol of the function being called.
-    #' @inheritParams pd_is_symbol_call
-    #' @description
-    #'    Gets the id of the symbol of the call.
-    #'    That is the name of the function being called.
     if(.check){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
@@ -137,6 +142,7 @@ if(FALSE){#!@testing
     expect_equal(pd_get_call_symbol_id(id, pd), 45L)
 }
 
+#' @describeIn calls test Get the set of arguments to the function call.
 pd_get_call_arg_ids <-
 function( id, pd, .check=TRUE){
     #' @title get ids of the arguments of a call.

@@ -7,13 +7,7 @@
 pd_get_closest_call_id(id, pd, calls = NULL, .check = TRUE)
 }
 \arguments{
-\item{id}{id of the expression of interest}
-
-\item{pd}{The \code{\link{parse-data}} information}
-
 \item{calls}{optional calls to limit consideration to.}
-
-\item{.check}{Perform checks for input validation?}
 }
 \description{
 Get the id of the call that is closest to the \code{id} given.
