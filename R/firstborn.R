@@ -36,7 +36,7 @@ pd_is_firstborn <- function(id, pd, .check=TRUE){
 }
 
 
-#' @describein nodes Get the firstborn child of `id`.
+#' @describeIn nodes Get the firstborn child of `id`.
 pd_get_firstborn <-
 function(id, pd, .check=TRUE){
     if (.check){

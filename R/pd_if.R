@@ -23,12 +23,27 @@
 #
 }#######################################################################
 
+#' @name if-statements
+#' @title If Statement Nodes
+#' @description
+#' These function navigate logic statements.
+#'
+#' @details
+#' If statements have the form of the following.
+#' ```
+#'     if (predicate) branch else alternate
+#' ```
+#' The `predicate` refers to the logical test being performed.
+#' The `branch` is the statement or block that is executed if `predicate` evaluates true.
+#' The `alternate` is the statement of block that is executed if `predicate` returns false.
+#'
+#' @inheritParams pd_get_children_ids
+NULL
+
+
+#' @describeIn if-statements Is node an if expression.
 pd_is_if <-
 function(id, pd, .check=TRUE){
-    #' @title Is if expression?
-    #' @inheritParams pd_get_children_ids
-    #' @description
-    #'   Tests if the id(s) represent if expressions.
     if (.check) {
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
@@ -36,11 +51,11 @@ function(id, pd, .check=TRUE){
     if (length(id)>1) sapply(id, pd_is_if, pd=pd) #nocov
     (token(id) == 'expr') &&
     (token(firstborn(id)) == 'IF')
-    #' @return a logical vector of same length as id.
 }
 is_if <- internal(pd_is_if)
 all_if_ids <- make_get_all(pd_is_if)
 
+#' @describeIn if-statements Get the predicate node.
 pd_get_if_predicate_id <-
 function(id, pd, .check=TRUE){
     #' @title Get if predicate id
@@ -59,6 +74,7 @@ function(id, pd, .check=TRUE){
 }
 if_predicate <- internal(pd_get_if_predicate_id, all_if_ids(pd))
 
+#' @describeIn if-statements Get the `branch` statement or block node.
 pd_get_if_branch_id <-
 function(id, pd, .check=TRUE){
     #' @title Get branch of if statement.
@@ -79,6 +95,7 @@ function(id, pd, .check=TRUE){
 }
 if_branch <- internal(pd_get_if_branch_id, all_if_ids(pd))
 
+#' @describeIn if-statements Get the `alternate` statement or block node.
 pd_get_if_alternate_id <-
 function(id, pd, .check=TRUE){
     #' @title Get the alternate branch of if statement
