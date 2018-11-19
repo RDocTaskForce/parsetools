@@ -22,7 +22,7 @@
 # along with this program. If not, see http://www.gnu.org/licenses/.  #
 #_____________________________________________________________________#
 
-#' @describeIn nodes Get the parent of `id`.
+#' @describeIn family-nodes Get the parent of `id`.
 pd_get_parent_id <- function(id, pd, .check=TRUE) {
     if (.check){
         pd <- ._check_parse_data(pd)
@@ -43,7 +43,7 @@ if(FALSE){#! @testing
     expect_identical(pd_get_parent_id(0L, pd), NA_integer_)
 }
 
-#' @describeIn nodes Get the ancestors of `id`.
+#' @describeIn family-nodes Get the ancestors of `id`.
 #' @param last           The last acceptable parent.
 #' @param only.present   should the list be restricted to only those
 #'                       node that are present?  Most relevant for

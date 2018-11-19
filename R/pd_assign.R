@@ -34,7 +34,6 @@ function( id, pd, .check=TRUE){
     any(token(children(id)) %in% assignment.opperators)
 }
 all_assignment_ids <- make_get_all(pd_is_assignment)
-pd_all_assignment_ids <- external(all_assignment_ids)
 is_assignment <- internal(pd_is_assignment)
 if(FALSE){#@testing
     pd1 <- get_parse_data(parse(text="x <-  1", keep.source=TRUE))

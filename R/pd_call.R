@@ -39,9 +39,11 @@
 #' We are often only concerned with symbol calls and not the anonymous
 #' version.
 #'
+#' @inheritParams family-nodes
 NULL
 
 #' @describeIn calls Test if the node is a call expression.
+#' @param calls an optional list of calls to restrict consideration to.
 pd_is_call <-
 function( id, pd, calls = NULL, .check=TRUE){
     if(.check){

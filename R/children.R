@@ -25,7 +25,7 @@
 
 #' @include internal.R
 
-#' @name nodes
+#' @name family-nodes
 #' @title Family-wise Node Identification and Navigation.
 #'
 #' @description
@@ -65,7 +65,7 @@
 #' @param ...             arguments passed on.
 NULL
 
-#' @describeIn nodes Get all nodes that are children of `id`.
+#' @describeIn family-nodes Get all nodes that are children of `id`.
 #'   Get all ids in `pd` that are children of \code{id}.
 #'   i.e. lower in the hierarchy or with id as a parent.
 #'   If \code{ngenerations} is greater than 1 and \code{aggregate}

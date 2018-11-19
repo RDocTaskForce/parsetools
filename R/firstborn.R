@@ -23,7 +23,7 @@
 #_____________________________________________________________________#
 #' @include internal.R
 
-#' @describeIn nodes Test if `id` is firstborn.
+#' @describeIn family-nodes Test if `id` is firstborn.
 pd_is_firstborn <- function(id, pd, .check=TRUE){
     #' @inheritParams pd_get_children_ids
     #' @description
@@ -36,7 +36,7 @@ pd_is_firstborn <- function(id, pd, .check=TRUE){
 }
 
 
-#' @describeIn nodes Get the firstborn child of `id`.
+#' @describeIn family-nodes Get the firstborn child of `id`.
 pd_get_firstborn <-
 function(id, pd, .check=TRUE){
     if (.check){

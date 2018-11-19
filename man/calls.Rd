@@ -16,6 +16,15 @@ pd_get_call_symbol_id(id, pd, .check = TRUE)
 
 pd_get_call_arg_ids(id, pd, .check = TRUE)
 }
+\arguments{
+\item{id}{id of the expression of interest}
+
+\item{pd}{The \code{\link{parse-data}} information}
+
+\item{calls}{an optional list of calls to restrict consideration to.}
+
+\item{.check}{Perform checks for input validation?}
+}
 \value{
 a logical of the same length as \code{id}
 

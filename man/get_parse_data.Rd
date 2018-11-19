@@ -61,6 +61,6 @@ get_parse_data or converted through as_parse_data.
 \section{Methods (by class)}{
 \itemize{
 \item \code{function}: Get parse information from a function.
-The function must have a \code{\link[=base:srcref]{base:srcref()}}.
+The function must have a \link[=srcref]{base::srcref}.
 }}
 

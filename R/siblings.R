@@ -33,7 +33,7 @@
 #'
 NULL
 
-#' @describeIn nodes Identify siblings of `id`.
+#' @describeIn family-nodes Identify siblings of `id`.
 pd_get_sibling_ids <- function(id, pd, .check=TRUE){
     if (.check){
         pd <- ._check_parse_data(pd)
@@ -45,7 +45,7 @@ pd_get_sibling_ids <- function(id, pd, .check=TRUE){
 siblings <- internal(pd_get_sibling_ids)
 
 
-#' @describeIn nodes Get the next younger sibling.
+#' @describeIn family-nodes Get the next younger sibling.
 pd_get_next_sibling_id <-
 function(id, pd, .check=TRUE){
     if (.check){
@@ -74,7 +74,7 @@ if(FALSE){#@testing
 }
 
 
-#' @describeIn nodes Get the next older sibling.
+#' @describeIn family-nodes Get the next older sibling.
 pd_get_prev_sibling_id <- function(id, pd, .check=TRUE){
     if (.check){
         pd <- ._check_parse_data(pd)
