@@ -1,8 +1,8 @@
-#! This file was automatically produced by the documentation package.
+#! This file was automatically produced by the testextra package.
 #! Changes will be overwritten.
 
 context('tests extracted from file `root.R`')
-#line 70 "/rdtf/parsetools/R/root.R"
+#line 69 "R/root.R"
 test_that('is_root', {#@testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     expect_true (pd_is_root(23, pd))
@@ -58,7 +58,7 @@ test_that('is_root', {#@testing
     ", keep.source=TRUE))
     expect_false(pd_is_root(pd[1,'id'], pd))
 })
-#line 150 "/rdtf/parsetools/R/root.R"
+#line 149 "R/root.R"
 test_that('roots', {#@testing
     pd <- get_parse_data(parse(text={"a <- 1
         {# section 1
@@ -100,7 +100,7 @@ test_that('roots', {#@testing
     id <- pd_all_root_ids(pd)
     expect_equal(id, c(43, 61, 74))
 })
-#line 208 "/rdtf/parsetools/R/root.R"
+#line 207 "R/root.R"
 test_that('all_root_nodes', {#!@testing
     pd <- get_parse_data(parse(text={"a <- 1
         {# section 1
@@ -118,7 +118,7 @@ test_that('all_root_nodes', {#!@testing
     expect_equal(all_root_nodes(pd, FALSE)$id   , c(7, 19, 31, 47, 63))
     expect_equal(all_root_nodes(pd, FALSE)$line1, c(1,  3,  5,  7,  9))
 })
-#line 246 "/rdtf/parsetools/R/root.R"
+#line 245 "R/root.R"
 test_that('ascend_to_root', {#@testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     expect_equal(ascend_to_root(id=23, pd), 23)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/pd_comments.R
 \name{pd_get_relative_comment_associated_ids}
 \alias{pd_get_relative_comment_associated_ids}
-\title{Associate relative ducumentation comments}
+\title{Associate relative documentation comments}
 \usage{
 pd_get_relative_comment_associated_ids(id, pd, .check = TRUE)
 }

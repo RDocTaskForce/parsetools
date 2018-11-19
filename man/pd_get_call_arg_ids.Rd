@@ -14,12 +14,8 @@ pd_get_call_arg_ids(id, pd, .check = TRUE)
 \item{.check}{Perform checks for input validation?}
 }
 \value{
-a named list where each element is the id for the 'expr' element of the argument.
+a named list where each element is the id for the \code{expr} element of the argument.
 }
 \description{
 Retrieves the ids of the arguments of a call as an integer vector.
-}
-\note{
-Are there cases other than alist that could result in a two
-id argument?
 }

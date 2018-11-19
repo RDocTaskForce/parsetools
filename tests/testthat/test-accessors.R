@@ -1,8 +1,8 @@
-#! This file was automatically produced by the documentation package.
+#! This file was automatically produced by the testextra package.
 #! Changes will be overwritten.
 
 context('tests extracted from file `accessors.R`')
-#line 41 "/rdtf/parsetools/R/accessors.R"
+#line 41 "R/accessors.R"
 test_that('token', {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
@@ -12,7 +12,7 @@ test_that('token', {#!@testing
     expect_equal(token(), pd$token)
     expect_equal(token(c(45,3, 58), pd), c("SYMBOL_FUNCTION_CALL", "SYMBOL", "expr"))
 })
-#line 56 "/rdtf/parsetools/R/accessors.R"
+#line 56 "R/accessors.R"
 test_that('text', {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
@@ -23,7 +23,7 @@ test_that('text', {#!@testing
     expect_equal(text(), pd$text)
     expect_equal(text(c(45,3, 58), pd), c("plot", "x", ""))
 })
-#line 72 "/rdtf/parsetools/R/accessors.R"
+#line 72 "R/accessors.R"
 test_that('nodes', {#!@testing
     pd <- get_parse_data(parse(text={"
         x <- rnorm(10, 0, 1)
@@ -34,7 +34,7 @@ test_that('nodes', {#!@testing
     expect_equal(nodes(pd$id), pd)
     expect_equal(nodes(c(45,3, 58), pd), pd[c('45', '3', '58'), ])
 })
-#line 132 "/rdtf/parsetools/R/accessors.R"
+#line 132 "R/accessors.R"
 test_that('is_first_on_line', {#@testing
 pd <- get_parse_data(parse(text="'
 
@@ -53,7 +53,7 @@ y+
 
 
 })
-#line 157 "/rdtf/parsetools/R/accessors.R"
+#line 157 "R/accessors.R"
 test_that('is_last_on_line', {#@testing
 pd <- get_parse_data(parse(text="'
 
@@ -63,7 +63,7 @@ expect_false(is_last_on_line(1, pd))
 expect_true(is_last_on_line(4, pd))
 expect_false(is_last_on_line(6, pd))
 })
-#line 172 "/rdtf/parsetools/R/accessors.R"
+#line 172 "R/accessors.R"
 test_that('spans_multiple_lines', {#@testing
 pd <- get_parse_data(parse(text="'
 
@@ -72,7 +72,7 @@ expect_true(spans_multiple_lines(1, pd))
 expect_false(spans_multiple_lines(4, pd))
 expect_true(spans_multiple_lines(pd_all_root_ids(pd), pd))
 })
-#line 186 "/rdtf/parsetools/R/accessors.R"
+#line 186 "R/accessors.R"
 test_that('terminal_ids_on_line', {#@testing
 pd <- get_parse_data(parse(text="      {
          {1 + 3}
@@ -90,7 +90,7 @@ expect_equal(text(terminal_ids_on_line(1, pd)), "'\n\n'")
 expect_equal(terminal_ids_on_line(2, pd), 1)
 expect_equal(terminal_ids_on_line(4, pd), integer(0))
 })
-#line 215 "/rdtf/parsetools/R/accessors.R"
+#line 215 "R/accessors.R"
 test_that('ids_ending_on_line', {#@testing
 pd <- get_parse_data(parse(text={"((1+
 2)+
@@ -103,7 +103,7 @@ expect_identical(ids_ending_on_line(1), 1:5)
 expect_identical(ids_ending_on_line(4), c(26L, 23L, 24L))
 
 })
-#line 239 "/rdtf/parsetools/R/accessors.R"
+#line 239 "R/accessors.R"
 test_that('prev_terminal', {#@testing
 pd <- get_parse_data(parse(text="   rnorm( 10,  0,   3)", keep.source=TRUE))
     id <- 4
@@ -113,7 +113,7 @@ pd <- get_parse_data(parse(text="   rnorm( 10,  0,   3)", keep.source=TRUE))
                 , c(NA, NA, NA, 1, rep(2, 2), 4, 6, 6, 9, 11, 11, 14)
                 )
 })
-#line 261 "/rdtf/parsetools/R/accessors.R"
+#line 261 "R/accessors.R"
 test_that('expr_text', {#@testing
     pd <- get_parse_data(parse(text="
         signature(x='hello', y='world')

@@ -2,7 +2,7 @@
 #! Changes will be overwritten.
 
 context('tests extracted from file `family.R`')
-#line 60 "/rdtf/parsetools/R/family.R"
+#line 62 "R/family.R"
 test_that('pd_get_family', {#@testing
     pd <- get_parse_data(parse(text={"a <- 1
         {# section 1
@@ -57,7 +57,7 @@ test_that('pd_get_family', {#@testing
 
 
 })
-#line 149 "/rdtf/parsetools/R/family.R"
+#line 151 "R/family.R"
 test_that('next_sibling', {#@testing
     pd <- get_parse_data(parse(text='a+b', keep.source = TRUE))
     id <- parent(.find_text('a'))
@@ -72,7 +72,7 @@ test_that('next_sibling', {#@testing
     expect_error(pd_get_next_sibling_id(1e9L, pd))
     expect_error(pd_get_next_sibling_id(id, id))
 })
-#line 181 "/rdtf/parsetools/R/family.R"
+#line 179 "R/family.R"
 test_that('prev_sibling', {#@testing
     pd <- get_parse_data(parse(text='a+b', keep.source = TRUE))
     id <- parent(.find_text('b'))
@@ -86,10 +86,10 @@ test_that('prev_sibling', {#@testing
     expect_error(pd_get_prev_sibling_id(1e9L, pd))
     expect_error(pd_get_prev_sibling_id(id, id))
 })
-#line 227 "/rdtf/parsetools/R/family.R"
+#line 221 "R/family.R"
 test_that('firstborn', {#@testing
     pd <- get_parse_data(parse(text='a+b', keep.source = TRUE))
-    fb <- pd_get_firstborn_id(roots(pd), pd)
+    fb <- pd_get_firstborn(roots(pd), pd)
     expect_identical(token(fb), "'+'")
     expect_true(pd_is_firstborn(fb, pd))
     expect_true(pd_is_firstborn(roots(pd), pd))

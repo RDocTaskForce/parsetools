@@ -14,7 +14,7 @@ pd_get_family(id, pd, include.self = TRUE, ngenerations = Inf, ...,
 
 \item{include.self}{Should the root node (\code{id}) be included?}
 
-\item{ngenerations}{Number of levels to descend.}
+\item{ngenerations}{Number of generations to go forwards or backwards.}
 
 \item{...}{currently ignored.}
 

@@ -2,7 +2,7 @@
 #! Changes will be overwritten.
 
 context('tests extracted from file `iff_blocks.R`')
-#line 74 "R/iff_blocks.R"
+#line 86 "R/iff_blocks.R"
 test_that('is_iff', {#!@testing
     pd <- get_parse_data(parse(text={"
         if(FALSE){# an if(FALSE) block
@@ -24,7 +24,7 @@ test_that('is_iff', {#!@testing
     expect_equal(pd_is_iff(roots(pd), pd), c(TRUE, TRUE, FALSE, TRUE))
     expect_equal(   is_iff(pd=pd), c(TRUE, TRUE, FALSE, TRUE))
 })
-#line 127 "R/iff_blocks.R"
+#line 138 "R/iff_blocks.R"
 test_that('is_iff_block', {#!@testing
     pd <- get_parse_data(parse(text={"
         if(FALSE){# an if(FALSE) block
@@ -46,7 +46,7 @@ test_that('is_iff_block', {#!@testing
     expect_equal(pd_is_iff_block(roots(pd), pd, FALSE), c(TRUE, FALSE, FALSE, FALSE))
     expect_equal(   is_iff_block(pd=pd), c(TRUE, TRUE, FALSE, FALSE))
 })
-#line 169 "R/iff_blocks.R"
+#line 180 "R/iff_blocks.R"
 test_that('all_iff_block_ids', {#!@testing
     pd <- get_parse_data(parse(text={"
         if(FALSE){# an if(FALSE) block
@@ -75,7 +75,7 @@ test_that('all_iff_block_ids', {#!@testing
     iff.ids <- all_iff_block_ids(pd, root.only=FALSE, ignore.groups = FALSE)
     expect_equal(length(iff.ids), 4)
 })
-#line 237 "R/iff_blocks.R"
+#line 235 "R/iff_blocks.R"
 test_that('pd_is_tagged_iff_block', {#!@testing
     pd  <- get_parse_data(parse(text={"
         if(FALSE){#!@tag
@@ -122,7 +122,7 @@ test_that('pd_is_tagged_iff_block', {#!@testing
     pd <- get_parse_data(parse(text='if(F){#@tag\nF\n}', keep.source=TRUE))
     expect_true(pd_is_tagged_iff_block(roots(pd), pd, tag))
 })
-#line 303 "R/iff_blocks.R"
+#line 302 "R/iff_blocks.R"
 test_that('all_tagged_iff_block_ids', {#!@testing
     pd  <- get_parse_data(parse(text={"
         if(FALSE){#!@tag
@@ -155,7 +155,7 @@ test_that('all_tagged_iff_block_ids', {#!@testing
     tagged.iff.ids <- all_tagged_iff_block_ids(pd, tag)
     expect_identical(tagged.iff.ids, integer(0))
 })
-#line 482 "R/iff_blocks.R"
+#line 481 "R/iff_blocks.R"
 test_that('iff_associated_name', {#!@testing
     pd <- get_parse_data(parse(text={'
     if(F){#!@testing

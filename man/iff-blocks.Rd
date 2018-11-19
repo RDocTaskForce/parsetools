@@ -50,7 +50,7 @@ that can be extracted into documentation or other files.
 \item \code{pd_is_iff}: This function tests if an expression id is the root of an
 \code{if(FALSE)} statement, differs from \code{pd_is_iff_block}
 in that it will return TRUE even if the conditional statement
-is not a formal bracketted block \code{{...}}.
+is not a formal bracketed block \code{{...}}.
 
 \item \code{pd_is_iff_block}: Tests if an expression id is the root of an
 \code{if(FALSE)} block statement, differs from \code{pd_is_iff}
@@ -69,7 +69,7 @@ return FALSE because the expression is not a 'block' statement.
 \item \code{pd_is_tagged_iff_block}: Test if a block if both an IFF block statement and is tagged.
 To tag an IFF block the first pared element must be a comment that contains
 an '@' tag to denote a special block. The comment on the same line as the
-opening brace or on any subsequent line but cannot be preceeded by any other
+opening brace or on any subsequent line but cannot be preceded by any other
 statement.
 }}
 

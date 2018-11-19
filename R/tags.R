@@ -73,7 +73,7 @@ function( id, pd, tag, ...){
     #' @description
     #'
     #' Check if a node of \code{parse-data} identified by \code{id}
-    #' is both a comment and contains a documentation tag itentifed by
+    #' is both a comment and contains a documentation tag identified by
     #' the `@` symbol.
     tag.rx <- make_tag_regex(tag, ...)
     pd_is_comment(id, pd) & grepl(tag.rx, text(id, pd), perl=TRUE, ignore.case=TRUE)

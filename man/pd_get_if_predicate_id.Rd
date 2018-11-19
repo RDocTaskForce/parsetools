@@ -14,6 +14,6 @@ pd_get_if_predicate_id(id, pd, .check = TRUE)
 \item{.check}{Perform checks for input validation?}
 }
 \description{
-Returns the id of the predicate of the if statemment,
+Returns the id of the predicate of the if statement,
 i.e. the conditional statement.
 }

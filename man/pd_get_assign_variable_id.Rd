@@ -14,7 +14,7 @@ pd_get_assign_variable_id(id, pd, .check = TRUE)
 \item{.check}{Perform checks for input validation?}
 }
 \value{
-an id integer, typically pointing to an 'expr' node in pd.
+an id integer, typically pointing to an \code{expr} node in pd.
 }
 \description{
 Gets the id for the variable portion of an assignment expression.

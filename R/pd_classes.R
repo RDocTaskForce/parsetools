@@ -19,7 +19,7 @@
 #'
 #' @description
 #' These function manage adding class defining functions and
-#' testing if an id is associated with a class definintion or
+#' testing if an id is associated with a class definition or
 #' if is contained in the class definition.
 #'
 #' @details
@@ -78,7 +78,7 @@
 #' pd_class_definitions$which(id, pd, check=TRUE)
 #' }}
 #'     Return the name of the class, if any,
-#'     which \code{id} corressponds to.
+#'     which \code{id} corresponds to.
 #' }
 #' \subsection{\code{pd_class_definitions$in_which}}{
 #' \subsection{Usage}{\preformatted{

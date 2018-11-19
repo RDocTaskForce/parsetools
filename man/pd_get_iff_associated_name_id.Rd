@@ -2,7 +2,7 @@
 % Please edit documentation in R/iff_blocks.R
 \name{pd_get_iff_associated_name_id}
 \alias{pd_get_iff_associated_name_id}
-\title{Find the name that should be assocciated with an \code{if(FALSE)} block.}
+\title{Find the name that should be associated with an \code{if(FALSE)} block.}
 \usage{
 pd_get_iff_associated_name_id(id, pd, .check = TRUE)
 }
@@ -14,13 +14,13 @@ pd_get_iff_associated_name_id(id, pd, .check = TRUE)
 \item{.check}{Perform checks for input validation?}
 }
 \description{
-Find the name that should be assocciated with an \code{if(FALSE)} block.
+Find the name that should be associated with an \code{if(FALSE)} block.
 }
 \details{
 \code{\link[=iff-blocks]{if(FALSE)}} blocks can be placed
 sequentially and \code{pd_get_iff_associated_name_id} will
 navigate back until it finds a non-IFF block to use for the name.
-This way users can place mutliple tests and examples after a
+This way users can place multiple tests and examples after a
 declaration.
 
 If the previous expression is an assignment, the assignee variable of

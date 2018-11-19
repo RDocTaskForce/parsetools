@@ -249,7 +249,7 @@ pd <- get_parse_data(parse(text="   rnorm( 10,  0,   3)", keep.source=TRUE))
 #@internal
 expr_text <- function(id, pd=get('pd', parent.frame())){
 #' @describeIn internal
-#' If id represents a expr token reitterate on the firstborn.
+#' If id represents an `expr` token reiterate on the firstborn.
 #' Throws an error if anything but an expression or text if found.
     if (length(id)>1L) return(sapply(id, expr_text, pd=pd))
     while (token(id) == 'expr' && n_children(id) == 1L)

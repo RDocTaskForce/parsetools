@@ -64,7 +64,7 @@ function( id, pd
     #'   This function tests if an expression id is the root of an
     #'   \code{if(FALSE)} statement, differs from `pd_is_iff_block`
     #'   in that it will return TRUE even if the conditional statement
-    #'   is not a formal bracketted block `{...}`.
+    #'   is not a formal bracketed block `{...}`.
     if (.check){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id)
@@ -215,7 +215,7 @@ function( id, pd, tag
     #' @describeIn iff-blocks Test if a block if both an IFF block statement and is tagged.
     #'             To tag an IFF block the first pared element must be a comment that contains
     #'             an '@' tag to denote a special block. The comment on the same line as the
-    #'             opening brace or on any subsequent line but cannot be preceeded by any other
+    #'             opening brace or on any subsequent line but cannot be preceded by any other
     #'             statement.
     if (.check){
         pd <- ._check_parse_data(pd)
@@ -334,7 +334,7 @@ if(FALSE){#!@testing
 
 pd_get_iff_associated_name_id <-
 function(id, pd, .check=TRUE){
-    #' @title Find the name that should be assocciated with an \code{if(FALSE)} block.
+    #' @title Find the name that should be associated with an \code{if(FALSE)} block.
     #' @inheritParams pd_is_iff_block
     #'
     #' @description
@@ -364,7 +364,7 @@ function(id, pd, .check=TRUE){
         #' \code{\link[=iff-blocks]{if(FALSE)}} blocks can be placed
         #' sequentially and \code{pd_get_iff_associated_name_id} will
         #' navigate back until it finds a non-IFF block to use for the name.
-        #' This way users can place mutliple tests and examples after a
+        #' This way users can place multiple tests and examples after a
         #' declaration.
         #'
         if (is.na(prev.id)) return(NULL)

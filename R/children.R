@@ -25,28 +25,58 @@
 
 #' @include internal.R
 
-#' @title Get all nodes that are children of `id`.
+#' @name nodes
+#' @title Family-wise Node Identification and Navigation.
+#'
+#' @description
+#' Parse data is organized into a hierachry of nodes. These functions provide
+#' simple ways to identify the nodes of interest, often from a specified node
+#' of interest.
+#'
+#' @details
+#' The language parsetools uses is that of family.
+#' Similar to a family each node could have: a \dfn{parent}, the node that contains the
+#' node in question; \dfn{children}, the nodes contained by the given node;
+#' \dfn{ancestors}, the collection of nodes that contain the given node, it's parent,
+#' it's parent's parent, and so on; and \dfn{descendents}, the collection of nodes that are
+#' contained by the given node or contained by those nodes, and so on.
+#' Terminology is analogous, a \dfn{generation} is all the the nodes at the same depth in
+#' the heirachry. A node may have \dfn{siblings}, the set of nodes with the same parent.
+#' If a node does not have a parent it is called a \dfn{root} node.
+#'
+#' Similarly, age is also used as an analogy for ease of navigation.  Generally, nodes
+#' are numbered by the order that they are encountered, when parsing the source.
+#' Therefore the node with the smallest `id` among a set of siblings is referred to the
+#' \dfn{firstborn}.  This is give the special designation as it is the most often of children
+#' used, as it likely determines the type of call or expression that is represented by the node.
+#' The firstborn has no 'older' siblings, the 'next' sibling would be the next oldest, i.e. the
+#' node among siblings with the smallest id, but is not smaller that the reference node id.
+#'
+#' In all cases when describing function the `id`, is assumed to be in the context of the
+#' parse data object `pd` and for convencience refers to the node associated with said `id`.
+#'
+#' @param pd              The \code{\link{parse-data}} information
+#' @param id              id of the expression of interest
+#' @param ngenerations    Number of generations to go forwards or backwards.
+#' @param include.self    Should the root node (\code{id}) be included?
+#' @param aggregate       Should aggregate(TRUE) or only the
+#'                        the final (FALSE) generation be returned?
+#' @param .check          Perform checks for input validation?
+#' @param ...             arguments passed on.
+NULL
+
+#' @describeIn nodes Get all nodes that are children of `id`.
+#'   Get all ids in `pd` that are children of \code{id}.
+#'   i.e. lower in the hierarchy or with id as a parent.
+#'   If \code{ngenerations} is greater than 1 and \code{aggregate}
+#'   is \code{TRUE}, all descendents are aggregated and returned.
 pd_get_children_ids <-
 function( id, pd
         , ngenerations    = 1
         , include.self    = FALSE
-        , all.generations = TRUE
+        , aggregate = TRUE
         , .check=TRUE
         ) {
-    #' @param pd              The \code{\link{parse-data}} information
-    #' @param id              id of the expression of interest
-    #' @param ngenerations    Number of levels to descend.
-    #' @param include.self    Should the root node (\code{id}) be included?
-    #' @param all.generations Should all generations(TRUE) or only the
-    #'                        the final (FALSE) generation be returned?
-    #' @param .check          Perform checks for input validation?
-    #' @param ...             arguments passed on.
-    #'
-    #' @description
-    #'   Get all ids in `pd` that are children of \code{id}.
-    #'   i.e. lower in the heirarchy or with id as a parent.
-    #'   If \code{ngenerations} is greater than 1 and \code{all.generations}
-    #'   is \code{TRUE}, all descendents are aggregated and returned.
     if (.check){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
@@ -58,7 +88,7 @@ function( id, pd
         old.ids <- ids
         new.ids <- pd[pd$parent %in% parents, 'id']
         parents <-
-        ids <- unique(c(if(all.generations)ids , new.ids))
+        ids <- unique(c(if(aggregate)ids , new.ids))
         if (identical(ids, old.ids)) break
     }
     ids
@@ -78,28 +108,28 @@ if(FALSE){#! @test
                 )
 
     expect_equal( pd_get_children_ids( id, pd, 2, include.self=FALSE
-                                  , all.generations = FALSE
+                                  , aggregate = FALSE
                                   )
                 , c(1,4,11,18)
-                , info='ngenerations=2, include.self=FALSE, all.generations=FALSE'
+                , info='ngenerations=2, include.self=FALSE, aggregate=FALSE'
                 )
 
     expect_equal( pd_get_children_ids( id, pd
                                   , ngenerations=2
                                   , include.self=FALSE
-                                  , all.generations = TRUE
+                                  , aggregate = TRUE
                                   )
                 , c(c(3,2,5,6,9,10,12,13,16,17,19,20), c(1,4,11,18))
-                , info='ngenerations=2, include.self=FALSE, all.generations=TRUE'
+                , info='ngenerations=2, include.self=FALSE, aggregate=TRUE'
                 )
 
     expect_equal( pd_get_children_ids( id, pd
                                   , ngenerations=2
                                   , include.self=TRUE
-                                  , all.generations = TRUE
+                                  , aggregate = TRUE
                                   )
                 , c(23, c(3,2,5,6,9,10,12,13,16,17,19,20), c(1,4,11,18))
-                , info='ngenerations=2, include.self=TRUE, all.generations=TRUE'
+                , info='ngenerations=2, include.self=TRUE, aggregate=TRUE'
                 )
 
     expect_error( pd_get_children_ids(.Machine$integer.max, pd)
@@ -144,7 +174,7 @@ if(FALSE){#!@test
                     , pd
                     , info='defaults')
 
-    expect_identical( get_children_pd(id=23, pd=pd, ngenerations=2, include.self=FALSE, all.generations=FALSE)
+    expect_identical( get_children_pd(id=23, pd=pd, ngenerations=2, include.self=FALSE, aggregate=FALSE)
                     , pd[pd$parent != 23 & pd$parent != 0, ]
                     , info='defaults')
 

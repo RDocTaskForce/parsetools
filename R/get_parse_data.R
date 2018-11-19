@@ -167,7 +167,7 @@ function( pd       #< parse data
         ) UseMethod('pd_identify', object)
 
 #' @export
-#' @describeIn pd_identify Default method identifies by [srcref](=base:srcref).
+#' @describeIn pd_identify Default method identifies by [base:srcref()].
 pd_identify.default <-
 function( pd, object) pd_identify(pd=pd, utils::getSrcref(object))
 
@@ -177,7 +177,7 @@ pd_identify.NULL <-
 function( pd, object) stop("Invalid object.")
 
 #' @export
-#' @describeIn pd_identify Identify by explicit srcref.
+#' @describeIn pd_identify Identify by explicit `srcref`.
 pd_identify.srcref <-
 function( pd, object){
     stopifnot( inherits(object, 'srcref')
@@ -266,7 +266,7 @@ if(FALSE){#@testing
 get_parse_data.function <-
 function(x, ...){
     #' @describeIn get_parse_data Get parse information from a function.
-    #'                            The function must have a srcref.
+    #'                            The function must have a [base:srcref()].
     stopifnot(is.function(x))
     if (methods::isGeneric(fdef=x)) {
         default <- attr(x, 'default')
@@ -351,7 +351,7 @@ get_parse_data.default <-
 function( x, ...){
     #! the default get_parse_data method
     #!
-    #! This extracts the srcref and uses that to obtain the parse data.
+    #! This extracts the [base:srcref()] and uses that to obtain the parse data.
     #! Currently I have only found srcrefs as attributes of functions.
     srcref <- utils::getSrcref(x)
     if (!is.null(srcref) && inherits(srcref, 'srcref')) {

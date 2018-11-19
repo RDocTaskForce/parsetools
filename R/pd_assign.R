@@ -97,7 +97,7 @@ function( id, pd, .check=TRUE){
           , RIGHT_ASSIGN = max(child.ids)
           , min(setdiff(child.ids, assign.pd$id))
           )
-    #' @return an id integer, typically pointing to an 'expr' node in pd.
+    #' @return an id integer, typically pointing to an `expr` node in pd.
 }
 assign_variable <- internal(pd_get_assign_variable_id, all_assignment_ids(pd))
 if(F){#!@testthat

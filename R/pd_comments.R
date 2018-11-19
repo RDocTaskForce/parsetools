@@ -1,6 +1,6 @@
 
 
-#' Associate relative ducumentation comments
+#' Associate relative documentation comments
 #'
 #' Relative comment created with \code{\#\<} comment tags document something
 #' designated by the location of the comment.

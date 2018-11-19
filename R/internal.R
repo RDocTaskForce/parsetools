@@ -1,4 +1,4 @@
-#' make a function opperate internal to parsetools
+#' Make a function operate internal to parsetools
 #'
 #' @param fun The function to make internal
 #'

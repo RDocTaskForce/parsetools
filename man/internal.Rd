@@ -20,7 +20,7 @@
 \alias{ids_ending_on_line}
 \alias{prev_terminal}
 \alias{expr_text}
-\title{make a function opperate internal to parsetools}
+\title{Make a function operate internal to parsetools}
 \usage{
 internal(fun, id = pd$id)
 
@@ -112,7 +112,7 @@ here for reference.
 
 \item \code{prev_terminal}: Get the id for the terminal expression that is immediately prior to the one given.
 
-\item \code{expr_text}: If id represents a expr token reitterate on the firstborn.
+\item \code{expr_text}: If id represents an \code{expr} token reiterate on the firstborn.
 Throws an error if anything but an expression or text if found.
 }}
 

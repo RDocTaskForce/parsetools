@@ -46,7 +46,7 @@ function(id, pd, .check=TRUE){
     #' @title Get if predicate id
     #' @inheritParams pd_is_if
     #' @description
-    #'   Returns the id of the predicate of the if statemment,
+    #'   Returns the id of the predicate of the if statement,
     #'   i.e. the conditional statement.
     if (.check) {
         pd <- ._check_parse_data(pd)
@@ -61,7 +61,7 @@ if_predicate <- internal(pd_get_if_predicate_id, all_if_ids(pd))
 
 pd_get_if_branch_id <-
 function(id, pd, .check=TRUE){
-    #' @title Get branch of if statment.
+    #' @title Get branch of if statement.
     #' @inheritParams pd_is_if
     #' @description
     #'   Returns the id of the body of the branch executed if the predicate

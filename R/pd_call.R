@@ -159,8 +159,8 @@ function( id, pd, .check=TRUE){
     val <- sapply( args, function(arg){
                       if (length(arg) == 1) return(arg)
                       if (length(arg) == 2) {
-                          #' @note Are there cases other than alist that could result in a two
-                          #' id argument?
+                          #! @note Are there cases other than [base::alist()] that could result in a two
+                          #! id argument?
                           stopifnot( text(call_symbol(id)) == 'alist')
                           return(NA_integer_)
                       }
@@ -176,7 +176,7 @@ function( id, pd, .check=TRUE){
                       stop()
                   })
     return(val)
-    #' @return a named list where each element is the id for the 'expr' element of the argument.
+    #' @return a named list where each element is the id for the `expr` element of the argument.
 }
 call_args <- internal(pd_get_call_arg_ids, roots(pd))
 if(FALSE){#! @testing

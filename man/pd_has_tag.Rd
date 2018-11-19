@@ -17,6 +17,6 @@ pd_has_tag(id, pd, tag, ...)
 }
 \description{
 Check if a node of \code{parse-data} identified by \code{id}
-is both a comment and contains a documentation tag itentifed by
+is both a comment and contains a documentation tag identified by
 the \code{@} symbol.
 }

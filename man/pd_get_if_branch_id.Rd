@@ -2,7 +2,7 @@
 % Please edit documentation in R/pd_if.R
 \name{pd_get_if_branch_id}
 \alias{pd_get_if_branch_id}
-\title{Get branch of if statment.}
+\title{Get branch of if statement.}
 \usage{
 pd_get_if_branch_id(id, pd, .check = TRUE)
 }

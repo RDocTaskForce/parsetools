@@ -1,29 +1,31 @@
-{#######################################################################
-# family.R
-# This file is part of the R package `parsetools`.
-#
-# Author: Andrew Redd
-# Copyright: 2017 University of Utah
-#
-# LICENSE
-# ========
-# The R package `parsetools` is free software:
-# you can redistribute it and/or modify it under the terms of the
-# GNU General Public License as published by the Free Software
-# Foundation, either version 3 of the License, or (at your option)
-# any later version.
-#
-# This software is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program. If not, see http://www.gnu.org/licenses/.
-#
-}#######################################################################
+# family.R ############################################################
+#                                                                     #
+# This file is part of the R package `parsetools`.                    #
+#                                                                     #
+# Author: Andrew Redd                                                 #
+# Copyright: 2017 The R Consortium                                    #
+#                                                                     #
+# LICENSE                                                             #
+# ========                                                            #
+# The R package `parsetools` is free software:                        #
+# you can redistribute it and/or modify it under the terms of the     #
+# GNU General Public License as published by the Free Software        #
+# Foundation, either version 3 of the License, or (at your option)    #
+# any later version.                                                  #
+#                                                                     #
+# This software is distributed in the hope that it will be useful,    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of      #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the        #
+# GNU General Public License for more details.                        #
+#                                                                     #
+# You should have received a copy of the GNU General Public License   #
+# along with this program. If not, see http://www.gnu.org/licenses/.  #
+#_____________________________________________________________________#
 
 #' @include internal.R
+
+
+
 
 pd_get_family <-
 function( id, pd
@@ -112,14 +114,17 @@ if(FALSE){#@testing
 
 }
 
+## Siblings ####
+#' @title Navigate siblings
+#' @description
+#' These functions help to navigate siblings, nodes with the same parent.
+#'
+#' @inheritParams pd_get_children_ids
+#'
+NULL
 
+#' @describeIn nodes Identify siblings of `id`.
 pd_get_sibling_ids <- function(id, pd, .check=TRUE){
-    #' @title Identify siblings.
-    #' @inheritParams pd_get_children_ids
-    #' @description \subsection{pd_get_sibling_ids}{
-    #'   A convenience function for identifying siblings of the given id.
-    #'   Siblings are nodes with the same parent.
-    #' }
     if (.check){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
@@ -130,12 +135,9 @@ pd_get_sibling_ids <- function(id, pd, .check=TRUE){
 siblings <- internal(pd_get_sibling_ids)
 
 
+#' @describeIn nodes Get the next younger sibling.
 pd_get_next_sibling_id <-
 function(id, pd, .check=TRUE){
-    #' @rdname pd_get_sibling_ids
-    #' @description \subsection{pd_get_next_sibling_id}{
-    #'   gives the id of the next youngest sibling of the current id.
-    #' }
     if (.check){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
@@ -162,12 +164,8 @@ if(FALSE){#@testing
 }
 
 
-
+#' @describeIn nodes Get the next older sibling.
 pd_get_prev_sibling_id <- function(id, pd, .check=TRUE){
-    #' @rdname pd_get_sibling_ids
-    #' @description \subsection{pd_get_prev_sibling_id}{
-    #'   gives the id of the next older sibling of the current id.
-    #' }
     if (.check){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
@@ -193,11 +191,11 @@ if(FALSE){#@testing
 }
 
 
-#' @title Test if id is the firstborn.
+#' @describeIn nodes Test if `id` is firstborn.
 pd_is_firstborn <- function(id, pd, .check=TRUE){
     #' @inheritParams pd_get_children_ids
     #' @description
-    #'   Test if an expression is the firstborn, ie. oldest or lowest id.
+    #'   Test if an expression is the firstborn, i.e. oldest or lowest id.
     if (.check){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
@@ -206,27 +204,23 @@ pd_is_firstborn <- function(id, pd, .check=TRUE){
 }
 
 
-#' @title get the firstborn child.
-pd_get_firstborn_id <-
+#' @describein nodes Get the firstborn child of `id`.
+pd_get_firstborn <-
 function(id, pd, .check=TRUE){
-    #' @inheritParams pd_get_children_ids
-    #' @description
-    #'   Get the id of the firstborn child of id.
-    #'   Without the "_id" is a wrapper for giving the nodes.
     if (.check){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
     }
-    if (length(id) > 1L) return(sapply(id, pd_get_firstborn_id, pd=pd))
+    if (length(id) > 1L) return(sapply(id, pd_get_firstborn, pd=pd))
     kids <- children(id=id, pd=pd)
     if (length(kids)==0 ) return(NA_integer_)
     else min(kids)
 }
 #@internal
-firstborn <- internal(pd_get_firstborn_id)
+firstborn <- internal(pd_get_firstborn)
 if(FALSE){#@testing
     pd <- get_parse_data(parse(text='a+b', keep.source = TRUE))
-    fb <- pd_get_firstborn_id(roots(pd), pd)
+    fb <- pd_get_firstborn(roots(pd), pd)
     expect_identical(token(fb), "'+'")
     expect_true(pd_is_firstborn(fb, pd))
     expect_true(pd_is_firstborn(roots(pd), pd))

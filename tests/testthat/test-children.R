@@ -1,8 +1,8 @@
-#! This file was automatically produced by the documentation package.
+#! This file was automatically produced by the testextra package.
 #! Changes will be overwritten.
 
 context('tests extracted from file `children.R`')
-#line 67 "/rdtf/parsetools/R/children.R"
+#line 97 "R/children.R"
 test_that('children', {#! @test
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     id <- pd[pd$parent==0, 'id']
@@ -17,28 +17,28 @@ test_that('children', {#! @test
                 )
 
     expect_equal( pd_get_children_ids( id, pd, 2, include.self=FALSE
-                                  , all.generations = FALSE
+                                  , aggregate = FALSE
                                   )
                 , c(1,4,11,18)
-                , info='ngenerations=2, include.self=FALSE, all.generations=FALSE'
+                , info='ngenerations=2, include.self=FALSE, aggregate=FALSE'
                 )
 
     expect_equal( pd_get_children_ids( id, pd
                                   , ngenerations=2
                                   , include.self=FALSE
-                                  , all.generations = TRUE
+                                  , aggregate = TRUE
                                   )
                 , c(c(3,2,5,6,9,10,12,13,16,17,19,20), c(1,4,11,18))
-                , info='ngenerations=2, include.self=FALSE, all.generations=TRUE'
+                , info='ngenerations=2, include.self=FALSE, aggregate=TRUE'
                 )
 
     expect_equal( pd_get_children_ids( id, pd
                                   , ngenerations=2
                                   , include.self=TRUE
-                                  , all.generations = TRUE
+                                  , aggregate = TRUE
                                   )
                 , c(23, c(3,2,5,6,9,10,12,13,16,17,19,20), c(1,4,11,18))
-                , info='ngenerations=2, include.self=TRUE, all.generations=TRUE'
+                , info='ngenerations=2, include.self=TRUE, aggregate=TRUE'
                 )
 
     expect_error( pd_get_children_ids(.Machine$integer.max, pd)
@@ -46,7 +46,7 @@ test_that('children', {#! @test
                 )
     expect_true( all(pd$id %in% pd_get_children_ids(0, pd, Inf)))
 })
-#line 127 "/rdtf/parsetools/R/children.R"
+#line 157 "R/children.R"
 test_that('get_children_pd', {#!@test
     'rnorm(10, mean=0, sd=1)' -> text
     pd       <- get_parse_data(parse(text=text, keep.source=TRUE))
@@ -67,7 +67,7 @@ test_that('get_children_pd', {#!@test
                     , pd
                     , info='defaults')
 
-    expect_identical( get_children_pd(id=23, pd=pd, ngenerations=2, include.self=FALSE, all.generations=FALSE)
+    expect_identical( get_children_pd(id=23, pd=pd, ngenerations=2, include.self=FALSE, aggregate=FALSE)
                     , pd[pd$parent != 23 & pd$parent != 0, ]
                     , info='defaults')
 
