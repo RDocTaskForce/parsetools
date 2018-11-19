@@ -23,18 +23,31 @@
 #
 }#######################################################################
 
+
+#' @name function-nodes
+#' @title Function Nodes
+#' @description
+#' These function help identify and navigate noses associated with
+#' function definition.
+#'
+#' @details
+#' A function node is the node for the expression that has as it's
+#' children the function keyword(firstborn), the arguments, including the
+#' nodes representing the opening closing parentheses in the definition,
+#' and finally a node, as the youngest, for the body of the function.
+#'
+#' @inheritParams pd_is_assignment
+NULL
+
+
+#' @describeIn function-nodes Test if the \code{id} points to a function.
 pd_is_function <-
 function( id, pd, .check=TRUE){
-    #' @title test if a function
-    #' @inheritParams pd_is_assignment
-    #' @description
-    #'   Test if the \code{id} points to a function.
     if(.check){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
     }
     !is.na(firstborn(id)) & token(firstborn(id)) == 'FUNCTION'
-    #' @return a logical vector, same length as \code{id}.
 }
 all_function_ids <- make_get_all(pd_is_function)
 is_function <- internal(pd_is_function)
@@ -56,7 +69,7 @@ function( id, pd, .check=TRUE){
 }
 
 
-#' @describeIn pd_is_function Obtain the body of a function
+#' @describeIn function-nodes Obtain the body of a function
 pd_get_function_body_id <-
 function( id, pd, .check=TRUE){
     if(.check){
@@ -83,7 +96,7 @@ pd <- get_parse_data(parse(text="hello_world <- function(){
                     )
 }
 
-#' @describeIn pd_is_function Obtain the ids for the arguments of a function
+#' @describeIn function-nodes Obtain the ids for the arguments of a function
 pd_get_function_arg_ids <-
 function( id, pd, .check=TRUE){
     if(.check){
@@ -110,8 +123,7 @@ function( pd                    #< parse data
                     )
 }
 
-#' Retrieve the variable for a function argument
-#' @inheritParams pd_get_function_arg_ids
+#' @describeIn function-nodes Retrieve the variable for a function argument
 pd_get_function_arg_variable_ids <-
 function( id, pd, .check = TRUE){
     if(.check){
@@ -136,13 +148,13 @@ function( pd                    #< parse data
     expect_error(pd_get_function_arg_variable_ids(roots(pd), pd))
 }
 
-#' @rdname pd_get_function_arg_variable_ids
+#' @describeIn function-nodes Get the variable names for a function definition.
 pd_get_function_arg_variable_text <-
     function(id, pd, .check=TRUE)
         pd_get_function_arg_variable_ids(id=id, pd=pd, .check=.check)
 
 
-#' @rdname pd_get_function_arg_variable_ids
+#' @describeIn function-nodes is `id` a function argument?
 pd_is_function_arg <-
 function(id, pd, .check=TRUE){
     if(.check){
@@ -174,7 +186,7 @@ if(F){#@testing
     expect_equal(sum(is_function_arg(pd$id, pd)), 4)
 }
 
-#' @rdname pd_get_function_arg_variable_ids
+#' @describeIn function-nodes Retrieve relative documentation comments associated with function arguments.
 pd_get_function_arg_associated_comment_ids <-
 function( id, pd, .check = TRUE){
     if (.check){
