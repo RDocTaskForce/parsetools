@@ -143,8 +143,6 @@ function( id, pd
         , ...       #< passed to <pd_get_children_ids>.
         , .check = TRUE
         ) {
-    #' @inheritParams pd_get_children_ids
-    #' @rdname pd_get_children_ids
     if (.check){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
