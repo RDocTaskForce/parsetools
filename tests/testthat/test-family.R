@@ -2,7 +2,7 @@
 #! Changes will be overwritten.
 
 context('tests extracted from file `family.R`')
-#line 62 "R/family.R"
+#line 59 "R/family.R"
 test_that('get_family_pd', {#@testing
     pd <- get_parse_data(parse(text={"a <- 1
         {# section 1
@@ -56,46 +56,4 @@ test_that('get_family_pd', {#@testing
     expect_equal(fam[1,'text'], "# normal comment")
 
 
-})
-#line 151 "R/family.R"
-test_that('next_sibling', {#@testing
-    pd <- get_parse_data(parse(text='a+b', keep.source = TRUE))
-    id <- parent(.find_text('a'))
-    expect_equal( pd_get_next_sibling_id(id,pd)
-                , parent(.find_text('b'))
-                )
-    expect_identical( pd_get_next_sibling_id(.find_text('a', pd), pd), NA_integer_)
-    expect_identical( pd_get_next_sibling_id(.find_text('+', pd), pd)
-                    , parent(.find_text('a', pd))
-                    )
-    expect_length(pd_get_next_sibling_id(pd$id, pd), nrow(pd))
-    expect_error(pd_get_next_sibling_id(1e9L, pd))
-    expect_error(pd_get_next_sibling_id(id, id))
-})
-#line 179 "R/family.R"
-test_that('prev_sibling', {#@testing
-    pd <- get_parse_data(parse(text='a+b', keep.source = TRUE))
-    id <- parent(.find_text('b'))
-    expect_equal( pd_get_prev_sibling_id(id,pd)
-                , parent(.find_text('a'))
-                )
-    expect_identical( pd_get_prev_sibling_id(.find_text('b', pd), pd), NA_integer_)
-    expect_identical( pd_get_prev_sibling_id(parent(.find_text('a', pd)), pd)
-                    , .find_text('+', pd))
-    expect_length(pd_get_prev_sibling_id(pd$id, pd), nrow(pd))
-    expect_error(pd_get_prev_sibling_id(1e9L, pd))
-    expect_error(pd_get_prev_sibling_id(id, id))
-})
-#line 221 "R/family.R"
-test_that('firstborn', {#@testing
-    pd <- get_parse_data(parse(text='a+b', keep.source = TRUE))
-    fb <- pd_get_firstborn(roots(pd), pd)
-    expect_identical(token(fb), "'+'")
-    expect_true(pd_is_firstborn(fb, pd))
-    expect_true(pd_is_firstborn(roots(pd), pd))
-    expect_false(pd_is_firstborn(next_sibling(fb), pd))
-
-    expect_true(fb %in% siblings(fb,pd))
-    expect_length(siblings(fb,pd), 3L)
-    expect_equal(sum(pd_is_firstborn(siblings(fb,pd), pd)), 1L)
 })
