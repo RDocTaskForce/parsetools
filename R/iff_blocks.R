@@ -340,7 +340,7 @@ function(id, pd, .check=TRUE){
     #'   For \code{\link[=iff-blocks]{if(FALSE)}} documentation blocks, such as
     #'   \code{@testing} and \code{@example} blocks, a user may supply an
     #'   information string which gives the name information for tests and
-    #'   examples.  for example, in `"if(FALSE)\{#@@test my special test`
+    #'   examples.  for example, in `if(FALSE)\{#@@test my special test`
     #  }
     #'   the information string is "my special test".
     #'
@@ -361,7 +361,7 @@ function(id, pd, .check=TRUE){
     if (length(id)>1L) return(sapply(id, pd_get_iff_associated_name_id, pd=pd, .check=FALSE))
     prev.id  <- prev_sibling(id, pd)
     while (TRUE){
-        #' \code{\link[=iff-blocks]{if(FALSE)}} blocks can be placed
+        #' IFF blocks can be placed
         #' sequentially and \code{pd_get_iff_associated_name_id} will
         #' navigate back until it finds a non-IFF block to use for the name.
         #' This way users can place multiple tests and examples after a
