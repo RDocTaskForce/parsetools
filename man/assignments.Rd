@@ -20,14 +20,8 @@ pd_get_assign_variable_id(id, pd, .check = TRUE)
 
 \item{.check}{Perform checks for input validation?}
 }
-\value{
-an id integer.
-}
 \description{
 These function help identify and navigate assignments in parse data.
-
-Gives the id of the value portion of the assignment, while correctly
-accounting for the direction of the arrow.
 }
 \details{
 These functions only deal with assignment operators.

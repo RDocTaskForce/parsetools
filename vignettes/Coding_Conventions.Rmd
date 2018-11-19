@@ -25,7 +25,7 @@ Functions
 All the functions in `parsetools` are concerned with `parse-data` objects.
 Functions either obtain the `parse-data`, such as `get_parse_data()`;
 convert or transform the parse data, such as `classify_comments()`;
-identify elements of the parse data tree, such as `pd_id_function()`; 
+identify elements of the parse data tree, such as `pd_is_function()`; 
 or navigate the tree, such as `get_parent_id()`.
 
 ### Arguments ###
@@ -52,7 +52,7 @@ pd_is_*       Logical test function     id vector   logical 1:1 for input id    
 pd_get_*_id   Navigation function       id vector   id integer 1:1 for input    Yes
 pd_get_*_ids  Set identification        single id   id vector many:1 for input  Yes
 get_*_pd      Subsetting                id(1)+pd    subsetted parse-data        No
-all_*_ids     Get list of ids           parse-data  id vector many:1 for input  No
+all_*_ids     Global sets               parse-data  id vector many:1 for input  No
 pd_*          Other action function     id+pd       Depending                   
 
 
@@ -68,12 +68,17 @@ any defined class definition.
 
 ### Navigation Functions ###
 
-functions that get a single id relative to the current id should follow the format 
-`pd_get_<name>_id`, where  and should accept
+Functions that get a single id relative to the current id follow the format
+`pd_get_<name>_id`, they may accept a vector of inputs and return a vector
+of outputs, with each element of the output vector corresponding respectively
+to the input vector.
 
 
 ### Set Identification Functions ###
 
+Function that of the form `pd_get_<name>_ids` are set identification functions.
+They take a single node, and only a single node and return a set of nodes 
+relative to the given node.
 
 
 ## Shortcut functions

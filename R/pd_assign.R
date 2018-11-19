@@ -53,10 +53,6 @@ if(FALSE){#@testing
 #' @describeIn assignments Get the id for the value portion of an assignment.
 pd_get_assign_value_id <-
 function( id, pd, .check = TRUE){
-    #' @inheritParams pd_is_assignment
-    #' @description
-    #'    Gives the id of the value portion of the assignment, while correctly
-    #'    accounting for the direction of the arrow.
     if(.check){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
@@ -70,7 +66,6 @@ function( id, pd, .check = TRUE){
           , RIGHT_ASSIGN = min(child.ids)
           , max(child.ids)
           )
-    #' @return an id integer.
 }
 assign_value <- internal(pd_get_assign_value_id, all_assignment_ids(pd))
 if(FALSE){#!@testing
