@@ -1,8 +1,8 @@
-#! This file was automatically produced by the documentation package.
+#! This file was automatically produced by the testextra package.
 #! Changes will be overwritten.
 
 context('tests extracted from file `grouping.R`')
-#line 50 "/rdtf/parsetools/R/grouping.R"
+#line 50 "R/grouping.R"
 test_that('is_grouping', {#@testing
     pd <- get_parse_data(parse(text='{
         this(is+a-grouping)
@@ -24,7 +24,7 @@ test_that('is_grouping', {#@testing
         ', keep.source=TRUE))
     expect_equal(sum(pd_is_grouping(pd$id, pd=pd)), 2)
 })
-#line 77 "/rdtf/parsetools/R/grouping.R"
+#line 77 "R/grouping.R"
 test_that('all_grouping_ids', {#@testing
     pd <- get_parse_data(parse(text='{
         this(is+a-grouping)
@@ -34,7 +34,7 @@ test_that('all_grouping_ids', {#@testing
     expect_equal(length(all_grouping_ids(pd)), 1)
     expect_equal(all_grouping_ids(pd), 25)
 })
-#line 114 "/rdtf/parsetools/R/grouping.R"
+#line 114 "R/grouping.R"
 test_that('fix_grouping_comment_association', {#@testing
     pd <- get_parse_data(parse(text={"
     {# grouped code
@@ -64,7 +64,7 @@ test_that('fix_grouping_comment_association', {#@testing
                 , c(-38, -38, -38, 34, -56, -74)
                 )
 })
-#line 143 "/rdtf/parsetools/R/grouping.R"
+#line 143 "R/grouping.R"
 test_that('fix_grouping_comment_association Special case', {#@test fix_grouping_comment_association Special case
     pd <- get_parse_data(parse(text={"
     {#' Documenation before

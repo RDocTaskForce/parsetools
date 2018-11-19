@@ -41,9 +41,20 @@ pd_is_tagged_iff_block(id, pd, tag, doc.only = TRUE, ...,
 comments only?}
 }
 \description{
-IFF is short for \code{if(FALSE)\{#@tag ...\}} blocks.
+IFF is short for \code{if(FALSE)\{#@tag ...} blocks.
 These block can contain development, testing, or example code
 that can be extracted into documentation or other files.
+}
+\details{
+Here are some examples:
+\itemize{
+\item \code{if(FALSE)\{#' @test ...} Is valid and tags the block as a test.
+\item \code{if(FALSE)\{#@test ...} Is valid and tags the block as a test.
+Note here that we are using the \code{#@} tag
+comment.
+\item \code{if(FALSE)\{# @test ...} Is valid only if \code{doc.only==FALSE}.
+\item \code{if(FALSE)#@test ...}
+}
 }
 \section{Functions}{
 \itemize{

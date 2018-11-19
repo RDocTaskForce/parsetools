@@ -2,7 +2,7 @@
 #! Changes will be overwritten.
 
 context('tests extracted from file `iff_blocks.R`')
-#line 86 "R/iff_blocks.R"
+#line 85 "R/iff_blocks.R"
 test_that('is_iff', {#!@testing
     pd <- get_parse_data(parse(text={"
         if(FALSE){# an if(FALSE) block
@@ -24,7 +24,7 @@ test_that('is_iff', {#!@testing
     expect_equal(pd_is_iff(roots(pd), pd), c(TRUE, TRUE, FALSE, TRUE))
     expect_equal(   is_iff(pd=pd), c(TRUE, TRUE, FALSE, TRUE))
 })
-#line 138 "R/iff_blocks.R"
+#line 137 "R/iff_blocks.R"
 test_that('is_iff_block', {#!@testing
     pd <- get_parse_data(parse(text={"
         if(FALSE){# an if(FALSE) block
@@ -46,7 +46,7 @@ test_that('is_iff_block', {#!@testing
     expect_equal(pd_is_iff_block(roots(pd), pd, FALSE), c(TRUE, FALSE, FALSE, FALSE))
     expect_equal(   is_iff_block(pd=pd), c(TRUE, TRUE, FALSE, FALSE))
 })
-#line 180 "R/iff_blocks.R"
+#line 179 "R/iff_blocks.R"
 test_that('all_iff_block_ids', {#!@testing
     pd <- get_parse_data(parse(text={"
         if(FALSE){# an if(FALSE) block
@@ -75,7 +75,7 @@ test_that('all_iff_block_ids', {#!@testing
     iff.ids <- all_iff_block_ids(pd, root.only=FALSE, ignore.groups = FALSE)
     expect_equal(length(iff.ids), 4)
 })
-#line 235 "R/iff_blocks.R"
+#line 234 "R/iff_blocks.R"
 test_that('pd_is_tagged_iff_block', {#!@testing
     pd  <- get_parse_data(parse(text={"
         if(FALSE){#!@tag
@@ -122,7 +122,7 @@ test_that('pd_is_tagged_iff_block', {#!@testing
     pd <- get_parse_data(parse(text='if(F){#@tag\nF\n}', keep.source=TRUE))
     expect_true(pd_is_tagged_iff_block(roots(pd), pd, tag))
 })
-#line 302 "R/iff_blocks.R"
+#line 301 "R/iff_blocks.R"
 test_that('all_tagged_iff_block_ids', {#!@testing
     pd  <- get_parse_data(parse(text={"
         if(FALSE){#!@tag

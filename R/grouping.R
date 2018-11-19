@@ -35,11 +35,11 @@ function( id, pd, .check=TRUE){
   if(length(id) > 1) return(sapply(id, pd_is_grouping, pd=pd, .check=FALSE))
 
   #' @description
-  #' a grouping is defined as a non empty set
+  #' A grouping is defined as a non empty set
   return(  length(children(id))
-        #' started with a "'\{'" token and
+        #' starting with a curley brace token and
         && token(firstborn(id)) == "'{'"
-        #' and there is no parent or the parent is also a grouping.
+        #' and for which there is no parent or the parent is also a grouping.
         && ( parent(id) == 0
           || pd_is_grouping(parent(id), pd, .check=FALSE)
            )

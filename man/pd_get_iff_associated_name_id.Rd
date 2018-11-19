@@ -14,7 +14,19 @@ pd_get_iff_associated_name_id(id, pd, .check = TRUE)
 \item{.check}{Perform checks for input validation?}
 }
 \description{
-Find the name that should be associated with an \code{if(FALSE)} block.
+For \code{\link[=iff-blocks]{if(FALSE)}} documentation blocks, such as
+\code{@testing} and \code{@example} blocks, a user may supply an
+information string which gives the name information for tests and
+examples.  for example, in \code{"if(FALSE)\{#@test my special test}
+the information string is "my special test".
+
+The more common case is when there is no information string.
+In these cases the name is inferred by the previous assignemnt or
+declaration.
+
+The \code{id} argument should identify one and only one
+\code{\link[=iff-blocks]{if(FALSE)}} block, but as this is an internal
+function, argument checks are not performed.
 }
 \details{
 \code{\link[=iff-blocks]{if(FALSE)}} blocks can be placed

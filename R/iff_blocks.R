@@ -32,7 +32,7 @@ unquote <- function(x){
 #' @name iff-blocks
 #' @title IFF Blocks
 #' @description
-#' IFF is short for \code{if(FALSE)\{#@tag ...\}} blocks.
+#' IFF is short for `if(FALSE)\{#@@tag ...` blocks.
 #' These block can contain development, testing, or example code
 #' that can be extracted into documentation or other files.
 #'
@@ -46,13 +46,12 @@ unquote <- function(x){
 #' @details
 #' Here are some examples:
 #'
-#' * `if(FALSE){#' @test ...` Is valid and tags the block as a test.
-#' * `if(FALSE){#@test ...` Is valid and tags the block as a test.
-#'                          Note here that we are using the `#@` tag
+#' * `if(FALSE)\{#' @test ...` Is valid and tags the block as a test.
+#' * `if(FALSE)\{#@test ...` Is valid and tags the block as a test.
+#'                          Note here that we are using the `#@@` tag
 #'                          comment.
-#' * `if(FALSE){# @test` Is valid only if `doc.only==FALSE`.
-#' * `if(FALSE)#@test`
-
+#' * `if(FALSE)\{# @test ...` Is valid only if `doc.only==FALSE`.
+#' * `if(FALSE)#@test ...`
 NULL
 
 pd_is_iff <-
@@ -341,7 +340,8 @@ function(id, pd, .check=TRUE){
     #'   For \code{\link[=iff-blocks]{if(FALSE)}} documentation blocks, such as
     #'   \code{@testing} and \code{@example} blocks, a user may supply an
     #'   information string which gives the name information for tests and
-    #'   examples.  for example, in `"if(FALSE){#@test my special test`
+    #'   examples.  for example, in `"if(FALSE)\{#@@test my special test`
+    #  }
     #'   the information string is "my special test".
     #'
     #'   The more common case is when there is no information string.
