@@ -18,5 +18,5 @@ an id integer.
 }
 \description{
 Returns the id of the body of the branch executed if the predicate
-  evaluates to true.
+evaluates to true.
 }

@@ -4,7 +4,7 @@
 \alias{extract_test_block}
 \title{Extract testing blocks from the parse-data.}
 \usage{
-extract_test_block(id = all_tagged_iff_ids(pd, .testing.tags),
+extract_test_block(id = all_tagged_iff_block_ids(pd, .testing.tags),
   pd = get("pd", parent.frame()))
 }
 \arguments{
@@ -14,10 +14,10 @@ extract_test_block(id = all_tagged_iff_ids(pd, .testing.tags),
 }
 \value{
 a character vector with the lines for the specific test(s)
-        with the name of the test included as an attribute.
+with the name of the test included as an attribute.
 }
 \description{
 Extract the content of a testing block as a character vector of lines.
-  The name, which is attached as an attribute is taken from the info
-  string or inferred by location, see Details.
+The name, which is attached as an attribute is taken from the info
+string or inferred by location, see Details.
 }

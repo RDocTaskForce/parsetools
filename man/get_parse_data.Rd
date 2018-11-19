@@ -39,7 +39,7 @@ as_parse_data(df)
 \description{
 Parsing data is at the core of parse tools and thus at the core
 of the documentation package. The \code{get_parse_data} function is
-essentially a customized version of `<getParseData>` that will return
+essentially a customized version of \code{<getParseData>} that will return
 a cleaned up version of the parse data for a variety of objects.
 This version also fails less often, even reparsing text when
 needed.

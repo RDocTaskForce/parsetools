@@ -15,5 +15,5 @@ strip_tag(x, tag, ...)
 }
 \description{
 Removes \code{@tag} tags from the text.
-   Also will remove '\code{#@tag}' replacing with '\code{#!}'.
+Also will remove '\code{#@tag}' replacing with '\code{#!}'.
 }

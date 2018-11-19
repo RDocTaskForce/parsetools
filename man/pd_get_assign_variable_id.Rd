@@ -18,5 +18,5 @@ an id integer, typically pointing to an 'expr' node in pd.
 }
 \description{
 Gets the id for the variable portion of an assignment expression.
-  This accounts for the direction of the assignment arrow.
+This accounts for the direction of the assignment arrow.
 }

@@ -3,7 +3,7 @@
 \name{pd_get_children_ids}
 \alias{pd_get_children_ids}
 \alias{get_children_pd}
-\title{Get all nodes that are children of `id`.}
+\title{Get all nodes that are children of \code{id}.}
 \usage{
 pd_get_children_ids(id, pd, ngenerations = 1, include.self = FALSE,
   all.generations = TRUE, .check = TRUE)
@@ -27,8 +27,8 @@ the final (FALSE) generation be returned?}
 \item{...}{arguments passed on.}
 }
 \description{
-Get all ids in `pd` that are children of \code{id}.
-  i.e. lower in the heirarchy or with id as a parent.
-  If \code{ngenerations} is greater than 1 and \code{all.generations}
-  is \code{TRUE}, all descendents are aggregated and returned.
+Get all ids in \code{pd} that are children of \code{id}.
+i.e. lower in the heirarchy or with id as a parent.
+If \code{ngenerations} is greater than 1 and \code{all.generations}
+is \code{TRUE}, all descendents are aggregated and returned.
 }

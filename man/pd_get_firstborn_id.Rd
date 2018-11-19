@@ -15,5 +15,5 @@ pd_get_firstborn_id(id, pd, .check = TRUE)
 }
 \description{
 Get the id of the firstborn child of id.
-  Without the "_id" is a wrapper for giving the nodes.
+Without the "_id" is a wrapper for giving the nodes.
 }

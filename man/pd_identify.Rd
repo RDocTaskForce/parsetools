@@ -26,7 +26,7 @@ Identify in pd the id for the object given.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{default}: Default method identifies by [srcref](=base:srcref).
+\item \code{default}: Default method identifies by \href{=base:srcref}{srcref}.
 
 \item \code{NULL}: Passing a NULL object will result in an error.
 

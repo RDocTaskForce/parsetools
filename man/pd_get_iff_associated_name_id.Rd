@@ -2,7 +2,7 @@
 % Please edit documentation in R/iff_blocks.R
 \name{pd_get_iff_associated_name_id}
 \alias{pd_get_iff_associated_name_id}
-\title{find the name that should be assocciated with an \code{if(FALSE)} block.}
+\title{Find the name that should be assocciated with an \code{if(FALSE)} block.}
 \usage{
 pd_get_iff_associated_name_id(id, pd, .check = TRUE)
 }
@@ -14,19 +14,7 @@ pd_get_iff_associated_name_id(id, pd, .check = TRUE)
 \item{.check}{Perform checks for input validation?}
 }
 \description{
-For \code{\link[=iff-blocks]{if(FALSE)}} documentation blocks, such as
-  \code{@testing} and \code{@example} blocks, a user may supply an
-  information string which gives the name information for tests and
-  examples.  for example, in \code{"if(FALSE)\{#@test my special test"}
-  the information string is "my special test".
-
-  The more common case is when there is no information string.
-  In these cases the name is inferred by the previous assignemnt or
-  declaration.
-
-The \code{id} argument should identify one and only one
-\code{\link[=iff-blocks]{if(FALSE)}} block, but as this is an internal
-function, argument checks are not performed.
+Find the name that should be assocciated with an \code{if(FALSE)} block.
 }
 \details{
 \code{\link[=iff-blocks]{if(FALSE)}} blocks can be placed
@@ -35,7 +23,7 @@ navigate back until it finds a non-IFF block to use for the name.
 This way users can place mutliple tests and examples after a
 declaration.
 
-If the previous expression is an assignment, the asignee variable of
+If the previous expression is an assignment, the assignee variable of
 the assignment is chosen as the name.
 An attribute 'type' is also set on the return value.
 For function assignments \code{type="function_assignment"},

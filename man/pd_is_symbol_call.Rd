@@ -18,5 +18,5 @@ a logical of the same length as \code{id}
 }
 \description{
 Checks if the \code{id} identifies in \code{pd} specifically a
-  symbol call expression, That is a call from a symbol.
+symbol call expression, That is a call from a symbol.
 }

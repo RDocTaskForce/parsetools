@@ -18,5 +18,5 @@ an id integer.
 }
 \description{
 Gives the id of the value portion of the assignment, while correctly
-   accounting for the direction of the arrow.
+accounting for the direction of the arrow.
 }

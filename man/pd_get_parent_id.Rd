@@ -2,7 +2,7 @@
 % Please edit documentation in R/parent.R
 \name{pd_get_parent_id}
 \alias{pd_get_parent_id}
-\title{Get the parent of the expression identified by `id` in `pd`.}
+\title{Get the parent of the expression identified by \code{id} in \code{pd}.}
 \usage{
 pd_get_parent_id(id, pd, .check = TRUE)
 }
@@ -14,5 +14,5 @@ pd_get_parent_id(id, pd, .check = TRUE)
 \item{.check}{Perform checks for input validation?}
 }
 \description{
-Get the parent of the expression identified by `id` in `pd`.
+Get the parent of the expression identified by \code{id} in \code{pd}.
 }

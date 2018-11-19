@@ -17,8 +17,8 @@ pd_get_ancestor_ids(id, pd, nancestors = Inf, aggregate = TRUE,
 
 \item{aggregate}{All (T) or only final (F).}
 
-\item{include.self}{should `id` be included in list of ancestors
-if `aggregate` is true.}
+\item{include.self}{should \code{id} be included in list of ancestors
+if \code{aggregate} is true.}
 
 \item{only.present}{should the list be restricted to only those
 node that are present?  Most revelvent for

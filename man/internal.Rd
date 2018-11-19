@@ -70,7 +70,7 @@ expr_text(id, pd = get("pd", parent.frame()))
 \item{line}{a line number}
 }
 \description{
-Convert a function to look for pd object in the `parent.frame()`,
+Convert a function to look for pd object in the \code{parent.frame()},
 and the id to extract from the pd unless overwritten.
 
 These functions are for internal use but are documented

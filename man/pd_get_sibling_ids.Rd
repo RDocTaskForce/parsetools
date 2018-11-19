@@ -21,15 +21,15 @@ pd_get_prev_sibling_id(id, pd, .check = TRUE)
 }
 \description{
 \subsection{pd_get_sibling_ids}{
-  A convenience function for identifying siblings of the given id.
-  Siblings are nodes with the same parent.
+A convenience function for identifying siblings of the given id.
+Siblings are nodes with the same parent.
 }
 
 \subsection{pd_get_next_sibling_id}{
-  gives the id of the next youngest sibling of the current id.
+gives the id of the next youngest sibling of the current id.
 }
 
 \subsection{pd_get_prev_sibling_id}{
-  gives the id of the next older sibling of the current id.
+gives the id of the next older sibling of the current id.
 }
 }

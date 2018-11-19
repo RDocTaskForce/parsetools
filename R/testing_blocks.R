@@ -30,7 +30,7 @@
 
 #' @export
 extract_test_block <-
-function( id = all_tagged_iff_ids(pd, .testing.tags)
+function( id = all_tagged_iff_block_ids(pd, .testing.tags)
         , pd = get('pd', parent.frame())
         ){
     #' @title Extract testing blocks from the parse-data.
@@ -151,7 +151,7 @@ if(FALSE){#!@testing
         #testing setAs
     }
     '}, keep.source=TRUE))
-    iff.ids <- all_tagged_iff_ids(pd, c('testing', 'testthat', 'test'))
+    iff.ids <- all_tagged_iff_block_ids(pd, c('testing', 'testthat', 'test'))
 
     expect_error( extract_test_block(iff.ids[[1L]], pd)
                 , "illformed block at <text>:2:5"
@@ -247,7 +247,7 @@ if(FALSE){#@testing Extraction with block tag.
 extract_test_blocks_parse_data <-
 function( pd ){
     pd <- ._check_parse_data(pd)
-    iff.ids <- all_tagged_iff_ids(pd, .testing.tags)
+    iff.ids <- all_tagged_iff_block_ids(pd, .testing.tags)
     .l <- lapply(iff.ids, extract_test_block, pd=pd)
     if (length(.l)==0) return(NULL)
     return(structure( c(.l, recursive=TRUE)

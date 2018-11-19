@@ -15,8 +15,8 @@ pd_get_relative_comment_associated_ids(id, pd, .check = TRUE)
 }
 \value{
 Returns a vector of the same length as id.  Where the value is
-        either the id of the associated object or NA if it cannot be
-        associated.
+either the id of the associated object or NA if it cannot be
+associated.
 }
 \description{
 Relative comment created with \code{\#\<} comment tags document something
@@ -27,12 +27,12 @@ the same parent as the comment. For example,
 }
 \details{
 function(x #< a valid comment
-            ){}
+){}
 
 would associate \code{a valid comment} with \code{x}, but
 
 function(x){ #< not a valid comment
-               }
+}
 
 would not.
 }

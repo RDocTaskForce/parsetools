@@ -15,5 +15,5 @@ pd_get_if_predicate_id(id, pd, .check = TRUE)
 }
 \description{
 Returns the id of the predicate of the if statemment,
-  i.e. the conditional statement.
+i.e. the conditional statement.
 }

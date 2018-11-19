@@ -26,7 +26,7 @@ ascend_to_root(id = pd$id, pd = get("pd", parent.frame()),
 \item{.check}{Perform checks for input validation?}
 
 \item{include.groups}{Include groups as root nodes (T)
-or descend into [groups](is.grouped) for roots?}
+or descend into \href{is.grouped}{groups} for roots?}
 }
 \description{
 Root IDs constitute the id of a stand alone expression.
@@ -38,7 +38,7 @@ In definition, A root node is defined to be a node that either
 has no parent or whose parent is a grouping node.
 }
 \details{
-If `ignore.groups=TRUE` then groupings are ignored and root nodes within the
+If \code{ignore.groups=TRUE} then groupings are ignored and root nodes within the
 group are interpreted as roots, otherwise nodes within a group are not
 interpreted as root.  Groupings are always interpreted as root if the
 parent is 0 or if the parent is a group and also a root.
@@ -47,7 +47,7 @@ parent is 0 or if the parent is a group and also a root.
 \itemize{
 \item \code{pd_is_root}: Test if a node is a root node
 
-\item \code{pd_all_root_ids}: give all root ids in `pd`
+\item \code{pd_all_root_ids}: give all root ids in \code{pd}
 
 \item \code{ascend_to_root}: ascend from id to root
 }}

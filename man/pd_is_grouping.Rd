@@ -14,7 +14,5 @@ pd_is_grouping(id, pd, .check = TRUE)
 \item{.check}{Perform checks for input validation?}
 }
 \description{
-a grouping is defined as a non empty set
-started with a "'\{'" token and
-and there is no parent or the parent is also a grouping.
+test if an id is a grouping element
 }

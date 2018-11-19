@@ -16,7 +16,7 @@ all_root_nodes(pd, include.groups = TRUE)
 }
 \description{
 A root node in a file is a standalone expression, such as in
-  source file a function definition.
-  when discussing a subset it is any expression that does not have
-  a parent in the subset.
+source file a function definition.
+when discussing a subset it is any expression that does not have
+a parent in the subset.
 }

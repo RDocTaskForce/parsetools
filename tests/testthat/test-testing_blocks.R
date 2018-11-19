@@ -54,7 +54,7 @@ test_that('extract_test_block', {#!@testing
         #testing setAs
     }
     '}, keep.source=TRUE))
-    iff.ids <- all_tagged_iff_ids(pd, c('testing', 'testthat', 'test'))
+    iff.ids <- all_tagged_iff_block_ids(pd, c('testing', 'testthat', 'test'))
 
     expect_error( extract_test_block(iff.ids[[1L]], pd)
                 , "illformed block at <text>:2:5"

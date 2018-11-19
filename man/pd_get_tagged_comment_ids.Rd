@@ -18,6 +18,6 @@ an integer vector of ids.
 }
 \description{
 Finds all ids that are comments and contain the given '@' \code{tag}.
-  If doc.only is true(default) then only documentation comments are
-  considered, otherwise all comments are examined.
+If doc.only is true(default) then only documentation comments are
+considered, otherwise all comments are examined.
 }

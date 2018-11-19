@@ -11,6 +11,6 @@ extract_test_blocks(file)
 }
 \description{
 Convenience function for extracting all tests from a file.
-   This parses the file and passes the work to
-   \code{\link{extract_test_block}}.
+This parses the file and passes the work to
+\code{\link{extract_test_block}}.
 }

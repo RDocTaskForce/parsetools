@@ -24,22 +24,22 @@ pd_is_doc_comment(id, pd, .check = TRUE)
 }
 \value{
 Should return a logical vector, for parse-data and data.frame should
-        be length of \code{nrow(x)}.  For character same length as x.
+be length of \code{nrow(x)}.  For character same length as x.
 }
 \description{
 \subsection{pd_is_comment}{
-     Test if an id represents a comment of any kind.
-  }
+Test if an id represents a comment of any kind.
+}
 
 \subsection{pd_is_relative_comment}{
-      Tests if the comment is a relative (location dependent) type comment.
-  }
+Tests if the comment is a relative (location dependent) type comment.
+}
 
 \subsection{pd_all_relative_comment_ids}{
-      Retrieve all ids associated with relative comments.
-  }
+Retrieve all ids associated with relative comments.
+}
 
 \subsection{pd_is_doc_comment}{
-      Additionally tests if the comment is a documentation type comment.
-  }
+Additionally tests if the comment is a documentation type comment.
+}
 }

@@ -15,5 +15,5 @@ pd_get_call_symbol_id(id, pd, .check = TRUE)
 }
 \description{
 Gets the id of the symbol of the call.
-   That is the name of the function being called.
+That is the name of the function being called.
 }

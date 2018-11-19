@@ -30,12 +30,12 @@ pd_add_class(name, .exists = TRUE, .overwrite = FALSE)
 
 \item{name}{name of the class defining function}
 
-\item{test.is}{function accepting arguments `id` and `pd` which
-tests if given `id` is associated with the defined
+\item{test.is}{function accepting arguments \code{id} and \code{pd} which
+tests if given \code{id} is associated with the defined
 class defining functions.}
 
-\item{test.in}{function accepting arguments `id` and `pd` which
-tests if given `id` is contained in the defined
+\item{test.in}{function accepting arguments \code{id} and \code{pd} which
+tests if given \code{id} is contained in the defined
 class defining functions.}
 
 \item{.exists}{require the function to exists to add.}
@@ -49,11 +49,11 @@ if is contained in the class definition.
 }
 \details{
 \subsection{\code{pd_class_definitions$has}}{
-    \subsection{Usage}{\preformatted{
+\subsection{Usage}{\preformatted{
         pd_class_definitions$has(name)
     }}
-    Check if a class defining function has
-    'is' and 'in' function defined for it.
+Check if a class defining function has
+'is' and 'in' function defined for it.
 }
 \subsection{\code{pd_class_definitions$add} or \code{pd_add_class}}{
 \subsection{Usage}{\preformatted{
@@ -61,7 +61,7 @@ pd_class_definitions$add(name, .exists=TRUE, .overwrite=FALSE)
 
 pd_add_class(name, .exists=TRUE, .overwrite=FALSE)
 }}
-    Add a def with default 'is' and 'in' functions defined.
+Add a def with default 'is' and 'in' functions defined.
 }
 \subsection{\code{pd_class_definitions$add_definition} or \code{pd_add_class_definition}}{
 \subsection{Usage}{\preformatted{
@@ -69,51 +69,51 @@ pd_class_definitions$add_definition(name, test.is, test.in, .exists=TRUE, .overw
 
 pd_add_class_definition(name, test.is, test.in, .exists=TRUE, .overwrite=FALSE)
 }}
-    Add a class defining function with custom 'is' and 'in' functions defined.
+Add a class defining function with custom 'is' and 'in' functions defined.
 }
 \subsection{\code{pd_class_definitions$rm}}{
 \subsection{Usage}{\preformatted{
 pd_class_definitions$rm(name)
 }}
-    Remove the testing functions for the class.
+Remove the testing functions for the class.
 }
 \subsection{\code{pd_class_definitions$names}}{
 \subsection{Usage}{\preformatted{
 pd_class_definitions$names()
 }}
-    Return a vector of the classed for which tests are defined.
+Return a vector of the classed for which tests are defined.
 }
 \subsection{\code{pd_class_definitions$test_is}}{
 \subsection{Usage}{\preformatted{
 pd_class_definitions$test_is(id, pd, check=TRUE)
 }}
-    Test if \code{id} is associated with each of
-    defined class definitions.
+Test if \code{id} is associated with each of
+defined class definitions.
 }
 \subsection{\code{pd_class_definitions$test_is_in}}{
 \subsection{Usage}{\preformatted{
 pd_class_definitions$test_is_in(id, pd, check=TRUE)
 }}
-    Test if \code{id} is contained within each of
-    defined class definitions.
+Test if \code{id} is contained within each of
+defined class definitions.
 }
 \subsection{\code{pd_class_definitions$which}}{
 \subsection{Usage}{\preformatted{
 pd_class_definitions$which(id, pd, check=TRUE)
 }}
-    Return the name of the class, if any,
-    which \code{id} corressponds to.
+Return the name of the class, if any,
+which \code{id} corressponds to.
 }
 \subsection{\code{pd_class_definitions$in_which}}{
 \subsection{Usage}{\preformatted{
 pd_class_definitions$in_which(id, pd, check=TRUE)
 }}
-    Returns a vector of the classes, if any,
-    of the classes which \code{id} is contained in.
+Returns a vector of the classes, if any,
+of the classes which \code{id} is contained in.
 }
 \subsection{\code{pd_is_class_definition}}{
-    Returns \code{TRUE} if the id corresponds to any of the
-    class defining calls.
+Returns \code{TRUE} if the id corresponds to any of the
+class defining calls.
 }
 }
 \keyword{datasets}

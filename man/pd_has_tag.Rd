@@ -2,7 +2,7 @@
 % Please edit documentation in R/tags.R
 \name{pd_has_tag}
 \alias{pd_has_tag}
-\title{Check if there is a documentation `@` tag.}
+\title{Check if there is a documentation \code{@} tag.}
 \usage{
 pd_has_tag(id, pd, tag, ...)
 }
@@ -18,5 +18,5 @@ pd_has_tag(id, pd, tag, ...)
 \description{
 Check if a node of \code{parse-data} identified by \code{id}
 is both a comment and contains a documentation tag itentifed by
-the `@` symbol.
+the \code{@} symbol.
 }
