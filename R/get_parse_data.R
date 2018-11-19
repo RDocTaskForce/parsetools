@@ -224,14 +224,14 @@ function( x
     #' @rdname get_parse_data
     #'
     #' @inheritParams ascend_to_root
-    #' @inheritParams pd_get_family
+    #' @inheritParams get_family_pd
     stopifnot(inherits(x, 'srcref'))
     pd <- get_parse_data.srcfile(attr(x, 'srcfile'), ...)
     id <- pd_identify(pd, x)
     root <- ascend_to_root(id, pd, ignore.groups=ignore.groups)
     if  (!length(root)) return(NULL)
     structure(id = id, root=root,
-    pd_get_family( root, pd
+    get_family_pd( root, pd
                  , include.doc.comments     = include.doc.comments
                  , include.regular.comments = include.regular.comments
                  ))

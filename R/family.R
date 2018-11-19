@@ -27,7 +27,7 @@
 
 
 
-pd_get_family <-
+get_family_pd <-
 function( id, pd
         , include.self = TRUE
         , ngenerations = Inf
@@ -35,7 +35,7 @@ function( id, pd
         , include.doc.comments     = TRUE
         , include.regular.comments = FALSE
         ){
-    #' @name pd_get_family
+    #' @name get_family_pd
     #' @title Get family of nodes.
     #' @inheritParams pd_get_children_ids
     #' @param ...                       currently ignored.
@@ -71,7 +71,7 @@ if(FALSE){#@testing
         e <- 5
     "}, keep.source=TRUE))
     id <- ascend_to_root(pd[pd$text == 'c','id'], pd)
-    expect_identical(pd_get_family(id, pd), pd[19:24,])
+    expect_identical(get_family_pd(id, pd), pd[19:24,])
 
     pd <- get_parse_data(parse(text={"
         # normal comment
@@ -81,13 +81,13 @@ if(FALSE){#@testing
             print('hello world')
         }
     "}, keep.source=TRUE))
-    fam <- pd_get_family(37, pd, include.doc.comments=TRUE, include.regular.comments=TRUE)
+    fam <- get_family_pd(37, pd, include.doc.comments=TRUE, include.regular.comments=TRUE)
     expect_equal(fam[1,'text'], "# normal comment")
-    fam <- pd_get_family(37, pd, include.doc.comments=TRUE, include.regular.comments=FALSE)
+    fam <- get_family_pd(37, pd, include.doc.comments=TRUE, include.regular.comments=FALSE)
     expect_equal(fam[1,'text'], "#' Documenation before")
-    fam <- pd_get_family(37, pd, include.doc.comments=FALSE, include.regular.comments=TRUE)
+    fam <- get_family_pd(37, pd, include.doc.comments=FALSE, include.regular.comments=TRUE)
     expect_equal(fam[1,'text'], "# normal comment")
-    fam <- pd_get_family(37, pd, include.doc.comments=FALSE, include.regular.comments=FALSE)
+    fam <- get_family_pd(37, pd, include.doc.comments=FALSE, include.regular.comments=FALSE)
     expect_equal(fam[1,'text'], "hw")
 
     pd <- get_parse_data(parse(text={"
@@ -104,11 +104,11 @@ if(FALSE){#@testing
     expect_true(pd_is_grouping(group.id, pd))
     id <- expr.id <- roots(pd, FALSE)
 
-    fam <- pd_get_family(expr.id, pd, include.doc.comments=FALSE, include.regular.comments=FALSE)
+    fam <- get_family_pd(expr.id, pd, include.doc.comments=FALSE, include.regular.comments=FALSE)
     expect_equal(fam[1,'text'], 'hw')
-    fam <- pd_get_family(expr.id, pd, include.doc.comments=TRUE, include.regular.comments=FALSE)
+    fam <- get_family_pd(expr.id, pd, include.doc.comments=TRUE, include.regular.comments=FALSE)
     expect_equal(fam[1,'text'], "#' Documenation before")
-    fam <- pd_get_family(expr.id, pd, include.doc.comments=TRUE, include.regular.comments=TRUE)
+    fam <- get_family_pd(expr.id, pd, include.doc.comments=TRUE, include.regular.comments=TRUE)
     expect_equal(fam[1,'text'], "# normal comment")
 
 
