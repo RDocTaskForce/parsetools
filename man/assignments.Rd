@@ -30,9 +30,9 @@ calls in terms of parse data.
 
 There are five assignment operators grouped into three categories.
 \itemize{
-\item Left assignment, the \href{`<-`}{base::assignOps} and \href{`<<-`}{base::assignOps},
-\item right assignment, \href{`->`}{base::assignOps} and the rarely used \href{`->>`}{base::assignOps}
-\item and the equals assignment \href{`=`}{base::assignOps}.
+\item Left assignment, the \code{\link[base:assignOps]{<-}} and \code{\link[base:assignOps]{<<-}},
+\item right assignment, \code{\link[base:assignOps]{->}} and the rarely used \code{\link[base:assignOps]{->>}}
+\item and the equals assignment \code{\link[base:assignOps]{=}}.
 }
 }
 \section{Functions}{

@@ -29,7 +29,7 @@
 #' @title Family-wise Node Identification and Navigation.
 #'
 #' @description
-#' Parse data is organized into a hierachry of nodes. These functions provide
+#' Parse data is organized into a hierarchy of nodes. These functions provide
 #' simple ways to identify the nodes of interest, often from a specified node
 #' of interest.
 #'
@@ -41,7 +41,7 @@
 #' it's parent's parent, and so on; and \dfn{descendents}, the collection of nodes that are
 #' contained by the given node or contained by those nodes, and so on.
 #' Terminology is analogous, a \dfn{generation} is all the the nodes at the same depth in
-#' the heirachry. A node may have \dfn{siblings}, the set of nodes with the same parent.
+#' the hierarchy. A node may have \dfn{siblings}, the set of nodes with the same parent.
 #' If a node does not have a parent it is called a \dfn{root} node.
 #'
 #' Similarly, age is also used as an analogy for ease of navigation.  Generally, nodes
@@ -53,7 +53,7 @@
 #' node among siblings with the smallest id, but is not smaller that the reference node id.
 #'
 #' In all cases when describing function the `id`, is assumed to be in the context of the
-#' parse data object `pd` and for convencience refers to the node associated with said `id`.
+#' parse data object `pd` and for convenience refers to the node associated with said `id`.
 #'
 #' @param pd              The \code{\link{parse-data}} information
 #' @param id              id of the expression of interest

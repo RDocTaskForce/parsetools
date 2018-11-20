@@ -37,7 +37,7 @@ function( id, pd, .check=TRUE){
   #' @description
   #' A grouping is defined as a non empty set
   return(  length(children(id))
-        #' starting with a curley brace token and
+        #' starting with a curly brace token and
         && token(firstborn(id)) == "'{'"
         #' and for which there is no parent or the parent is also a grouping.
         && ( parent(id) == 0

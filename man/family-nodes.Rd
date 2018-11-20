@@ -55,7 +55,7 @@ when parent is zero.}
 \item{...}{arguments passed on.}
 }
 \description{
-Parse data is organized into a hierachry of nodes. These functions provide
+Parse data is organized into a hierarchy of nodes. These functions provide
 simple ways to identify the nodes of interest, often from a specified node
 of interest.
 
@@ -69,7 +69,7 @@ node in question; \dfn{children}, the nodes contained by the given node;
 it's parent's parent, and so on; and \dfn{descendents}, the collection of nodes that are
 contained by the given node or contained by those nodes, and so on.
 Terminology is analogous, a \dfn{generation} is all the the nodes at the same depth in
-the heirachry. A node may have \dfn{siblings}, the set of nodes with the same parent.
+the hierarchy. A node may have \dfn{siblings}, the set of nodes with the same parent.
 If a node does not have a parent it is called a \dfn{root} node.
 
 Similarly, age is also used as an analogy for ease of navigation.  Generally, nodes
@@ -81,7 +81,7 @@ The firstborn has no 'older' siblings, the 'next' sibling would be the next olde
 node among siblings with the smallest id, but is not smaller that the reference node id.
 
 In all cases when describing function the \code{id}, is assumed to be in the context of the
-parse data object \code{pd} and for convencience refers to the node associated with said \code{id}.
+parse data object \code{pd} and for convenience refers to the node associated with said \code{id}.
 }
 \section{Functions}{
 \itemize{

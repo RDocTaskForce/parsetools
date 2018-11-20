@@ -15,6 +15,6 @@ pd_is_grouping(id, pd, .check = TRUE)
 }
 \description{
 A grouping is defined as a non empty set
-starting with a curley brace token and
+starting with a curly brace token and
 and for which there is no parent or the parent is also a grouping.
 }

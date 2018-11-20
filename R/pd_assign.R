@@ -14,9 +14,9 @@ assignment.opperators <- c("LEFT_ASSIGN", "RIGHT_ASSIGN", "EQ_ASSIGN")
 #'
 #' There are five assignment operators grouped into three categories.
 #'
-#' * Left assignment, the [base::assignOps](`<-`) and [base::assignOps](`<<-`),
-#' * right assignment, [base::assignOps](`->`) and the rarely used [base::assignOps](`->>`)
-#' * and the equals assignment [base::assignOps](`=`).
+#' * Left assignment, the [`<-`][base::assignOps] and [`<<-`][base::assignOps],
+#' * right assignment, [`->`][base::assignOps] and the rarely used [`->>`][base::assignOps]
+#' * and the equals assignment [`=`][base::assignOps].
 #'
 #' @inheritParams pd_get_children_ids
 NULL

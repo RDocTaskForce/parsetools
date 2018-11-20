@@ -163,7 +163,7 @@ if(FALSE){#@testing
 #' @export
 pd_identify <-
 function( pd       #< parse data
-        , object   #< srcref object to identify
+        , object   #< [srcref] object to identify
         ) UseMethod('pd_identify', object)
 
 #' @export
@@ -266,7 +266,7 @@ if(FALSE){#@testing
 get_parse_data.function <-
 function(x, ...){
     #' @describeIn get_parse_data Get parse information from a function.
-    #'                            The function must have a [base::srcref][srcref].
+    #'                            The function must have a [`srcref`][base::srcref].
     stopifnot(is.function(x))
     if (methods::isGeneric(fdef=x)) {
         default <- attr(x, 'default')

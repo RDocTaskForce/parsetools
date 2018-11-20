@@ -345,7 +345,7 @@ function(id, pd, .check=TRUE){
     #'   the information string is "my special test".
     #'
     #'   The more common case is when there is no information string.
-    #'   In these cases the name is inferred by the previous assignemnt or
+    #'   In these cases the name is inferred by the previous assignment or
     #'   declaration.
     #'
     #' The \code{id} argument should identify one and only one
