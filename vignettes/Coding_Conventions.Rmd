@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-Coding Convertions for the `parsetools` package
+Coding Conventions for the `parsetools` package
 ===============================================
 
 Functions
@@ -38,7 +38,7 @@ expected to be an integer of values that exist in `pd$id` which denotes
 the node or nodes of interest.  Whether id is a singleton or vector
 is differentiated by function naming conventions described in the 
 following sections.  If there is a need for additional function arguments 
-they must occure after the `id` and `pd` arguments.
+they must occur after the `id` and `pd` arguments.
 
 
 ### Naming Conventions Overview ###
