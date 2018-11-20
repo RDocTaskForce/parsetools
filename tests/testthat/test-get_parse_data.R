@@ -194,27 +194,30 @@ test_that('get_parse_data.default', {#@testing
     pd <- get_parse_data(exprs, keep.source=TRUE)
     expect_is(pd, 'parse-data', info = "get_parse_datwa.default with srcfile")
 })
-#line 415 "R/get_parse_data.R"
+#line 417 "R/get_parse_data.R"
 test_that('fix_eq_assign', {#! @testthat
     pd <- utils::getParseData(parse(text="a=1", keep.source=TRUE))
     fixed.pd <- fix_eq_assign(pd)
     expect_true('equal_assign'%in% fixed.pd$token)
     expect_true('EQ_ASSIGN'%in% fixed.pd$token)
     expect_that(sum(fixed.pd$parent==0), equals(1))
+    expect_identical(fixed.pd, fix_eq_assign(fixed.pd))
 
     pd <- utils::getParseData(parse(text="a=1\nb<-2\nc=3\nd<<-4", keep.source=TRUE))
     fixed.pd <- fix_eq_assign(pd)
     expect_true('equal_assign'%in% fixed.pd$token)
     expect_true('EQ_ASSIGN'%in% fixed.pd$token)
     expect_that(sum(fixed.pd$parent==0), equals(4))
+    expect_identical(fixed.pd, fix_eq_assign(fixed.pd))
 
     pd <- utils::getParseData(parse(text="a=b=1", keep.source=TRUE))
     fixed.pd <- fix_eq_assign(pd)
     expect_true('equal_assign'%in% fixed.pd$token)
     expect_true('EQ_ASSIGN'%in% fixed.pd$token)
     expect_that(sum(fixed.pd$parent==0), equals(1))
+    expect_identical(fixed.pd, fix_eq_assign(fixed.pd))
 })
-#line 438 "R/get_parse_data.R"
+#line 443 "R/get_parse_data.R"
 test_that('`subset.parse-data`', {#@testing
     pd <- get_parse_data(parse(text={
     "{# Section Block
@@ -232,14 +235,14 @@ test_that('`subset.parse-data`', {#@testing
     expect_is(pd2, 'parse-data')
     expect_equal(min(pd2$line1), 4)
 })
-#line 464 "R/get_parse_data.R"
+#line 469 "R/get_parse_data.R"
 test_that('`[.parse-data`', {#@testing
     pd       <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     expect_is(pd, 'parse-data')
     expect_is(pd[pd$parent==0, ], 'parse-data')
     expect_false(methods::is(pd[pd$parent==0, 'id'], 'parse-data'))
 })
-#line 480 "R/get_parse_data.R"
+#line 485 "R/get_parse_data.R"
 test_that('`-.parse-data`', {#@test `-.parse-data`
 pd <- get_parse_data(parse(text={
 "{# Section Block
@@ -259,14 +262,14 @@ clean.pd <- pd - comments
 expect_is(clean.pd, 'parse-data')
 expect_true(!any(comments$id %in% clean.pd$id))
 })
-#line 534 "R/get_parse_data.R"
+#line 539 "R/get_parse_data.R"
 test_that('valid_parse_data', {#@testing
     df <- utils::getParseData(parse(text="rnorm(10,0,1)", keep.source=TRUE))
     expect_true (valid_parse_data(df), 'parse-data')
     expect_equal(valid_parse_data(datasets::iris      ), "names of data do not conform.")
     expect_equal(valid_parse_data(stats::rnorm(10,0,1)), "Not a data.frame object")
 })
-#line 557 "R/get_parse_data.R"
+#line 562 "R/get_parse_data.R"
 test_that('as_parse_data', {#@testing
     df <- utils::getParseData(parse(text="rnorm(10,0,1)", keep.source=TRUE))
     expect_is   (as_parse_data(df), 'parse-data')

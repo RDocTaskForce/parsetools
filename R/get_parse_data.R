@@ -377,14 +377,16 @@ fix_eq_assign <-
 function( pd  #< The [parse-data] to fix
         ){
     #! Fix the parents for expressions associated with EQ_ASSIGN tokens.
-    if ( R.version$major > 3
-      || ( R.version$major == 3
-        && R.version$minor >= 6.0 ))
-        return (pd)
+    # if ( R.version$major > 3
+    #   || ( R.version$major == 3
+    #     && R.version$minor >= 6.0 ))
+    #     return (pd)
 
     ids <- pd[pd[['token']] == "EQ_ASSIGN", 'id']
 
-    for(id in rev(ids)){
+    for(id in rev(ids)) if (!identical(token(parent(id)), 'equal_assign'))
+        {
+
         fam.pd <- get_children_pd(parent(id), pd, .check=FALSE)
         fam.pd <- fam.pd[order(fam.pd$id), ]
         fam.pd <- utils::head(fam.pd[fam.pd$id >= id, ], 3)
@@ -418,18 +420,21 @@ if(F){#! @testthat
     expect_true('equal_assign'%in% fixed.pd$token)
     expect_true('EQ_ASSIGN'%in% fixed.pd$token)
     expect_that(sum(fixed.pd$parent==0), equals(1))
+    expect_identical(fixed.pd, fix_eq_assign(fixed.pd))
 
     pd <- utils::getParseData(parse(text="a=1\nb<-2\nc=3\nd<<-4", keep.source=TRUE))
     fixed.pd <- fix_eq_assign(pd)
     expect_true('equal_assign'%in% fixed.pd$token)
     expect_true('EQ_ASSIGN'%in% fixed.pd$token)
     expect_that(sum(fixed.pd$parent==0), equals(4))
+    expect_identical(fixed.pd, fix_eq_assign(fixed.pd))
 
     pd <- utils::getParseData(parse(text="a=b=1", keep.source=TRUE))
     fixed.pd <- fix_eq_assign(pd)
     expect_true('equal_assign'%in% fixed.pd$token)
     expect_true('EQ_ASSIGN'%in% fixed.pd$token)
     expect_that(sum(fixed.pd$parent==0), equals(1))
+    expect_identical(fixed.pd, fix_eq_assign(fixed.pd))
 }
 
 
