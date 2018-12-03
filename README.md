@@ -1,4 +1,4 @@
-# Parse Tools #
+# Parse Tools <img src="man/figures/logo.png" align="right" height=140/>
 [![Build Status](https://travis-ci.org/RDocTaskForce/parsetools.svg?branch=master)](https://travis-ci.org/RDocTaskForce/parsetools)
 [![codecov.io](https://codecov.io/github/RDocTaskForce/parsetools/coverage.svg?branch=master)](https://codecov.io/github/RDocTaskForce/parsetools?branch=master)
 [![CRAN version](http://www.r-pkg.org/badges/version/parsetools)](https://cran.r-project.org/package=parsetools)
