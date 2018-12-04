@@ -38,6 +38,9 @@
 #' The `alternate` is the statement of block that is executed if `predicate` returns false.
 #'
 #' @inheritParams pd_get_children_ids
+#' @example inst/examples/example-pd.R
+#' @example inst/examples/example-roots.R
+#' @example inst/examples/example-if.R
 NULL
 
 
@@ -48,7 +51,7 @@ function(id, pd, .check=TRUE){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
     }
-    if (length(id)>1) sapply(id, pd_is_if, pd=pd) #nocov
+    if (length(id)>1) return(sapply(id, pd_is_if, pd=pd)) #nocov
     (token(id) == 'expr') &&
     (token(firstborn(id)) == 'IF')
 }

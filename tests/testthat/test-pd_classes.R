@@ -2,7 +2,7 @@
 #! Changes will be overwritten.
 
 context('tests extracted from file `pd_classes.R`')
-#line 200 "R/pd_classes.R"
+#line 203 "R/pd_classes.R"
 test_that('pd_class_definitions', {#@testing pd_class_definitions
     expect_identical(pd_class_definitions$has(), logical(0))
     expect_true(pd_class_definitions$has('setClass'))
@@ -126,7 +126,7 @@ test_that('pd_class_definitions', {#@testing pd_class_definitions
     expect_null(pd_class_definitions$rm('another_custom'))
     expect_false(pd_class_definitions$has('another_custom'))
 })
-#line 334 "R/pd_classes.R"
+#line 337 "R/pd_classes.R"
 test_that('pd_is_class_definition', {#@test
     pd <- get_parse_data(parse(text='
                 setClass( "testClass"
@@ -149,7 +149,7 @@ test_that('pd_is_class_definition', {#@test
                     , c(TRUE, FALSE)
                     )
 })
-#line 367 "R/pd_classes.R"
+#line 370 "R/pd_classes.R"
 test_that('object in setClass', {#@test object in setClass
     pd <- get_parse_data(parse(text='
                 setClass( "testClass"
@@ -178,7 +178,7 @@ test_that('object in setClass', {#@test object in setClass
 
     expect_identical(pd_is_in_class_definition(c(id, id2), pd), c(TRUE, FALSE))
 })
-#line 402 "R/pd_classes.R"
+#line 405 "R/pd_classes.R"
 test_that('pd_add_class_definition', {#@testing
     test.is <- pd_make_is_call('setTestClass')
     test.in <- pd_make_is_in_call('setTestClass', .is = test.is)
@@ -191,7 +191,7 @@ test_that('pd_add_class_definition', {#@testing
     expect_false(pd_is_class_definition(id = .find_text('MyClass', pd), pd))
     pd_class_definitions$rm('setTestClass')
 })
-#line 419 "R/pd_classes.R"
+#line 422 "R/pd_classes.R"
 test_that('pd_add_class', {#@testing
     pd_add_class('setAnotherClass', FALSE, TRUE)
 
@@ -203,7 +203,7 @@ test_that('pd_add_class', {#@testing
 
     pd_class_definitions$rm('setAnotherClass')
 })
-#line 456 "R/pd_classes.R"
+#line 459 "R/pd_classes.R"
 test_that('closest_call', {#@testing
 pd <- get_parse_data(parse(text={"
 x <- 1

@@ -1,8 +1,8 @@
-#! This file was automatically produced by the documentation package.
+#! This file was automatically produced by the testextra package.
 #! Changes will be overwritten.
 
 context('tests extracted from file `reconstitute.R`')
-#line 63 "/rdtf/parsetools/R/reconstitute.R"
+#line 102 "R/reconstitute.R"
 test_that('reconstitute', {#@testing
     pd <- get_parse_data(parse(text='rnorm(10L, mean=0, sd=1)', keep.source=TRUE))
     id <- roots(pd)
@@ -35,5 +35,29 @@ test_that('reconstitute', {#@testing
             fb <- firstborn(id)
             reconstitute(fb)
         })
+    expect_equal(reconstituted, expected)
+})
+#line 136 "R/reconstitute.R"
+test_that('reconstitute if statements}', {#@test reconstitute if statements}
+    pd <- get_parse_data(parse(text={'
+        if (TRUE) "YES" else "NO"
+        '}, keep.source=TRUE))
+    id <- roots(pd)
+
+    reconstituted <- pd_reconstitute(id, pd)
+    expect_is(reconstituted, 'if')
+
+    expected <- quote(if (TRUE) "YES" else "NO")
+    expect_equal(reconstituted, expected)
+
+    pd <- get_parse_data(parse(text={'
+        if (TRUE) "YES"
+        '}, keep.source=TRUE))
+    id <- roots(pd)
+
+    reconstituted <- pd_reconstitute(id, pd)
+    expect_is(reconstituted, 'if')
+
+    expected <- quote(if (TRUE) "YES")
     expect_equal(reconstituted, expected)
 })

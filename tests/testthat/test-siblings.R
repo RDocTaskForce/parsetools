@@ -2,7 +2,7 @@
 #! Changes will be overwritten.
 
 context('tests extracted from file `siblings.R`')
-#line 61 "R/siblings.R"
+#line 64 "R/siblings.R"
 test_that('next_sibling', {#@testing
     pd <- get_parse_data(parse(text='a+b', keep.source = TRUE))
     id <- parent(.find_text('a'))
@@ -17,7 +17,7 @@ test_that('next_sibling', {#@testing
     expect_error(pd_get_next_sibling_id(1e9L, pd))
     expect_error(pd_get_next_sibling_id(id, id))
 })
-#line 89 "R/siblings.R"
+#line 92 "R/siblings.R"
 test_that('prev_sibling', {#@testing
     pd <- get_parse_data(parse(text='a+b', keep.source = TRUE))
     id <- parent(.find_text('b'))

@@ -37,6 +37,9 @@
 #' and finally a node, as the youngest, for the body of the function.
 #'
 #' @inheritParams pd_is_assignment
+#' @example inst/examples/example-pd.R
+#' @example inst/examples/example-roots.R
+#' @example inst/examples/example-function.R
 NULL
 
 

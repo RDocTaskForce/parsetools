@@ -63,6 +63,9 @@
 #'                        the final (FALSE) generation be returned?
 #' @param .check          Perform checks for input validation?
 #' @param ...             arguments passed on.
+#' @example inst/examples/example-pd.R
+#' @example inst/examples/example-roots.R
+#' @example inst/examples/example-children.R
 NULL
 
 #' @describeIn family-nodes Get all nodes that are children of `id`.

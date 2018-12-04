@@ -52,6 +52,16 @@ parent is 0 or if the parent is a group and also a root.
 \item \code{ascend_to_root}: ascend from id to root
 }}
 
+\examples{
+# load example file and get_parse data
+ex.file <- system.file("examples", "example.R", package="parsetools")
+exprs <- parse(ex.file, keep.source = TRUE)
+pd <- get_parse_data(exprs)
+
+# There are 3 expressions so there should be three roots.
+sum(pd_is_root(pd$id, pd))
+roots <- pd_all_root_ids(pd)
+}
 \seealso{
 see \code{\link{pd_is_grouping}} for details on what a grouping is.
 }

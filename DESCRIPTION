@@ -42,6 +42,7 @@ Collate:
     'pd_classes.R'
     'pd_comments.R'
     'pd_function.R'
+    'pd_identify.R'
     'pd_if.R'
     'reconstitute.R'
     'root.R'

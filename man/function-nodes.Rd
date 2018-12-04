@@ -59,3 +59,35 @@ and finally a node, as the youngest, for the body of the function.
 \item \code{pd_get_function_arg_associated_comment_ids}: Retrieve relative documentation comments associated with function arguments.
 }}
 
+\examples{
+# load example file and get_parse data
+ex.file <- system.file("examples", "example.R", package="parsetools")
+exprs <- parse(ex.file, keep.source = TRUE)
+pd <- get_parse_data(exprs)
+
+# There are 3 expressions so there should be three roots.
+sum(pd_is_root(pd$id, pd))
+roots <- pd_all_root_ids(pd)
+
+function.id <- pd_get_assign_value_id(roots[[1]], pd)
+pd_is_function(function.id, pd)
+length(function.kids <- pd_get_children_ids(function.id, pd))
+# function nodes have many because it contains
+# 1. the function keyword.
+# 2. the parentheses '(' and ')'
+# 3. each argument name plus the equals sign and value, if given.
+# 4. and finally, and expr node for the function body.
+pd_token(function.kids, pd)
+# even though there are only two argument since each has
+# a default value given there are 6 total nodes that
+# return true as function arguments, care is needed when
+# dealing with function arguments.
+pd_is_function_arg(function.kids, pd)
+pd_get_function_arg_ids(function.id, pd)
+# A simple way to identify the argument names is
+pd_text(pd_get_function_arg_variable_ids(function.id, pd), pd)
+
+# To identify the function body node.
+pd_get_function_body_id(function.id, pd)
+
+}

@@ -1,69 +1,32 @@
-#######################################################################
-# get_parse_data.R
-# This file is part of the R package `parsetools`.
-#
-# Author: Andrew Redd
-# Copyright: 2017 The R Consortium
-#
-# LICENSE
-# ========
-# The R package `parsetools` is free software:
-# you can redistribute it and/or modify it under the terms of the
-# GNU General Public License as published by the Free Software
-# Foundation, either version 3 of the License, or (at your option)
-# any later version.
-#
-# This software is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program. If not, see http://www.gnu.org/licenses/.
-#
-#######################################################################
+# get_parse_data.R #####################################################
+#                                                                     #
+# This file is part of the R package `parsetools`.                    #
+#                                                                     #
+# Author: Andrew Redd                                                 #
+# Copyright: 2018 The R Consortium                                    #
+#                                                                     #
+# LICENSE                                                             #
+# ========                                                            #
+# The R package `parsetools` is free software:                        #
+# you can redistribute it and/or modify it under the terms of the     #
+# GNU General Public License as published by the Free Software        #
+# Foundation, either version 3 of the License, or (at your option)    #
+# any later version.                                                  #
+#                                                                     #
+# This software is distributed in the hope that it will be useful,    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of      #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the        #
+# GNU General Public License for more details.                        #
+#                                                                     #
+# You should have received a copy of the GNU General Public License   #
+# along with this program. If not, see http://www.gnu.org/licenses/.  #
+#_____________________________________________________________________#
 
 .pd.expected.names <-{c( 'line1', 'col1', 'line2', 'col2', 'id'
                        , 'parent', 'token', 'terminal', 'text'
                        )}
 
-
-#' @export
-as.data.frame.parseData <-
-function( x, ...){
-    x <- t(unclass(x))
-    colnames(x) <- c( "line1", "col1", "line2", "col2"
-                    , "terminal", "token.num", "id", "parent"
-                    )
-    x <- data.frame( x[, -c(5, 6), drop = FALSE]
-                   , token    = attr(x, "tokens")
-                   , terminal = as.logical(x[, "terminal"])
-                   , text     = attr(x, 'text')
-                   , stringsAsFactors = FALSE
-                   )
-    o <- order(x[, 1], x[, 2], -x[, 3], -x[, 4])
-    x <- x[o, ]
-    rownames(x) <- x$id
-    x
-}
-if(FALSE){#@testing
-    if(F)
-        debug(as.data.frame.parseData)
-    p <- parse(text={"
-    my_function <- function(object #< An object to do something with
-            ){
-        #' A title
-        #'
-        #' A Description
-        print(\"It Works!\")
-        #< A return value.
-    }"}, keep.source=TRUE)
-    srcfile <- attr(p, 'srcfile')
-    x <- srcfile$parseData
-
-    df1 <- as.data.frame.parseData(x, srcfile=srcfile)
-    expect_true(valid_parse_data(df1))
-}
+# Internal Helpers =====================================================
 
 #@internal
 get_srcfile <- function(x){
@@ -80,8 +43,72 @@ get_srcfile <- function(x){
     attr(srcref, "srcfile")
 }
 
+fix_eq_assign <-
+function( pd  #< The [parse-data] to fix
+        ){
+    #! Fix the parents for expressions associated with EQ_ASSIGN tokens.
+    # if ( R.version$major > 3
+    #   || ( R.version$major == 3
+    #     && R.version$minor >= 6.0 ))
+    #     return (pd)
+
+    ids <- pd[pd[['token']] == "EQ_ASSIGN", 'id']
+
+    for(id in rev(ids)) if (!identical(token(parent(id)), 'equal_assign'))
+        {
+
+        fam.pd <- get_children_pd(parent(id), pd, .check=FALSE)
+        fam.pd <- fam.pd[order(fam.pd$id), ]
+        fam.pd <- utils::head(fam.pd[fam.pd$id >= id, ], 3)
+
+        new.id <- max(pd$id)+1L
+        fam.pd$parent <- new.id
+
+        line1   = min(fam.pd$line1)
+        col1    = min(fam.pd[fam.pd$line1==line1, 'col1'])
+        line2   = max(fam.pd$line2)
+        col2    = max(fam.pd[fam.pd$line2==line2, 'col2'])
+
+        pd <-
+        rbind( pd[!(pd$id %in% c(fam.pd$id)), ]
+             , data.frame( line1, col1
+                         , line2, col2
+                         , id      = new.id
+                         , parent  = parent(id)
+                         , token   = 'equal_assign'
+                         , terminal= FALSE
+                         , text    = ''
+                         )
+             , fam.pd
+             )
+    }
+    pd[do.call(order, pd), ]
+}
+if(F){#! @testthat
+    pd <- utils::getParseData(parse(text="a=1", keep.source=TRUE))
+    fixed.pd <- fix_eq_assign(pd)
+    expect_true('equal_assign'%in% fixed.pd$token)
+    expect_true('EQ_ASSIGN'%in% fixed.pd$token)
+    expect_that(sum(fixed.pd$parent==0), equals(1))
+    expect_identical(fixed.pd, fix_eq_assign(fixed.pd))
+
+    pd <- utils::getParseData(parse(text="a=1\nb<-2\nc=3\nd<<-4", keep.source=TRUE))
+    fixed.pd <- fix_eq_assign(pd)
+    expect_true('equal_assign'%in% fixed.pd$token)
+    expect_true('EQ_ASSIGN'%in% fixed.pd$token)
+    expect_that(sum(fixed.pd$parent==0), equals(4))
+    expect_identical(fixed.pd, fix_eq_assign(fixed.pd))
+
+    pd <- utils::getParseData(parse(text="a=b=1", keep.source=TRUE))
+    fixed.pd <- fix_eq_assign(pd)
+    expect_true('equal_assign'%in% fixed.pd$token)
+    expect_true('EQ_ASSIGN'%in% fixed.pd$token)
+    expect_that(sum(fixed.pd$parent==0), equals(1))
+    expect_identical(fixed.pd, fix_eq_assign(fixed.pd))
+}
 
 
+# get_parse_data =======================================================
 #' @aliases parse-data
 #' @title Parse Data
 #'
@@ -96,8 +123,34 @@ get_srcfile <- function(x){
 #' This version also fails less often, even reparsing text when
 #' needed.
 #' @export
+#' @example inst/examples/example-get_parse_data.R
 get_parse_data <- function(x, ...)UseMethod("get_parse_data")
+if(FALSE){#@example
+    text <- "    my_function <- function(object #< An object to do something with
+            ){
+        #' A title
+        #'
+        #' A Description
+        print(\"It Works!\")
+        #< A return value.
+    }"
+    source(textConnection(text), keep.source = TRUE)
 
+    # Get parse data from a function
+    (pd <- get_parse_data(my_function))
+    # which must have a srcref attribute.
+    # You can call the get_parse data directly on the srcref object.
+    src <- utils::getSrcref(my_function)
+    pd2 <- get_parse_data(src)
+
+    identical(pd, pd2)
+
+    # Objects must have a srcref.
+    utils::getSrcref(rnorm)
+    tools::assertError(get_parse_data(rnorm), TRUE)
+}
+
+#' @describeIn get_parse_data
 #' @export
 get_parse_data.srcfile <-
 function( x
@@ -151,67 +204,6 @@ if(FALSE){#@testing
 
     unlink(tmp)
 }
-
-#' Get the ID for an object
-#'
-#' Identify in pd the id for the object given.
-#'
-#' @param pd the parse data.
-#' @param object an object that originated in pd,
-#'               for which to obtain the ID.
-#'
-#' @export
-pd_identify <-
-function( pd       #< parse data
-        , object   #< [srcref] object to identify
-        ) UseMethod('pd_identify', object)
-
-#' @export
-#' @describeIn pd_identify Default method identifies by [base::srcref()].
-pd_identify.default <-
-function( pd, object) pd_identify(pd=pd, utils::getSrcref(object))
-
-#' @export
-#' @describeIn pd_identify Passing a NULL object will result in an error.
-pd_identify.NULL <-
-function( pd, object) stop("Invalid object.")
-
-#' @export
-#' @describeIn pd_identify Identify by explicit `srcref`.
-pd_identify.srcref <-
-function( pd, object){
-    stopifnot( inherits(object, 'srcref')
-             , inherits(pd, 'parse-data')
-             )
-    pd[ pd$line1 == utils::getSrcLocation(object, 'line', TRUE )
-      & pd$line2 == utils::getSrcLocation(object, 'line', FALSE)
-      & pd$col1  == utils::getSrcLocation(object, 'col' , TRUE)
-      & pd$col2  == utils::getSrcLocation(object, 'col' , FALSE)
-      , 'id' ]
-}
-if(FALSE){#@testing
-    text <-{"my_function <-
-        function( object #< An object to do something with
-                ){
-            #' A title
-            #'
-            #' A Description
-            print('It Works!')
-            #< A return value.
-        }
-        another_f <- function(){}
-        if(F){}
-    "}
-    source(file = textConnection(text), local=TRUE, keep.source = TRUE )
-    parsed <- parse(text=text, keep.source=TRUE)
-    pd <- get_parse_data(parsed)
-
-    id <- pd_identify(pd, my_function)
-    expect_equal(id, 40)
-
-    expect_error(pd_identify(pd, NULL))
-}
-
 
 #' @export
 get_parse_data.srcref <-
@@ -373,71 +365,6 @@ if(FALSE){#@testing
     expect_is(pd, 'parse-data', info = "get_parse_datwa.default with srcfile")
 }
 
-fix_eq_assign <-
-function( pd  #< The [parse-data] to fix
-        ){
-    #! Fix the parents for expressions associated with EQ_ASSIGN tokens.
-    # if ( R.version$major > 3
-    #   || ( R.version$major == 3
-    #     && R.version$minor >= 6.0 ))
-    #     return (pd)
-
-    ids <- pd[pd[['token']] == "EQ_ASSIGN", 'id']
-
-    for(id in rev(ids)) if (!identical(token(parent(id)), 'equal_assign'))
-        {
-
-        fam.pd <- get_children_pd(parent(id), pd, .check=FALSE)
-        fam.pd <- fam.pd[order(fam.pd$id), ]
-        fam.pd <- utils::head(fam.pd[fam.pd$id >= id, ], 3)
-
-        new.id <- max(pd$id)+1L
-        fam.pd$parent <- new.id
-
-        line1   = min(fam.pd$line1)
-        col1    = min(fam.pd[fam.pd$line1==line1, 'col1'])
-        line2   = max(fam.pd$line2)
-        col2    = max(fam.pd[fam.pd$line2==line2, 'col2'])
-
-        pd <-
-        rbind( pd[!(pd$id %in% c(fam.pd$id)), ]
-             , data.frame( line1, col1
-                         , line2, col2
-                         , id      = new.id
-                         , parent  = parent(id)
-                         , token   = 'equal_assign'
-                         , terminal= FALSE
-                         , text    = ''
-                         )
-             , fam.pd
-             )
-    }
-    pd[do.call(order, pd), ]
-}
-if(F){#! @testthat
-    pd <- utils::getParseData(parse(text="a=1", keep.source=TRUE))
-    fixed.pd <- fix_eq_assign(pd)
-    expect_true('equal_assign'%in% fixed.pd$token)
-    expect_true('EQ_ASSIGN'%in% fixed.pd$token)
-    expect_that(sum(fixed.pd$parent==0), equals(1))
-    expect_identical(fixed.pd, fix_eq_assign(fixed.pd))
-
-    pd <- utils::getParseData(parse(text="a=1\nb<-2\nc=3\nd<<-4", keep.source=TRUE))
-    fixed.pd <- fix_eq_assign(pd)
-    expect_true('equal_assign'%in% fixed.pd$token)
-    expect_true('EQ_ASSIGN'%in% fixed.pd$token)
-    expect_that(sum(fixed.pd$parent==0), equals(4))
-    expect_identical(fixed.pd, fix_eq_assign(fixed.pd))
-
-    pd <- utils::getParseData(parse(text="a=b=1", keep.source=TRUE))
-    fixed.pd <- fix_eq_assign(pd)
-    expect_true('equal_assign'%in% fixed.pd$token)
-    expect_true('EQ_ASSIGN'%in% fixed.pd$token)
-    expect_that(sum(fixed.pd$parent==0), equals(1))
-    expect_identical(fixed.pd, fix_eq_assign(fixed.pd))
-}
-
-
 #' @export
 `subset.parse-data` <- function(x, ...)structure(NextMethod(), class=c('parse-data', 'data.frame'))
 if(FALSE){#@testing
@@ -457,6 +384,8 @@ if(FALSE){#@testing
     expect_is(pd2, 'parse-data')
     expect_equal(min(pd2$line1), 4)
 }
+
+# S3 Methods ===========================================================
 
 #' @export
 `[.parse-data` <- function(x, ...){
@@ -521,6 +450,46 @@ if(FALSE){#TODO test for parse-data
     }, keep.source=TRUE))
     sort(pd)
 }
+
+#' @export
+as.data.frame.parseData <-
+function( x, ...){
+    x <- t(unclass(x))
+    colnames(x) <- c( "line1", "col1", "line2", "col2"
+                    , "terminal", "token.num", "id", "parent"
+                    )
+    x <- data.frame( x[, -c(5, 6), drop = FALSE]
+                   , token    = attr(x, "tokens")
+                   , terminal = as.logical(x[, "terminal"])
+                   , text     = attr(x, 'text')
+                   , stringsAsFactors = FALSE
+                   )
+    o <- order(x[, 1], x[, 2], -x[, 3], -x[, 4])
+    x <- x[o, ]
+    rownames(x) <- x$id
+    x
+}
+if(FALSE){#@testing
+    if(F)
+        debug(as.data.frame.parseData)
+    p <- parse(text={"
+    my_function <- function(object #< An object to do something with
+            ){
+        #' A title
+        #'
+        #' A Description
+        print(\"It Works!\")
+        #< A return value.
+    }"}, keep.source=TRUE)
+    srcfile <- attr(p, 'srcfile')
+    x <- srcfile$parseData
+
+    df1 <- as.data.frame.parseData(x, srcfile=srcfile)
+    expect_true(valid_parse_data(df1))
+}
+
+# Others ===============================================================
+
 #' @export
 valid_parse_data <-
 function( df ){
@@ -542,6 +511,7 @@ if(F){#@testing
     expect_equal(valid_parse_data(datasets::iris      ), "names of data do not conform.")
     expect_equal(valid_parse_data(stats::rnorm(10,0,1)), "Not a data.frame object")
 }
+
 
 as_parse_data <- function(df){
     #' @rdname get_parse_data

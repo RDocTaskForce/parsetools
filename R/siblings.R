@@ -30,7 +30,10 @@
 #' These functions help to navigate siblings, nodes with the same parent.
 #'
 #' @inheritParams pd_get_children_ids
-#'
+#' @example inst/examples/example-pd.R
+#' @example inst/examples/example-roots.R
+#' @example inst/examples/example-function.R
+#' @example inst/examples/example-siblings.R
 NULL
 
 #' @describeIn family-nodes Identify siblings of `id`.

@@ -44,6 +44,8 @@
 #'
 #' @aliases root root-nodes root-ids
 #' @seealso see \code{\link{pd_is_grouping}} for details on what a grouping is.
+#' @example inst/examples/example-pd.R
+#' @example inst/examples/example-roots.R
 list()
 
 pd_is_root <-

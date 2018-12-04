@@ -2,7 +2,7 @@
 #! Changes will be overwritten.
 
 context('tests extracted from file `children.R`')
-#line 97 "R/children.R"
+#line 100 "R/children.R"
 test_that('children', {#! @test
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     id <- pd[pd$parent==0, 'id']
@@ -46,7 +46,7 @@ test_that('children', {#! @test
                 )
     expect_true( all(pd$id %in% pd_get_children_ids(0, pd, Inf)))
 })
-#line 155 "R/children.R"
+#line 158 "R/children.R"
 test_that('get_children_pd', {#!@test
     'rnorm(10, mean=0, sd=1)' -> text
     pd       <- get_parse_data(parse(text=text, keep.source=TRUE))

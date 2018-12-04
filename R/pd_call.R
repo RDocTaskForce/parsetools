@@ -40,6 +40,9 @@
 #' version.
 #'
 #' @inheritParams family-nodes
+#' @example inst/examples/example-pd.R
+#' @example inst/examples/example-roots.R
+#' @example inst/examples/example-call.R
 NULL
 
 #' @describeIn calls Test if the node is a call expression.

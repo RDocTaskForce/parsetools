@@ -19,6 +19,9 @@ assignment.opperators <- c("LEFT_ASSIGN", "RIGHT_ASSIGN", "EQ_ASSIGN")
 #' * and the equals assignment [`=`][base::assignOps].
 #'
 #' @inheritParams pd_get_children_ids
+#' @example inst/examples/example-pd.R
+#' @example inst/examples/example-roots.R
+#' @example inst/examples/example-assign.R
 NULL
 
 #' @describeIn assignments Check if the node is an assignment expression.

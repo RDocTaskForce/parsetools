@@ -6,3 +6,4 @@
 ^CONTRIB\.md$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^logo$

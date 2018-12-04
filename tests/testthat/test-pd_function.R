@@ -2,7 +2,7 @@
 #! Changes will be overwritten.
 
 context('tests extracted from file `pd_function.R`')
-#line 54 "/rdtf/parsetools/R/pd_function.R"
+#line 57 "R/pd_function.R"
 test_that('pd_is_function', {#! @testthat pd_is_function
     pd <- get_parse_data(parse(text="function(){}", keep.source=TRUE))
     expect_true(pd_is_function(roots(pd), pd))
@@ -14,7 +14,7 @@ test_that('pd_is_function', {#! @testthat pd_is_function
 
 
 })
-#line 84 "/rdtf/parsetools/R/pd_function.R"
+#line 87 "R/pd_function.R"
 test_that('function_body', {#@testing
 pd <- get_parse_data(parse(text="hello_world <- function(){
     print('hello world')
@@ -29,7 +29,7 @@ pd <- get_parse_data(parse(text="hello_world <- function(){
                     , parent(parent(.find_text('paste')), pd)
                     )
 })
-#line 112 "/rdtf/parsetools/R/pd_function.R"
+#line 115 "R/pd_function.R"
 test_that('function_args', {#@testing
 pd <- get_parse_data(parse(text='pd_get_function_arg_ids <-
 function( pd                    #< parse data
@@ -43,7 +43,7 @@ function( pd                    #< parse data
                        )
                     )
 })
-#line 140 "/rdtf/parsetools/R/pd_function.R"
+#line 143 "R/pd_function.R"
 test_that('function_arg_variables', {#@testing
 pd <- get_parse_data(parse(text='pd_get_function_arg_ids <-
 function( pd                    #< parse data
@@ -54,7 +54,7 @@ function( pd                    #< parse data
     expect_identical(pd_get_function_arg_variable_ids(id, pd), expected)
     expect_error(pd_get_function_arg_variable_ids(roots(pd), pd))
 })
-#line 175 "/rdtf/parsetools/R/pd_function.R"
+#line 178 "R/pd_function.R"
 test_that('is_function_arg', {#@testing
     pd <- get_parse_data(parse(text='
     function( a, b = 1){
@@ -68,7 +68,7 @@ test_that('is_function_arg', {#@testing
     expect_length(is_function_arg(pd$id, pd), nrow(pd))
     expect_equal(sum(is_function_arg(pd$id, pd)), 4)
 })
-#line 206 "/rdtf/parsetools/R/pd_function.R"
+#line 209 "R/pd_function.R"
 test_that('function_arg_associated_comments', {#@testing
 pd <- get_parse_data(parse(text='pd_get_function_arg_ids <-
 function( pd                    #< parse data

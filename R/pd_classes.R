@@ -92,6 +92,9 @@
 #'     class defining calls.
 #' }
 #'
+#' @example inst/examples/example-pd.R
+#' @example inst/examples/example-roots.R
+#' @example inst/examples/example-classes.R
 pd_class_definitions <- new.env(hash=TRUE)
 local(envir=pd_class_definitions, {
 .is    <- new.env(hash=TRUE, parent=emptyenv())
