@@ -112,10 +112,10 @@ if(FALSE){#@testing
 #'         be length of \code{nrow(x)}.  For character same length as x.
 pd_is_comment <- function(id, pd, .check=TRUE){
     #' @inheritParams pd_get_children_ids
-    if (.check){
+    if (.check){# nocov start
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
-    }
+    }# nocov end
     token(id, pd) %in% c(comment.classes$class, "NORMAL_COMMENT")
 }
 all_comment_ids <- make_get_all(pd_is_comment)
@@ -144,10 +144,10 @@ if(FALSE){#!@testing
 #'       Tests if the comment is a relative (location dependent) type comment.
 #'   }
 pd_is_relative_comment <- function(id, pd, .check=TRUE){
-    if(.check){
+    if(.check){# nocov start
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
-    }
+    }# nocov end
     token(id, pd) == "RELATIVE_COMMENT"
 }
 all_relative_comment_ids <- make_get_all(pd_is_relative_comment)
@@ -183,10 +183,10 @@ if(F){#@testing
 #'       Additionally tests if the comment is a documentation type comment.
 #'   }
 pd_is_doc_comment <- function(id, pd, .check=TRUE){
-    if (.check){
+    if (.check){# nocov start
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
-    }
+    }# nocov end
     token(id) %in% comment.classes$class
 }
 all_doc_comment_ids <- make_get_all(pd_is_doc_comment)

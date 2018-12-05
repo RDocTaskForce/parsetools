@@ -131,7 +131,6 @@ function( id, pd, .check=TRUE){
         stopifnot(all(is_symbol_call(id,pd)))
     }
     if (length(id)>1) return(sapply(id, pd_get_call_symbol_id, pd=pd))
-    if (!pd_is_symbol_call(id, pd)) return(NA_integer_)
     stopifnot(pd_is_symbol_call(id, pd))
     children(next_sibling(firstborn(id)))
 }
@@ -179,12 +178,11 @@ function( id, pd, .check=TRUE){
                           stopifnot( all(token(arg) == c('SYMBOL_SUB', 'EQ_SUB', 'expr')) )
                           return(arg[[3]])
                       }
-                      stop("I don't know how to handle this :(")
+                      stop("I don't know how to handle this :(") # nocov
                   })
     names(val) <- sapply(args, function(arg){
                       if (length(arg) == 1) return('')
                       if (length(arg) >  1) return(text(arg[1]))
-                      stop()
                   })
     return(val)
     #' @return a named list where each element is the id for the `expr` element of the argument.

@@ -186,6 +186,13 @@ if(FALSE){#!@test
 #' Count the number of children
 n_children <- function(id=pd$id, pd=get('pd', parent.frame())){
     #' @inheritParams pd_get_children_ids
-    if (length(id)>1L) sapply(id, n_children, pd=pd)
+    if (length(id)>1L) return(sapply(id, n_children, pd=pd))
     length(children(id))
+}
+if(FALSE){#@testing
+    ex.file <- system.file("examples", "example.R", package="parsetools")
+    exprs <- parse(ex.file, keep.source = TRUE)
+    pd <- get_parse_data(exprs)
+
+    expect_equal(n_children(roots(pd)), c(3, 3, 8))
 }

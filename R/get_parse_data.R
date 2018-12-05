@@ -42,6 +42,20 @@ get_srcfile <- function(x){
     }
     attr(srcref, "srcfile")
 }
+if(FALSE){#@testing
+    ex.file <- system.file("examples", "example.R", package="parsetools")
+    exprs <- parse(ex.file, keep.source = TRUE)
+    pd <- get_parse_data(exprs)
+
+    sf <- attr(exprs, 'srcfile')
+    expect_identical(get_srcfile(exprs), sf)
+    attr(exprs, 'srcfile') <- NULL
+
+    expect_identical(get_srcfile(exprs), sf)
+    attr(exprs, "wholeSrcref") <- NULL
+
+    expect_identical(get_srcfile(exprs), sf)
+}
 
 fix_eq_assign <-
 function( pd  #< The [parse-data] to fix
@@ -221,7 +235,7 @@ function( x
     pd <- get_parse_data.srcfile(attr(x, 'srcfile'), ...)
     id <- pd_identify(pd, x)
     root <- ascend_to_root(id, pd, ignore.groups=ignore.groups)
-    if  (!length(root)) return(NULL)
+    if  (!length(root)) return(NULL) # nocov
     structure(id = id, root=root,
     get_family_pd( root, pd
                  , include.doc.comments     = include.doc.comments
@@ -263,7 +277,9 @@ function(x, ...){
     if (methods::isGeneric(fdef=x)) {
         default <- attr(x, 'default')
         if (is.null(default) || !is.function(default))
-            stop(deparse(substitute(x)), " appears to be a generic, but could not find the default method, where parse data should be found.")
+            stop( deparse(substitute(x))
+                , " appears to be a generic, but could not find the"
+                , " default method, where parse data should be found.")
         return(Recall(default, ...))
     }
     get_parse_data.default(x, ...)
@@ -338,6 +354,17 @@ if(FALSE){#@test get_parse_data.function S4 Generic
     pd <- get_parse_data(my_generic)
     expect_is(pd, 'parse-data')
 }
+if(FALSE){#@test get_parse_data.function
+    p <- parse(text='setGeneric("test_generic",
+        function(object
+                ){
+            value <- standardGeneric("test_generic")
+        })', keep.source=TRUE)
+    eval(p)
+    expect_true(isGeneric(fdef = test_generic))
+    expect_error( get_parse_data(test_generic)
+                , "could not find the default method")
+}
 #' @export
 get_parse_data.default <-
 function( x, ...){
@@ -363,6 +390,10 @@ if(FALSE){#@testing
                          ), keep.source=TRUE)
     pd <- get_parse_data(exprs, keep.source=TRUE)
     expect_is(pd, 'parse-data', info = "get_parse_datwa.default with srcfile")
+
+
+    expect_error(get_parse_data.default(datasets::iris)
+                , "datasets::iris does not have a valid srcref\\.")
 }
 
 #' @export
@@ -390,7 +421,7 @@ if(FALSE){#@testing
 #' @export
 `[.parse-data` <- function(x, ...){
     result <- NextMethod()
-    if(inherits(result, 'data-frame'))
+    if (inherits(result, 'data.frame'))
         structure(result, class=c('parse-data', 'data.frame'))
     else
         result

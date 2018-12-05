@@ -38,11 +38,11 @@ NULL
 
 #' @describeIn family-nodes Identify siblings of `id`.
 pd_get_sibling_ids <- function(id, pd, .check=TRUE){
-    if (.check){
+    if (.check){# nocov start
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
         stopifnot(length(id) == 1)
-    }
+    }# nocov end
     children(parent(id, pd), pd)
 }
 siblings <- internal(pd_get_sibling_ids)
@@ -51,10 +51,10 @@ siblings <- internal(pd_get_sibling_ids)
 #' @describeIn family-nodes Get the next younger sibling.
 pd_get_next_sibling_id <-
 function(id, pd, .check=TRUE){
-    if (.check){
+    if (.check){# nocov start
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
-    }
+    }# nocov end
     if (length(id) > 1L) return(sapply(id, pd_get_next_sibling_id, pd=pd, .check=FALSE))
     sids <- siblings(id, pd)
     . <- which(sids>id)

@@ -2,7 +2,7 @@
 #! Changes will be overwritten.
 
 context('tests extracted from file `testing_blocks.R`')
-#line 103 "R/testing_blocks.R"
+#line 103 "/rdtf/parsetools/R/testing_blocks.R"
 test_that('extract_test_block', {#!@testing
     pd <- get_parse_data(parse(text={'
     if(F){#!@testing
@@ -130,7 +130,7 @@ test_that('extract_test_block', {#!@testing
                            )
                 , info = "setAs")
 })
-#line 230 "R/testing_blocks.R"
+#line 230 "/rdtf/parsetools/R/testing_blocks.R"
 test_that('Extraction with block tag.', {#@testing Extraction with block tag.
     pd <- get_parse_data(parse(text={"
         if(FALSE){#@testing An info string
@@ -146,7 +146,15 @@ test_that('Extraction with block tag.', {#@testing Extraction with block tag.
                            , name = "An info string")
                 , info = "using text string")
 })
-#line 271 "R/testing_blocks.R"
+#line 258 "/rdtf/parsetools/R/testing_blocks.R"
+test_that('extract_test_blocks_parse_data', {#@testing
+    ex.file <- system.file("examples", "example.R", package="parsetools")
+    exprs <- parse(ex.file, keep.source = TRUE)
+    pd <- get_parse_data(exprs)
+
+    expect_null(extract_test_blocks_parse_data(pd))
+})
+#line 279 "/rdtf/parsetools/R/testing_blocks.R"
 test_that('extract_test_blocks', {#! @testthat
 text <- {'hello_world <- function(){
     print("hello world")

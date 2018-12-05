@@ -110,6 +110,14 @@ filename <- function(pd=get('pd', parent.frame())){
     src            <- attr(pd, 'srcfile')
     if (!is.null(src)) src$filename else "<UNKNOWN>"
 }
+if(FALSE){#@test
+    pd <- get_parse_data(parse(text="1+1"))
+    expect_identical(filename(pd), "<text>")
+
+    attr(pd, 'srcfile') <- NULL
+    expect_identical(filename(pd), "<UNKNOWN>")
+}
+
 
 #@internal
 lines <- function(id, pd=get('pd', parent.frame())){
@@ -289,7 +297,3 @@ pd_end_line <- external(end_line)
 pd_filename <- external(filename)
 pd_start_col <- external(start_col)
 pd_end_col <- external(end_col)
-
-
-#@internal
-cumand <- function(a)Reduce('&&', a, right=TRUE, accumulate = TRUE)

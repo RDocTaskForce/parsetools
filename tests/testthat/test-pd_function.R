@@ -14,7 +14,19 @@ test_that('pd_is_function', {#! @testthat pd_is_function
 
 
 })
-#line 87 "R/pd_function.R"
+#line 79 "R/pd_function.R"
+test_that('is_in_function', {#@testing
+    ex.file <- system.file("examples", "example.R", package="parsetools")
+    exprs <- parse(ex.file, keep.source = TRUE)
+    pd <- get_parse_data(exprs)
+
+    id <- .find_text('"Congratulations!"')
+    expect_true(pd_is_in_function(id, pd))
+
+    id <- .find_text('"myClass"')
+    expect_identical(is_in_function(id), c(FALSE, FALSE))
+})
+#line 105 "R/pd_function.R"
 test_that('function_body', {#@testing
 pd <- get_parse_data(parse(text="hello_world <- function(){
     print('hello world')
@@ -29,7 +41,21 @@ pd <- get_parse_data(parse(text="hello_world <- function(){
                     , parent(parent(.find_text('paste')), pd)
                     )
 })
-#line 115 "R/pd_function.R"
+#line 119 "R/pd_function.R"
+test_that('function_body vectorizing', {#@testing function_body vectorizing
+pd <- get_parse_data(parse(text="
+hello_world <- function(){
+    print('hello world')
+}
+goodby_earth <- function(){
+    print('goodby earth')
+}
+", keep.source=TRUE))
+
+    id <- all_function_ids(pd)
+    expect_equal(pd_get_function_body_id(id, pd), parent(.find_text('{')))
+})
+#line 146 "R/pd_function.R"
 test_that('function_args', {#@testing
 pd <- get_parse_data(parse(text='pd_get_function_arg_ids <-
 function( pd                    #< parse data
@@ -43,7 +69,7 @@ function( pd                    #< parse data
                        )
                     )
 })
-#line 143 "R/pd_function.R"
+#line 174 "R/pd_function.R"
 test_that('function_arg_variables', {#@testing
 pd <- get_parse_data(parse(text='pd_get_function_arg_ids <-
 function( pd                    #< parse data
@@ -54,7 +80,19 @@ function( pd                    #< parse data
     expect_identical(pd_get_function_arg_variable_ids(id, pd), expected)
     expect_error(pd_get_function_arg_variable_ids(roots(pd), pd))
 })
-#line 178 "R/pd_function.R"
+#line 190 "R/pd_function.R"
+test_that('pd_get_function_arg_variable_text', {#@testing
+    pd <- get_parse_data(parse(text='
+    function( a, b = 1){
+        cat("hello world")
+    }', keep.source=TRUE))
+
+    id <- roots(pd)
+    expect_identical( pd_get_function_arg_variable_text(id, pd)
+                    , c("a", "b")
+                    )
+})
+#line 220 "R/pd_function.R"
 test_that('is_function_arg', {#@testing
     pd <- get_parse_data(parse(text='
     function( a, b = 1){
@@ -68,7 +106,7 @@ test_that('is_function_arg', {#@testing
     expect_length(is_function_arg(pd$id, pd), nrow(pd))
     expect_equal(sum(is_function_arg(pd$id, pd)), 4)
 })
-#line 209 "R/pd_function.R"
+#line 251 "R/pd_function.R"
 test_that('function_arg_associated_comments', {#@testing
 pd <- get_parse_data(parse(text='pd_get_function_arg_ids <-
 function( pd                    #< parse data

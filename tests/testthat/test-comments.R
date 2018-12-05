@@ -1,8 +1,8 @@
-#! This file was automatically produced by the documentation package.
+#! This file was automatically produced by the testextra package.
 #! Changes will be overwritten.
 
 context('tests extracted from file `comments.R`')
-#line 48 "/rdtf/parsetools/R/comments.R"
+#line 48 "R/comments.R"
 test_that('classify_comment.character', {#@testing
     expect_equal(classify_comment.character("## normal comment       "), "NORMAL_COMMENT")
     expect_equal(classify_comment.character("#' Roxygen comment      "), "ROXYGEN_COMMENT")
@@ -13,7 +13,7 @@ test_that('classify_comment.character', {#@testing
 
     expect_equal(classify_comment.character("1"), "")
 })
-#line 64 "/rdtf/parsetools/R/comments.R"
+#line 64 "R/comments.R"
 test_that('classify_comment.data.frame', {#@testing
     x <-
     df <- utils::getParseData(parse(text="{
@@ -34,7 +34,7 @@ test_that('classify_comment.data.frame', {#@testing
                    , "'}'")
                 )
 })
-#line 85 "/rdtf/parsetools/R/comments.R"
+#line 85 "R/comments.R"
 test_that('classify_comment', {#@testing
     df <- utils::getParseData(parse(text="{
         ## normal comment
@@ -54,7 +54,7 @@ test_that('classify_comment', {#@testing
                    )
                 )
 })
-#line 123 "/rdtf/parsetools/R/comments.R"
+#line 123 "R/comments.R"
 test_that('is_comment', {#!@testing
     pd <- get_parse_data(parse(text={"
         ## normal comment
@@ -71,7 +71,7 @@ test_that('is_comment', {#!@testing
 
     expect_equal( all_comment_ids(pd), (1:6)*3L)
 })
-#line 162 "/rdtf/parsetools/R/comments.R"
+#line 162 "R/comments.R"
 test_that('is_relative_comment', {#@testing
     pd <- get_parse_data(parse(text={"
         ## normal comment
@@ -87,7 +87,7 @@ test_that('is_relative_comment', {#@testing
     expect_equal(rtn, c(F,F,F,T,F,F,F,F))
 
 })
-#line 194 "/rdtf/parsetools/R/comments.R"
+#line 194 "R/comments.R"
 test_that('is_doc_comment', {#@testing
     pd <- get_parse_data(parse(text="{
         ## normal comment
@@ -113,7 +113,7 @@ test_that('is_doc_comment', {#@testing
     expect_is(rtn, 'logical')
     expect_equal(rtn, c(F,F,F,T,T,T,T,T,F))
 })
-#line 227 "/rdtf/parsetools/R/comments.R"
+#line 227 "R/comments.R"
 test_that('strip_doc_comment_leads.character', {#@testing
     expect_equal(strip_doc_comment_leads.character("#  normal comment       "), "#  normal comment")
     expect_equal(strip_doc_comment_leads.character("#' Roxygen comment      "), "Roxygen comment")
@@ -122,7 +122,7 @@ test_that('strip_doc_comment_leads.character', {#@testing
     expect_equal(strip_doc_comment_leads.character("#^ Continuation comment "), "Continuation comment")
     expect_equal(strip_doc_comment_leads.character("#@ Tag comment          "), "Tag comment")
 })
-#line 243 "/rdtf/parsetools/R/comments.R"
+#line 243 "R/comments.R"
 test_that('strip_doc_comment_leads.data.frame', {#@testing
     pd <- get_parse_data(parse(text="{
         ## normal comment
@@ -143,7 +143,7 @@ test_that('strip_doc_comment_leads.data.frame', {#@testing
                    )
                 )
 })
-#line 275 "/rdtf/parsetools/R/comments.R"
+#line 275 "R/comments.R"
 test_that('strip_doc_comment_leads', {#@testing
     expect_equal(strip_doc_comment_leads("#  normal comment       "), "#  normal comment")
     expect_equal(strip_doc_comment_leads("#' Roxygen comment      "), "Roxygen comment")

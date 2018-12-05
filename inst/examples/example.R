@@ -29,7 +29,7 @@ hello_world <- function(greeting="hello", who="world"){
 
 myClass <- setClass("myClass", contains='list')
 
-setMethod('initialize', 'myClass', function(.Object, ...){
+setMethod("initialize", "myClass", function(.Object, ...){
     l <- list(...)
     if (!all(sapply(l, is, 'character')))
         stop("Sorry you are not a winner.  Please try again.")

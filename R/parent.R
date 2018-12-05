@@ -58,7 +58,6 @@ function( id, pd
         , last         = 0L
         , .check = TRUE
         ){
-    id <- ._check_id(id)
     if (.check){
         pd <- ._check_parse_data(pd)
         id <- ._check_id(id, pd)
@@ -67,14 +66,12 @@ function( id, pd
                  , length(id) == 1L
                  )
     }
-    if ( include.self && only.present && !(id %in% pd$id))
-            stop("only.present=TRUE and include.self=TRUE but id is not present in pd.")
     if (ngenerations == 0 && include.self) return (id)
     if (aggregate) ancestors <- if (include.self) id else integer(0)
     while(ngenerations > 0L){
         ngenerations <- ngenerations - 1
         parent <- parent(id, pd)
-        if (is.na(parent)) break
+        if (is.na(parent)) break # nocov
         if (only.present && !parent %in% pd$id){
             parent <- id
             break

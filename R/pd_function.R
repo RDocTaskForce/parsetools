@@ -66,10 +66,28 @@ if(F){#! @testthat pd_is_function
 
 }
 
-.pd_is_in_function <-
+pd_is_in_function <-
 function( id, pd, .check=TRUE){
-    stop("Not implimented")
+    if(.check){
+        pd <- ._check_parse_data(pd)
+        id <- ._check_id(id, pd)
+    }
+    if (length(id)>1L) return(sapply(id, pd_is_in_function, pd=pd, .check=FALSE))
+    any(is_function(ancestors(id)))
 }
+is_in_function <- internal(pd_is_in_function)
+if(FALSE){#@testing
+    ex.file <- system.file("examples", "example.R", package="parsetools")
+    exprs <- parse(ex.file, keep.source = TRUE)
+    pd <- get_parse_data(exprs)
+
+    id <- .find_text('"Congratulations!"')
+    expect_true(pd_is_in_function(id, pd))
+
+    id <- .find_text('"myClass"')
+    expect_identical(is_in_function(id), c(FALSE, FALSE))
+}
+
 
 
 #' @describeIn function-nodes Obtain the body of a function
@@ -97,6 +115,19 @@ pd <- get_parse_data(parse(text="hello_world <- function(){
     expect_identical( pd_get_function_body_id(all_function_ids(pd), pd=pd)
                     , parent(parent(.find_text('paste')), pd)
                     )
+}
+if(FALSE){#@testing function_body vectorizing
+pd <- get_parse_data(parse(text="
+hello_world <- function(){
+    print('hello world')
+}
+goodby_earth <- function(){
+    print('goodby earth')
+}
+", keep.source=TRUE))
+
+    id <- all_function_ids(pd)
+    expect_equal(pd_get_function_body_id(id, pd), parent(.find_text('{')))
 }
 
 #' @describeIn function-nodes Obtain the ids for the arguments of a function
@@ -153,9 +184,20 @@ function( pd                    #< parse data
 
 #' @describeIn function-nodes Get the variable names for a function definition.
 pd_get_function_arg_variable_text <-
-    function(id, pd, .check=TRUE)
-        pd_get_function_arg_variable_ids(id=id, pd=pd, .check=.check)
+function(id, pd, .check=TRUE){
+    text(pd_get_function_arg_variable_ids(id=id, pd=pd, .check=.check))
+}
+if(FALSE){#@testing
+    pd <- get_parse_data(parse(text='
+    function( a, b = 1){
+        cat("hello world")
+    }', keep.source=TRUE))
 
+    id <- roots(pd)
+    expect_identical( pd_get_function_arg_variable_text(id, pd)
+                    , c("a", "b")
+                    )
+}
 
 #' @describeIn function-nodes is `id` a function argument?
 pd_is_function_arg <-

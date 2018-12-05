@@ -15,7 +15,7 @@ pd_token(function.kids, pd)
 pd_is_function_arg(function.kids, pd)
 pd_get_function_arg_ids(function.id, pd)
 # A simple way to identify the argument names is
-pd_text(pd_get_function_arg_variable_ids(function.id, pd), pd)
+pd_get_function_arg_variable_text(function.id, pd)
 
 # To identify the function body node.
 pd_get_function_body_id(function.id, pd)

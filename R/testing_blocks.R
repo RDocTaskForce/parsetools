@@ -255,6 +255,14 @@ function( pd ){
                     , start.locations = utils::head(cumsum(c(1, sapply(.l, length))),-1)
                     ))
 }
+if(FALSE){#@testing
+    ex.file <- system.file("examples", "example.R", package="parsetools")
+    exprs <- parse(ex.file, keep.source = TRUE)
+    pd <- get_parse_data(exprs)
+
+    expect_null(extract_test_blocks_parse_data(pd))
+}
+
 
 #' @export
 extract_test_blocks <-
