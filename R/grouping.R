@@ -105,7 +105,7 @@ function( id = all_grouping_ids(pd)
                     if (is_root(n, pd))
                         pd[ pd$id == cid, 'parent'] <- -n
                     else
-                        pd[ pd$id == cid, 'parent'] <- -ascend_to_root(n, pd)
+                        pd[ pd$id == cid, 'parent'] <- -ascend_to_root(n, pd) # nocov
                 }
             }
     }

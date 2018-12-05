@@ -403,7 +403,7 @@ function(id, pd, .check=TRUE){
                             class.arg <- if ('Class' %in% names(args)) args[['Class']] else args[[1L]]
                             while (token(class.arg) == 'expr') class.arg <- firstborn(class.arg)
                             if (token(class.arg) == 'STR_CONST') unquote(text(class.arg)) else
-                                line_error(prev.id, 'cannot infer Class argument of setClass at')
+                                line_error(prev.id, 'Cannot infer Class argument of setClass.')
                         }
                     structure(name, type = "setClass")
                 }
@@ -424,12 +424,15 @@ function(id, pd, .check=TRUE){
                     signature <- {
                         # args[[ifelse('signature' %in% names(args), 'signature', 2L)]]
                         sig.arg <- args[[ifelse('signature' %in% names(args), 'signature', 2L)]]
-                        if (is_symbol_call(sig.arg,pd)) {
-                            if (!(text(call_symbol(sig.arg)) %in% c('signature', 'c')))
-                                line_error(sig.arg, 'Cannot infer signature for setMethod.')
-                            args <- call_args(sig.arg)
-                            sig.args.text <- expr_text(args)
-                        } else expr_text(sig.arg)
+                        if ( is_symbol_call(sig.arg,pd)
+                          && (text(call_symbol(sig.arg)) %in% c('signature', 'c'))
+                           ) {
+                            expr_text(call_args(sig.arg))
+                        } else
+                        if (token(firstborn(sig.arg)) == 'STR_CONST'){
+                            expr_text(sig.arg)
+                        } else
+                            line_error(sig.arg, 'Cannot infer signature for setMethod.')
                     }
                     name <- paste0(fname, paste0(',', signature, collapse=''), '-method')
                     structure(name, type="setMethod")
@@ -447,7 +450,7 @@ function(id, pd, .check=TRUE){
                         fname.arg <- args[[ifelse('f' %in% names(args), 'f', 1L)]]
                         while (token(fname.arg) == 'expr') fname.arg <- firstborn(fname.arg)
                         if (token(fname.arg) == 'STR_CONST') unquote(text(fname.arg)) else
-                            line_error(prev.id, "Cannot infer method name for setGeneric")
+                            line_error(prev.id, "Cannot infer method name for setGeneric.")
                     }
                     structure(fname, type='setGeneric')
                 }
@@ -462,13 +465,13 @@ function(id, pd, .check=TRUE){
                         fname.arg <- args[[ifelse('from' %in% names(args), 'from', 1L)]]
                         while (token(fname.arg) == 'expr') fname.arg <- firstborn(fname.arg)
                         if (token(fname.arg) == 'STR_CONST') unquote(text(fname.arg)) else
-                            line_error(prev.id, "Cannot infer from class for setAs")
+                            line_error(prev.id, "Cannot infer from class for setAs.")
                     }
                     to <- {
                         fname.arg <- args[[ifelse('to' %in% names(args), 'to', 2L)]]
                         while (token(fname.arg) == 'expr') fname.arg <- firstborn(fname.arg)
                         if (token(fname.arg) == 'STR_CONST') unquote(text(fname.arg)) else
-                            line_error(prev.id, "Cannot infer to argument for setAs")
+                            line_error(prev.id, "Cannot infer to argument for setAs.")
                     }
                     structure( paste0(paste(fname, from, to, sep=','), '-method')
                              , from=from, to=to, type='setAs')
@@ -567,5 +570,68 @@ if(FALSE){#!@testing
                            , from='class1', to='class2' )
                 , info="setAs")
 }
+if(FALSE){#@testing iff_associated_name errors
+    pd <- get_parse_data(parse(text={'
+    setClass(A)
+    if(F){#@testing
+        #testing a setClass
+    }'}))
+    id <- all_tagged_iff_block_ids(pd, c('testing', 'testthat', 'test'))
+    expect_error( iff_associated_name(pd)
+                , "Cannot infer Class argument of setClass")
 
+    pd <- get_parse_data(parse(text={'
+    setMethod(A, "class")
+    if(F){#@testing
+        #testing a setMethod
+    }'}))
+    id <- all_tagged_iff_block_ids(pd, c('testing', 'testthat', 'test'))
+    expect_error( iff_associated_name(pd)
+                , "Cannot infer method name for setMethod.")
+
+    pd <- get_parse_data(parse(text={'
+    setMethod("show", setClass("A"))
+    if(F){#@testing
+        #testing a setMethod
+    }'}))
+    id <- all_tagged_iff_block_ids(pd, c('testing', 'testthat', 'test'))
+    expect_error( iff_associated_name(id, pd)
+                , "Cannot infer signature for setMethod.")
+
+    pd <- get_parse_data(parse(text={'
+    setMethod("show", A)
+    if(F){#@testing
+        #testing a setMethod
+    }'}))
+    id <- all_tagged_iff_block_ids(pd, c('testing', 'testthat', 'test'))
+    expect_error( iff_associated_name(id, pd)
+                , "Cannot infer signature for setMethod.")
+
+    pd <- get_parse_data(parse(text={'
+    setGeneric(generic, function(x){x})
+    if(F){#@testing
+        #testing a setGeneric
+    }'}))
+    id <- all_tagged_iff_block_ids(pd, c('testing', 'testthat', 'test'))
+    expect_error( iff_associated_name(id, pd)
+                , "Cannot infer method name for setGeneric.")
+
+    pd <- get_parse_data(parse(text={'
+    setAs(from, "to")
+    if(F){#@testing
+        #testing a setAs
+    }'}))
+    id <- all_tagged_iff_block_ids(pd, c('testing', 'testthat', 'test'))
+    expect_error( iff_associated_name(id, pd)
+                , "Cannot infer from class for setAs.")
+
+    pd <- get_parse_data(parse(text={'
+    setAs("from", to)
+    if(F){#@testing
+        #testing a setAs
+    }'}))
+    id <- all_tagged_iff_block_ids(pd, c('testing', 'testthat', 'test'))
+    expect_error( iff_associated_name(id, pd)
+                , "Cannot infer to argument for setAs.")
+}
 

@@ -2,7 +2,7 @@
 #! Changes will be overwritten.
 
 context('tests extracted from file `iff_blocks.R`')
-#line 85 "R/iff_blocks.R"
+#line 85 "/rdtf/parsetools/R/iff_blocks.R"
 test_that('is_iff', {#!@testing
     pd <- get_parse_data(parse(text={"
         if(FALSE){# an if(FALSE) block
@@ -24,7 +24,7 @@ test_that('is_iff', {#!@testing
     expect_equal(pd_is_iff(roots(pd), pd), c(TRUE, TRUE, FALSE, TRUE))
     expect_equal(   is_iff(pd=pd), c(TRUE, TRUE, FALSE, TRUE))
 })
-#line 137 "R/iff_blocks.R"
+#line 137 "/rdtf/parsetools/R/iff_blocks.R"
 test_that('is_iff_block', {#!@testing
     pd <- get_parse_data(parse(text={"
         if(FALSE){# an if(FALSE) block
@@ -46,7 +46,7 @@ test_that('is_iff_block', {#!@testing
     expect_equal(pd_is_iff_block(roots(pd), pd, FALSE), c(TRUE, FALSE, FALSE, FALSE))
     expect_equal(   is_iff_block(pd=pd), c(TRUE, TRUE, FALSE, FALSE))
 })
-#line 179 "R/iff_blocks.R"
+#line 179 "/rdtf/parsetools/R/iff_blocks.R"
 test_that('all_iff_block_ids', {#!@testing
     pd <- get_parse_data(parse(text={"
         if(FALSE){# an if(FALSE) block
@@ -75,7 +75,7 @@ test_that('all_iff_block_ids', {#!@testing
     iff.ids <- all_iff_block_ids(pd, root.only=FALSE, ignore.groups = FALSE)
     expect_equal(length(iff.ids), 4)
 })
-#line 234 "R/iff_blocks.R"
+#line 234 "/rdtf/parsetools/R/iff_blocks.R"
 test_that('pd_is_tagged_iff_block', {#!@testing
     pd  <- get_parse_data(parse(text={"
         if(FALSE){#!@tag
@@ -122,7 +122,7 @@ test_that('pd_is_tagged_iff_block', {#!@testing
     pd <- get_parse_data(parse(text='if(F){#@tag\nF\n}', keep.source=TRUE))
     expect_true(pd_is_tagged_iff_block(roots(pd), pd, tag))
 })
-#line 301 "R/iff_blocks.R"
+#line 301 "/rdtf/parsetools/R/iff_blocks.R"
 test_that('all_tagged_iff_block_ids', {#!@testing
     pd  <- get_parse_data(parse(text={"
         if(FALSE){#!@tag
@@ -155,7 +155,7 @@ test_that('all_tagged_iff_block_ids', {#!@testing
     tagged.iff.ids <- all_tagged_iff_block_ids(pd, tag)
     expect_identical(tagged.iff.ids, integer(0))
 })
-#line 481 "R/iff_blocks.R"
+#line 484 "/rdtf/parsetools/R/iff_blocks.R"
 test_that('iff_associated_name', {#!@testing
     pd <- get_parse_data(parse(text={'
     if(F){#!@testing
@@ -244,4 +244,69 @@ test_that('iff_associated_name', {#!@testing
                 , structure("coerce,class1,class2-method", type = "setAs"
                            , from='class1', to='class2' )
                 , info="setAs")
+})
+#line 573 "/rdtf/parsetools/R/iff_blocks.R"
+test_that('iff_associated_name errors', {#@testing iff_associated_name errors
+    pd <- get_parse_data(parse(text={'
+    setClass(A)
+    if(F){#@testing
+        #testing a setClass
+    }'}))
+    id <- all_tagged_iff_block_ids(pd, c('testing', 'testthat', 'test'))
+    expect_error( iff_associated_name(pd)
+                , "Cannot infer Class argument of setClass")
+
+    pd <- get_parse_data(parse(text={'
+    setMethod(A, "class")
+    if(F){#@testing
+        #testing a setMethod
+    }'}))
+    id <- all_tagged_iff_block_ids(pd, c('testing', 'testthat', 'test'))
+    expect_error( iff_associated_name(pd)
+                , "Cannot infer method name for setMethod.")
+
+    pd <- get_parse_data(parse(text={'
+    setMethod("show", setClass("A"))
+    if(F){#@testing
+        #testing a setMethod
+    }'}))
+    id <- all_tagged_iff_block_ids(pd, c('testing', 'testthat', 'test'))
+    expect_error( iff_associated_name(id, pd)
+                , "Cannot infer signature for setMethod.")
+
+    pd <- get_parse_data(parse(text={'
+    setMethod("show", A)
+    if(F){#@testing
+        #testing a setMethod
+    }'}))
+    id <- all_tagged_iff_block_ids(pd, c('testing', 'testthat', 'test'))
+    expect_error( iff_associated_name(id, pd)
+                , "Cannot infer signature for setMethod.")
+
+    pd <- get_parse_data(parse(text={'
+    setGeneric(generic, function(x){x})
+    if(F){#@testing
+        #testing a setGeneric
+    }'}))
+    id <- all_tagged_iff_block_ids(pd, c('testing', 'testthat', 'test'))
+    expect_error( iff_associated_name(id, pd)
+                , "Cannot infer method name for setGeneric.")
+
+    pd <- get_parse_data(parse(text={'
+    setAs(from, "to")
+    if(F){#@testing
+        #testing a setAs
+    }'}))
+    id <- all_tagged_iff_block_ids(pd, c('testing', 'testthat', 'test'))
+    expect_error( iff_associated_name(id, pd)
+                , "Cannot infer from class for setAs.")
+
+    pd <- get_parse_data(parse(text={'
+    setAs("from", to)
+    if(F){#@testing
+        #testing a setAs
+    }'}))
+    id <- all_tagged_iff_block_ids(pd, c('testing', 'testthat', 'test'))
+    expect_error( iff_associated_name(id, pd)
+                , "Cannot infer to argument for setAs.")
 })
