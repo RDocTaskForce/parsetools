@@ -3,6 +3,7 @@
 \name{function-nodes}
 \alias{function-nodes}
 \alias{pd_is_function}
+\alias{pd_is_in_function}
 \alias{pd_get_function_body_id}
 \alias{pd_get_function_arg_ids}
 \alias{pd_get_function_arg_variable_ids}
@@ -12,6 +13,8 @@
 \title{Function Nodes}
 \usage{
 pd_is_function(id, pd, .check = TRUE)
+
+pd_is_in_function(id, pd, .check = TRUE)
 
 pd_get_function_body_id(id, pd, .check = TRUE)
 
@@ -45,6 +48,8 @@ and finally a node, as the youngest, for the body of the function.
 \section{Functions}{
 \itemize{
 \item \code{pd_is_function}: Test if the \code{id} points to a function.
+
+\item \code{pd_is_in_function}: test if a node is contained in a function definition.
 
 \item \code{pd_get_function_body_id}: Obtain the body of a function
 

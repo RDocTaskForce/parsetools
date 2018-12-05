@@ -66,6 +66,7 @@ if(F){#! @testthat pd_is_function
 
 }
 
+#' @describeIn function-nodes test if a node is contained in a function definition.
 pd_is_in_function <-
 function( id, pd, .check=TRUE){
     if(.check){
