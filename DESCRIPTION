@@ -55,3 +55,5 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 VignetteBuilder: knitr
 KeepSource: yes
+URL: https://github.com/RDocTaskForce/parsetools
+BugReports: https://github.com/RDocTaskForce/parsetools/issues
