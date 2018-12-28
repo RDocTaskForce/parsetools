@@ -19,9 +19,9 @@ Suggests:
     rmarkdown,
     testthat
 Description: Tools and utilities for dealing with parse data. 
-    parse data represents the parse tree as a data frame with location and type
-    information.  This package provides functions for navigating the parse 
-    tree as a data frame.
+    Parse data represents the parse tree as data with location and type
+    information.  This package provides functions for navigating the  
+    parse tree as a data frame.
 Collate:
     'internal.R'
     'accessors.R'

@@ -18,4 +18,4 @@
   for functions likely to be used.
 * Also testing coverage has been expanded which revealed a few bugs
   that have been rectified.
-  
+* Grammar mistakes in DESCRIPTION have been corrected.
