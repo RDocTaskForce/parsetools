@@ -1,6 +1,6 @@
 ## Test environments
 * local windows install, R 3.6.0
-* local windows install, R 3.5.1
+* local windows install, R 3.5.2
 * ubuntu 14.04 (on travis-ci), R 3.6.0
 * win-builder (devel and release)
 * r-hub builder
@@ -19,3 +19,6 @@
 * Also testing coverage has been expanded which revealed a few bugs
   that have been rectified.
 * Grammar mistakes in DESCRIPTION have been corrected.
+
+Please note I have other packages dependent on this ready to release.
+A prompt response is appreciated.
