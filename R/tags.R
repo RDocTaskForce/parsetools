@@ -249,5 +249,33 @@ if(FALSE){#@testing
                     , "")
 }
 
+if(FALSE){#@testing edge cases
+    pd  <- parsetools::get_parse_data(parse(text={"
+        f <- function(){
+        #' @testtag comment lines
 
+        #' That aren't contiguous.
+        #' because they are separated by a blank line.
 
+        #' @testtag2 These are contiguous
+        #'
+        #' Because the line separating them is
+        #' a documentation comment itself.
+        print('hello world')
+        #' and testtag2 ends due to an expression.
+        }
+    "}, keep.source=TRUE))
+    expect_equal(sum(has_tag()), 2L)
+
+    id <- pd_get_tagged_comment_ids(pd, 'testtag')
+    expect_identical( pd_get_comment_tag_content(id, pd, 'testtag', TRUE)
+                    , "comment lines")
+
+    id <- pd_get_tagged_comment_ids(pd, 'testtag2')
+    expect_identical( pd_get_comment_tag_content(id, pd, 'testtag2', TRUE)
+                    , c( "These are contiguous"
+                       , ""
+                       , "Because the line separating them is"
+                       , "a documentation comment itself."
+                       ))
+}
