@@ -65,7 +65,7 @@ test_that('pd_get_tagged_comment_ids', {#!@testing
     expect_equal(pd_get_tagged_comment_ids(pd, tag, TRUE ),   15L      )
     expect_equal(pd_get_tagged_comment_ids(pd, tag, FALSE), c(15L, 21L))
 })
-#line 220 "R/tags.R"
+#line 223 "R/tags.R"
 test_that('pd_get_comment_tag_content', {#@testing
     pd  <- parsetools::get_parse_data(parse(text={"
         if(FALSE){#@block block content
@@ -97,7 +97,7 @@ test_that('pd_get_comment_tag_content', {#@testing
     expect_identical( pd_get_comment_tag_content(last.id, pd, 'last')
                     , "")
 })
-#line 252 "R/tags.R"
+#line 255 "R/tags.R"
 test_that('edge cases', {#@testing edge cases
     pd  <- parsetools::get_parse_data(parse(text={"
         f <- function(){

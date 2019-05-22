@@ -197,10 +197,12 @@ if(FALSE){#!@testing
 #' Get the content of a tag
 #'
 #' @inheritParams pd_has_tag
+#'
+#' @param all.contiguous if TRUE get all comments connected to this element.
 #' @export
-pd_get_comment_tag_content <- function(id, pd, tags, all.contiguous=FALSE){
+pd_get_comment_tag_content <- function(id, pd, tag, all.contiguous=FALSE){
     stopifnot( all(is_doc_comment(id, pd))
-             , all(pd_has_tag(id, pd, tags))
+             , all(pd_has_tag(id, pd, tag))
              )
     if (all.contiguous){
         ids <- id
@@ -212,9 +214,9 @@ pd_get_comment_tag_content <- function(id, pd, tags, all.contiguous=FALSE){
             ids <- c(ids, ns)
             id <- ns
         }
-        trimws(strip_doc_comment_leads(strip_tag(text(ids), tags)))
+        trimws(strip_doc_comment_leads(strip_tag(text(ids), tag)))
     } else {
-        trimws(strip_doc_comment_leads(strip_tag(text(id), tags)))
+        trimws(strip_doc_comment_leads(strip_tag(text(id), tag)))
     }
 }
 if(FALSE){#@testing
