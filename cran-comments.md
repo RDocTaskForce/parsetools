@@ -1,10 +1,9 @@
 ## Test environments
+* local windows install, R 3.7.0 (Devel)
 * local windows install, R 3.6.0
-* local windows install, R 3.5.2
 * ubuntu 14.04 (on travis-ci), R 3.6.0
 * win-builder (devel and release)
 * r-hub builder
-* local docker rocker/verse, R 3.5.1
 
 ## R CMD check results
 
@@ -12,13 +11,9 @@
 
 * This is a new release.
 
-## Resubmission
+## Notes
 
-* As requested, the documentation has been expanded with examples
-  for functions likely to be used.
-* Also testing coverage has been expanded which revealed a few bugs
-  that have been rectified.
-* Grammar mistakes in DESCRIPTION have been corrected.
-
-Please note I have other packages dependent on this ready to release.
-A prompt response is appreciated.
+This should fix the bug related to the assertError change in R-3.7.0 
+which resulted in parsetools being removed from CRAN.
+There are also packages that are dependent on parsetools that I would 
+request be restored now that parsetools is fixed.
