@@ -161,7 +161,7 @@ if(FALSE){#@example
 
     # Objects must have a srcref.
     utils::getSrcref(rnorm)
-    tools::assertError(get_parse_data(rnorm), TRUE)
+    tools::assertError(get_parse_data(rnorm), verbose = TRUE)
 }
 
 #' @describeIn get_parse_data

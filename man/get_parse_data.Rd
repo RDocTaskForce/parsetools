@@ -86,5 +86,5 @@ The function must have a \code{\link[base:srcref]{srcref}}.
 
     # Objects must have a srcref.
     utils::getSrcref(rnorm)
-    tools::assertError(get_parse_data(rnorm), TRUE)
+    tools::assertError(get_parse_data(rnorm), verbose = TRUE)
 }
