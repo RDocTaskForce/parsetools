@@ -26,7 +26,7 @@ ascend_to_root(id = pd$id, pd = get("pd", parent.frame()),
 \item{.check}{Perform checks for input validation?}
 
 \item{include.groups}{Include groups as root nodes (T)
-or descend into \href{is.grouped}{groups} for roots?}
+or descend into \link[=pd_is_grouping]{groups} for roots?}
 }
 \description{
 Root IDs constitute the id of a stand alone expression.

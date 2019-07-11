@@ -129,11 +129,11 @@ if(FALSE){#@testing
 pd_all_root_ids <-
 function( pd                    #< parse data from `<get_parse_data>`
         , include.groups = TRUE #< Include groups as root nodes (T)
-                                #^ or descend into [groups](is.grouped) for roots?
+                                #^ or descend into [groups][pd_is_grouping] for roots?
         ){
     #' @describeIn root give all root ids in `pd`
     #' @param include.groups Include groups as root nodes (T)
-    #'                       or descend into [groups](is.grouped) for roots?
+    #'                       or descend into [groups][pd_is_grouping] for roots?
     roots <- pd[ !(abs(pd$parent) %in% pd$id                )
                & !(    pd$token   %in% .excluded.root.tokens)
                , 'id']
