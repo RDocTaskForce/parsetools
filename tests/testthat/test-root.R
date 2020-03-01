@@ -5,8 +5,11 @@ context('tests extracted from file `root.R`')
 #line 71 "R/root.R"
 test_that('is_root', {#@testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
-    expect_true (pd_is_root(23, pd))
-    expect_false(pd_is_root( 1, pd))
+    root <- pd$id[pd$parent==0]
+    leaf <- pd$id[pd$parent!=0][1]
+
+    expect_true (pd_is_root(root, pd))
+    expect_false(pd_is_root(leaf, pd))
     expect_equal(sum(pd_is_root(pd$id, pd=pd)), 1)
 
 
@@ -15,18 +18,22 @@ test_that('is_root', {#@testing
         y <- runif(10)
         plot(x,y)
     }'}, keep.source=TRUE))
-    expect_true(pd_is_root(68, pd), info="Grouping root")
-    expect_true(pd_is_root(30, pd), info="Root within grouping.")
+    group.root <- pd$id[pd$parent==0]
+    roots <- children(group.root)[-1]
+    leaf <- .find_text('0')
+
+    expect_true(pd_is_root(group.root, pd), info="Grouping root")
+    expect_true(pd_is_root(roots[[1]], pd), info="Root within grouping.")
     expect_equal(sum(pd_is_root(pd$id, pd=pd)), 4)
-    expect_equal(sum(pd_is_root(c(68, 30, 46, 62), pd)), 4)
-    expect_false(pd_is_root(66, pd))
+    expect_equal(sum(pd_is_root(c(group.root, roots), pd)), 4)
+    expect_false(pd_is_root(leaf, pd))
 
     expect_equal(sum(pd_is_root(pd$id, pd, ignore.groups=FALSE)), 1)
     expect_error(pd_is_root(0L, pd))
 
-    pd[pd$parent %in% c(0,68) & pd$token == 'expr', ]
-    expect_false(pd_is_root(30, pd, ignore.groups = FALSE))
-    expect_equal(pd_is_root(c(68, 30), pd, ignore.groups = FALSE), c(TRUE, FALSE))
+    pd[pd$parent %in% c(0,group.root) & pd$token == 'expr', ]
+    expect_false(pd_is_root(roots[[1]], pd, ignore.groups = FALSE))
+    expect_equal(pd_is_root(c(group.root, roots[[1]]), pd, ignore.groups = FALSE), c(TRUE, FALSE))
 
     pd <- get_parse_data(parse(text={"
         # a comment outside the grouping
@@ -58,7 +65,7 @@ test_that('is_root', {#@testing
     ", keep.source=TRUE))
     expect_false(pd_is_root(pd[1,'id'], pd))
 })
-#line 151 "R/root.R"
+#line 158 "R/root.R"
 test_that('roots', {#@testing
     pd <- get_parse_data(parse(text={"a <- 1
         {# section 1
@@ -70,10 +77,15 @@ test_that('roots', {#@testing
         }# end of section 2
         e <- 5
     "}, keep.source=TRUE))
-    expect_equal(pd_all_root_ids(pd, TRUE), c(7, 52, 63))
+
+    bases <- pd[pd$parent==0, 'id']
+
+    groups <- parent(.find_text('{'))
+    expect_equal(pd_all_root_ids(pd, TRUE), bases)
 
     roots <- pd_all_root_ids(pd, FALSE)
-    expect_equal(roots, c(7, 19, 31, 47, 63))
+    expected <- parent(.find_text('<-'))
+    expect_equal(roots, expected)
     expect_equal(getParseText(pd, roots), c('a <- 1','b <- 2', 'c <- 3', 'd <- 4', 'e <- 5'))
 
     pd <- get_parse_data(parse(text="
@@ -97,10 +109,9 @@ test_that('roots', {#@testing
     # Comment 3
     4+5
     "}, keep.source=TRUE))
-    id <- pd_all_root_ids(pd)
-    expect_equal(id, c(43, 61, 74))
+    expect_equal(pd_all_root_ids(pd), pd[pd$parent==0, 'id'])
 })
-#line 209 "R/root.R"
+#line 220 "R/root.R"
 test_that('all_root_nodes', {#!@testing
     pd <- get_parse_data(parse(text={"a <- 1
         {# section 1
@@ -118,11 +129,13 @@ test_that('all_root_nodes', {#!@testing
     expect_equal(all_root_nodes(pd, FALSE)$id   , c(7, 19, 31, 47, 63))
     expect_equal(all_root_nodes(pd, FALSE)$line1, c(1,  3,  5,  7,  9))
 })
-#line 247 "R/root.R"
+#line 258 "R/root.R"
 test_that('ascend_to_root', {#@testing
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
-    expect_equal(ascend_to_root(id=23, pd), 23)
-    expect_equal(ascend_to_root(id=1 , pd), 23)
+    root <- roots(pd)
+
+    expect_equal(ascend_to_root(id=root, pd), root)
+    expect_equal(ascend_to_root(id=1 , pd), root)
     expect_identical(ascend_to_root(id=0, pd), 0L)
 
     pd <- get_parse_data(parse(text={"
@@ -133,8 +146,10 @@ test_that('ascend_to_root', {#@testing
         }
         #' comment after
     "}, keep.source=TRUE))
-    expect_equal(ascend_to_root(3, pd), 34)
-    expect_equal(ascend_to_root(pd$id, pd=pd), c(rep(34, 20), 0))
+    root <- roots(pd)
+
+    expect_equal(ascend_to_root(.find_text("#' hello world"), pd), root)
+    expect_equal(ascend_to_root(pd$id, pd=pd), c(rep(root, nrow(pd)-1), 0L))
 
     pd <- get_parse_data(parse(text={"
     {   #' hello world
@@ -145,8 +160,8 @@ test_that('ascend_to_root', {#@testing
         #' comment after
     }"}, keep.source=TRUE))
 
-    ascend_to_root(.find_text('hw'), pd)
+    expect_false( ascend_to_root(.find_text('hw'), pd) %in% roots(pd))
+    expect_true( ascend_to_root(.find_text('hw'), pd) %in% roots(pd, FALSE))
 
-    next_sibling(.find_text("#' hello world")) %>%
-    is_root()
+    expect_true(is_root(next_sibling(.find_text("#' hello world"))))
 })

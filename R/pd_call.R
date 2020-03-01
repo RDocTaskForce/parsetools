@@ -143,7 +143,8 @@ if(FALSE){#!@testing
     "}, keep.source=TRUE))
     ids <- roots(pd)
     id <- ids[[3]]
-    expect_equal(pd_get_call_symbol_id(id, pd), 45L)
+    expect_equal( pd_get_call_symbol_id(id, pd)
+                , .find_text('plot'))
 }
 
 #' @describeIn calls test Get the set of arguments to the function call.
@@ -194,7 +195,11 @@ if(FALSE){#! @testing
 
     expect_is(test.object, 'integer')
     expect_equal(names(test.object), c('', 'mean', 'sd'))
-    expect_identical(test.object, c(5L, mean=12L, sd=19L))
+    expect_identical( test.object
+                    , c( 5L
+                       , mean=parent(.find_text('0'))
+                       , sd  =parent(.find_text('1')))
+                    )
     pd <- get_parse_data(parse(text='alist(x, y=z, ...=)', keep.source=TRUE))
     expect_identical( call_args(all_call_ids(pd), pd=pd)
                     , c( parent(.find_text('x'))

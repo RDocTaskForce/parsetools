@@ -4,8 +4,15 @@
 \alias{get_family_pd}
 \title{Get family of nodes.}
 \usage{
-get_family_pd(id, pd, include.self = TRUE, ngenerations = Inf, ...,
-  include.doc.comments = TRUE, include.regular.comments = FALSE)
+get_family_pd(
+  id,
+  pd,
+  include.self = TRUE,
+  ngenerations = Inf,
+  ...,
+  include.doc.comments = TRUE,
+  include.regular.comments = FALSE
+)
 }
 \arguments{
 \item{id}{id of the expression of interest}

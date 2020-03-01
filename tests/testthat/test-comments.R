@@ -85,9 +85,8 @@ test_that('is_relative_comment', {#@testing
 
     expect_is(rtn <- pd_is_relative_comment(pd$id, pd=pd), 'logical')
     expect_equal(rtn, c(F,F,F,T,F,F,F,F))
-
 })
-#line 194 "R/comments.R"
+#line 193 "R/comments.R"
 test_that('is_doc_comment', {#@testing
     pd <- get_parse_data(parse(text="{
         ## normal comment
@@ -113,7 +112,7 @@ test_that('is_doc_comment', {#@testing
     expect_is(rtn, 'logical')
     expect_equal(rtn, c(F,F,F,T,T,T,T,T,F))
 })
-#line 227 "R/comments.R"
+#line 226 "R/comments.R"
 test_that('strip_doc_comment_leads.character', {#@testing
     expect_equal(strip_doc_comment_leads.character("#  normal comment       "), "#  normal comment")
     expect_equal(strip_doc_comment_leads.character("#' Roxygen comment      "), "Roxygen comment")
@@ -122,7 +121,7 @@ test_that('strip_doc_comment_leads.character', {#@testing
     expect_equal(strip_doc_comment_leads.character("#^ Continuation comment "), "Continuation comment")
     expect_equal(strip_doc_comment_leads.character("#@ Tag comment          "), "Tag comment")
 })
-#line 243 "R/comments.R"
+#line 242 "R/comments.R"
 test_that('strip_doc_comment_leads.data.frame', {#@testing
     pd <- get_parse_data(parse(text="{
         ## normal comment
@@ -143,7 +142,7 @@ test_that('strip_doc_comment_leads.data.frame', {#@testing
                    )
                 )
 })
-#line 275 "R/comments.R"
+#line 274 "R/comments.R"
 test_that('strip_doc_comment_leads', {#@testing
     expect_equal(strip_doc_comment_leads("#  normal comment       "), "#  normal comment")
     expect_equal(strip_doc_comment_leads("#' Roxygen comment      "), "Roxygen comment")

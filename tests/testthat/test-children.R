@@ -2,42 +2,44 @@
 #! Changes will be overwritten.
 
 context('tests extracted from file `children.R`')
-#line 100 "/rdtf/parsetools/R/children.R"
+#line 100 "R/children.R"
 test_that('children', {#! @test
     pd <- get_parse_data(parse(text='rnorm(10, mean=0, sd=1)', keep.source=TRUE))
     id <- pd[pd$parent==0, 'id']
+    kids <- pd[pd$parent==id, 'id']
     expect_equal( pd_get_children_ids(id, pd, 1, include.self = FALSE)
-                , c(3,2,5,6,9,10,12,13,16,17,19,20)
+                , kids
                 , info="for default values"
                 )
 
     expect_equal( pd_get_children_ids(id, pd, 1, include.self=TRUE)
-                , c(23,3,2,5,6,9,10,12,13,16,17,19,20)
+                , c(id,kids)
                 , info='include.self=TRUE'
                 )
 
+    grandkids <- pd[pd$parent %in% kids, 'id']
     expect_equal( pd_get_children_ids( id, pd, 2, include.self=FALSE
-                                  , aggregate = FALSE
-                                  )
-                , c(1,4,11,18)
+                                     , aggregate = FALSE
+                                     )
+                , grandkids
                 , info='ngenerations=2, include.self=FALSE, aggregate=FALSE'
                 )
 
-    expect_equal( pd_get_children_ids( id, pd
-                                  , ngenerations=2
-                                  , include.self=FALSE
-                                  , aggregate = TRUE
-                                  )
-                , c(c(3,2,5,6,9,10,12,13,16,17,19,20), c(1,4,11,18))
+    expect_equal( sort(pd_get_children_ids( id, pd
+                                          , ngenerations=2
+                                          , include.self=FALSE
+                                          , aggregate = TRUE
+                                          ))
+                , sort(c(kids, grandkids))
                 , info='ngenerations=2, include.self=FALSE, aggregate=TRUE'
                 )
 
-    expect_equal( pd_get_children_ids( id, pd
-                                  , ngenerations=2
-                                  , include.self=TRUE
-                                  , aggregate = TRUE
-                                  )
-                , c(23, c(3,2,5,6,9,10,12,13,16,17,19,20), c(1,4,11,18))
+    expect_equal( sort(pd_get_children_ids( id, pd
+                                          , ngenerations=2
+                                          , include.self=TRUE
+                                          , aggregate = TRUE
+                                          ))
+                , sort(c(id, kids, grandkids))
                 , info='ngenerations=2, include.self=TRUE, aggregate=TRUE'
                 )
 
@@ -46,34 +48,34 @@ test_that('children', {#! @test
                 )
     expect_true( all(pd$id %in% pd_get_children_ids(0, pd, Inf)))
 })
-#line 158 "/rdtf/parsetools/R/children.R"
+#line 160 "R/children.R"
 test_that('get_children_pd', {#!@test
     'rnorm(10, mean=0, sd=1)' -> text
     pd       <- get_parse_data(parse(text=text, keep.source=TRUE))
-    id       <- 3
+    id       <- pd[match('rnorm', pd$text), 'parent']
 
-    expect_identical( get_children_pd(3, pd), utils::head(pd, 1), info='defaults')
-    expect_identical( get_children_pd(3, pd, include.self=TRUE), utils::head(pd, 2), info='include.self=TRUE')
+    expect_identical( get_children_pd(id, pd), utils::head(pd, 1), info='defaults')
+    expect_identical( get_children_pd(id, pd, include.self=TRUE), utils::head(pd, 2), info='include.self=TRUE')
 
-    expect_identical( get_children_pd(id=23, pd=pd, ngenerations=1, include.self=FALSE)
-                    , pd[pd$parent==23,]
+    expect_identical( get_children_pd(id=parent(id), pd=pd, ngenerations=1, include.self=FALSE)
+                    , pd[pd$parent==parent(id),]
                     , info='defaults')
 
-    expect_identical( get_children_pd(id=23, pd=pd, ngenerations=1, include.self=TRUE)
-                    , pd[pd$parent==23 | pd$id==23,]
+    expect_identical( get_children_pd(id=parent(id), pd=pd, ngenerations=1, include.self=TRUE)
+                    , pd[pd$parent==parent(id) | pd$id==parent(id),]
                     , info='defaults')
 
-    expect_identical( get_children_pd(id=23, pd=pd, ngenerations=2, include.self=TRUE)
+    expect_identical( get_children_pd(id=parent(id), pd=pd, ngenerations=2, include.self=TRUE)
                     , pd
                     , info='defaults')
 
-    expect_identical( get_children_pd(id=23, pd=pd, ngenerations=2, include.self=FALSE, aggregate=FALSE)
-                    , pd[pd$parent != 23 & pd$parent != 0, ]
+    expect_identical( get_children_pd(id=parent(id), pd=pd, ngenerations=2, include.self=FALSE, aggregate=FALSE)
+                    , pd[pd$parent != parent(id) & pd$parent != 0, ]
                     , info='defaults')
 
     expect_error(get_children_pd(id=pd$id, pd=pd))
 })
-#line 192 "/rdtf/parsetools/R/children.R"
+#line 194 "R/children.R"
 test_that('n_children', {#@testing
     ex.file <- system.file("examples", "example.R", package="parsetools")
     exprs <- parse(ex.file, keep.source = TRUE)

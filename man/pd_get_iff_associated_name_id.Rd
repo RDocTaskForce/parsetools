@@ -17,7 +17,7 @@ pd_get_iff_associated_name_id(id, pd, .check = TRUE)
 For \code{\link[=iff-blocks]{if(FALSE)}} documentation blocks, such as
 \code{@testing} and \code{@example} blocks, a user may supply an
 information string which gives the name information for tests and
-examples.  for example, in \code{if(FALSE)\{#@test my special test}
+examples.  for example, in \verb{if(FALSE)\\\{#@test my special test}
 the information string is "my special test".
 
 The more common case is when there is no information string.

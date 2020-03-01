@@ -161,7 +161,7 @@ if(FALSE){#@example
 
     # Objects must have a srcref.
     utils::getSrcref(rnorm)
-    tools::assertError(get_parse_data(rnorm), verbose = TRUE)
+    expect_error(get_parse_data(rnorm), "x does not have a valid srcref.")
 }
 
 #' @describeIn get_parse_data

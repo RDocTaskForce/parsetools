@@ -45,7 +45,9 @@ if(FALSE){#!@testing
         plot(x, y)
     "}, keep.source=TRUE))
     expect_equal(token(), pd$token)
-    expect_equal(token(c(45,3, 58), pd), c("SYMBOL_FUNCTION_CALL", "SYMBOL", "expr"))
+    ids <- pd$id[match(c('rnorm', 'x', '<-'), pd$text)]
+    expect_equal( token(ids, pd)
+                , c("SYMBOL_FUNCTION_CALL", "SYMBOL", "LEFT_ASSIGN"))
 }
 
 #@internal
@@ -59,9 +61,11 @@ if(FALSE){#!@testing
         y <- runif(10)
         plot(x, y)
     "}, keep.source=TRUE))
+    text <- c('rnorm', 'x', '<-')
+    ids <- pd$id[match(c('rnorm', 'x', '<-'), pd$text)]
     expect_equal(text(pd$id, pd), pd$text)
-    expect_equal(text(), pd$text)
-    expect_equal(text(c(45,3, 58), pd), c("plot", "x", ""))
+    expect_equal(text(ids), text)
+    expect_equal(text(ids, pd), text)
 }
 
 #@internal
@@ -245,12 +249,14 @@ prev_terminal <- function(id=pd$id, pd=get('pd', parent.frame())){
     pd$id[max(ix)]
 }
 if(FALSE){#@testing
-pd <- get_parse_data(parse(text="   rnorm( 10,  0,   3)", keep.source=TRUE))
-    id <- 4
-    expect_equal(prev_terminal(id, pd), 2L)
-
-    expect_equal( prev_terminal(pd$id, pd=pd)
-                , c(NA, NA, NA, 1, rep(2, 2), 4, 6, 6, 9, 11, 11, 14)
+    pd <- get_parse_data(parse(text="   rnorm( 10,  0,   3)", keep.source=TRUE))
+    ids <- pd$id[match(c('10', '(', 'rnorm'), pd$text)]
+    id <- ids[[1]]
+    expect_equal( prev_terminal(ids[[1]], pd), ids[[2]])
+    expect_equal( prev_terminal(ids[[2]], pd), ids[[3]])
+    expect_equal( prev_terminal(ids[[3]], pd), NA_integer_)
+    expect_equal( prev_terminal(ids, pd=pd)
+                , c(utils::tail(ids, -1), NA_integer_)
                 )
 }
 

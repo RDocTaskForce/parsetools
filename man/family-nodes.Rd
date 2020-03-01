@@ -13,8 +13,14 @@
 \alias{pd_get_prev_sibling_id}
 \title{Family-wise Node Identification and Navigation.}
 \usage{
-pd_get_children_ids(id, pd, ngenerations = 1, include.self = FALSE,
-  aggregate = TRUE, .check = TRUE)
+pd_get_children_ids(
+  id,
+  pd,
+  ngenerations = 1,
+  include.self = FALSE,
+  aggregate = TRUE,
+  .check = TRUE
+)
 
 pd_is_firstborn(id, pd, .check = TRUE)
 
@@ -22,9 +28,16 @@ pd_get_firstborn(id, pd, .check = TRUE)
 
 pd_get_parent_id(id, pd, .check = TRUE)
 
-pd_get_ancestor_ids(id, pd, ngenerations = Inf, aggregate = TRUE,
-  include.self = TRUE, only.present = FALSE, last = 0L,
-  .check = TRUE)
+pd_get_ancestor_ids(
+  id,
+  pd,
+  ngenerations = Inf,
+  aggregate = TRUE,
+  include.self = TRUE,
+  only.present = FALSE,
+  last = 0L,
+  .check = TRUE
+)
 
 pd_get_sibling_ids(id, pd, .check = TRUE)
 
@@ -51,8 +64,6 @@ node that are present?  Most relevant for
 when parent is zero.}
 
 \item{last}{The last acceptable parent.}
-
-\item{...}{arguments passed on.}
 }
 \description{
 Parse data is organized into a hierarchy of nodes. These functions provide

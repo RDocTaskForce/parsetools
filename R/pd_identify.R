@@ -78,7 +78,8 @@ if(FALSE){#@testing
     pd <- get_parse_data(parsed)
 
     id <- pd_identify(pd, my_function)
-    expect_equal(id, 40)
+    expected <- parent(.find_text('function')[1])
+    expect_equal(id, expected)
 
     expect_error(pd_identify(pd, NULL))
 }

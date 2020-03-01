@@ -17,8 +17,7 @@ pd_all_iff_ids(pd = get("pd", parent.frame()), ...)
 
 pd_all_iff_block_ids(pd, root.only = TRUE, ignore.groups = FALSE, ...)
 
-pd_is_tagged_iff_block(id, pd, tag, doc.only = TRUE, ...,
-  .check = TRUE)
+pd_is_tagged_iff_block(id, pd, tag, doc.only = TRUE, ..., .check = TRUE)
 }
 \arguments{
 \item{id}{id of the expression of interest}
@@ -41,19 +40,19 @@ pd_is_tagged_iff_block(id, pd, tag, doc.only = TRUE, ...,
 comments only?}
 }
 \description{
-IFF is short for \code{if(FALSE)\{#@tag ...} blocks.
+IFF is short for \verb{if(FALSE)\\\{#@tag ...} blocks.
 These block can contain development, testing, or example code
 that can be extracted into documentation or other files.
 }
 \details{
 Here are some examples:
 \itemize{
-\item \code{if(FALSE)\{#' @test ...} Is valid and tags the block as a test.
-\item \code{if(FALSE)\{#@test ...} Is valid and tags the block as a test.
-Note here that we are using the \code{#@} tag
+\item \verb{if(FALSE)\\\{#' @test ...} Is valid and tags the block as a test.
+\item \verb{if(FALSE)\\\{#@test ...} Is valid and tags the block as a test.
+Note here that we are using the \verb{#@} tag
 comment.
-\item \code{if(FALSE)\{# @test ...} Is valid only if \code{doc.only==FALSE}.
-\item \code{if(FALSE)#@test ...}
+\item \verb{if(FALSE)\\\{# @test ...} Is valid only if \code{doc.only==FALSE}.
+\item \verb{if(FALSE)#@test ...}
 }
 }
 \section{Functions}{
@@ -65,7 +64,7 @@ is not a formal bracketed block \code{{...}}.
 
 \item \code{pd_is_iff_block}: Tests if an expression id is the root of an
 \code{if(FALSE)} block statement, differs from \code{pd_is_iff}
-in that in addition to it being an \code{if(FALSE)} expression
+in that in addition to it being an \verb{if(FALSE)} expression
 the conditional branch of the logic must be a braced block
 of code.  E.g. if given the id corresponding to
 \code{if(FALSE){...}}, both \code{pd_is_iff()} and \code{pd_is_iff_block()}

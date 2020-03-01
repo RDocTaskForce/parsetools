@@ -51,7 +51,9 @@ if(FALSE){#@testing
     pd <- get_parse_data(parse(text='{
         this(is+a-grouping)
     }', keep.source=TRUE))
-    expect_true (pd_is_grouping(25L, pd))
+    id <- pd[match("'{'", pd$token), 'id']
+    gid <- parent(id)
+    expect_true (pd_is_grouping(gid, pd))
     expect_false(pd_is_grouping( 1L, pd))
 
     expect_is(pd_is_grouping(pd$id, pd=pd), 'logical')
@@ -81,7 +83,7 @@ if(FALSE){#@testing
 
     expect_is(all_grouping_ids(pd), 'integer')
     expect_equal(length(all_grouping_ids(pd)), 1)
-    expect_equal(all_grouping_ids(pd), 25)
+    expect_equal(all_grouping_ids(pd), pd[match("'{'", pd$token), 'parent'])
 }
 
 fix_grouping_comment_association <-
@@ -136,8 +138,20 @@ if(FALSE){#@testing
                     )
 
     expect_identical(fixed[-6], pd[-6])
-    expect_equal( parent(all_comment_ids(fixed), fixed)
-                , c(-38, -38, -38, 34, -56, -74)
+
+    text(all_comment_ids(fixed), fixed)
+
+    x <- pd_get_ancestor_ids(.find_text('print', fixed), fixed)
+
+    inside.parent <- max(x[is_in_function(x, fixed) & ! is_function(x)])
+
+
+
+    expect_equal( abs(parent(all_comment_ids(fixed), fixed))
+                , c( rep(ascend_to_root(.find_text('hw', fixed), fixed), 3)
+                   , inside.parent
+                   , parent(.find_text('+'))
+                   )
                 )
 }
 if(FALSE){#@test fix_grouping_comment_association Special case

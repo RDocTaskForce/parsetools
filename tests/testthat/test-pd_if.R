@@ -14,7 +14,7 @@ test_that('if structures', {#!@testing if structures
     id <- roots(pd) # 33
 
     expect_true(pd_is_if(id,pd))
-    expect_equal(pd_get_if_predicate_id(id, pd),  7L)
-    expect_equal(pd_get_if_branch_id   (id, pd), 18L)
-    expect_equal(pd_get_if_alternate_id(id, pd), 30L)
+    expect_equal(pd_get_if_predicate_id(id, pd), parent(.find_text('predicate')))
+    expect_equal(pd_get_if_branch_id   (id, pd), parent(parent(.find_text('body'))))
+    expect_equal(pd_get_if_alternate_id(id, pd), parent(parent(.find_text('alternate'))))
 })

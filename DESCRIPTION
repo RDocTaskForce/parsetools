@@ -1,7 +1,7 @@
 Package: parsetools
 Type: Package
 Title: Parse Tools
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: c(
     person("Andrew", "Redd", , "andrew.redd@hsc.utah.edu", c("aut", "cre")),
     person("R Consortium", role=c("cph", "fnd"))
@@ -11,7 +11,6 @@ License: GPL-2
 Language: en-US
 Imports:
     methods,
-    tools,
     utils 
 Suggests:
     covr,
@@ -52,7 +51,7 @@ Collate:
     'zzz.R'
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 VignetteBuilder: knitr
 KeepSource: yes
 URL: https://github.com/RDocTaskForce/parsetools

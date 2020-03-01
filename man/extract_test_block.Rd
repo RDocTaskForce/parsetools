@@ -4,8 +4,10 @@
 \alias{extract_test_block}
 \title{Extract testing blocks from the parse-data.}
 \usage{
-extract_test_block(id = all_tagged_iff_block_ids(pd, .testing.tags),
-  pd = get("pd", parent.frame()))
+extract_test_block(
+  id = all_tagged_iff_block_ids(pd, .testing.tags),
+  pd = get("pd", parent.frame())
+)
 }
 \arguments{
 \item{id}{iff block id, not the content}

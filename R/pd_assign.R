@@ -1,6 +1,6 @@
 #' @include internal.R
 
-assignment.opperators <- c("LEFT_ASSIGN", "RIGHT_ASSIGN", "EQ_ASSIGN")
+assignment.opperators <- c( "LEFT_ASSIGN", "RIGHT_ASSIGN", "EQ_ASSIGN")
 
 #' @name assignments
 #' @title Assignment Node Navigation.
@@ -33,7 +33,7 @@ function( id, pd, .check=TRUE){
     }
     if (length(id)>1L) return(sapply(id, pd_is_assignment, pd=pd))
 
-    token(id) %in% c('expr', 'equal_assign') &&
+    token(id) %in% c( 'expr', 'equal_assign') &&
     any(token(children(id)) %in% assignment.opperators)
 }
 all_assignment_ids <- make_get_all(pd_is_assignment)
@@ -47,8 +47,16 @@ if(FALSE){#@testing
     expect_true(pd_is_assignment(roots(pd3), pd=pd3))
     pd4 <- get_parse_data(parse(text="1 ->> x", keep.source=TRUE))
     expect_true(pd_is_assignment(roots(pd4), pd=pd4))
+
     pd5 <- get_parse_data(parse(text="x = 1", keep.source=TRUE))
-    expect_true(pd_is_assignment(roots(pd5), pd=pd5))
+    expect_equal(sum(pd_is_assignment(pd5$id, pd5)), 1)
+    if(R.version$major < 4) {
+        expect_true(pd_is_assignment(roots(pd5), pd=pd5))
+    } else {
+        expect_false(pd_is_assignment(roots(pd5), pd=pd5))
+        expect_true(pd_is_assignment(firstborn(roots(pd5), pd5), pd5), pd5)
+    }
+
 }
 
 
@@ -75,16 +83,23 @@ pd <- get_parse_data(parse(text="x<-1", keep.source=TRUE))
 expect_equal(pd_get_assign_value_id(all_assignment_ids(pd), pd=pd), 5L)
 
 pd <- get_parse_data(parse(text="x=1", keep.source=TRUE))
-expect_equal(pd_get_assign_value_id(all_assignment_ids(pd), pd=pd), 5L)
+expect_equal( pd_get_assign_value_id(all_assignment_ids(pd), pd=pd)
+            , parent(.find_text('1'))
+            )
 
 pd <- get_parse_data(parse(text="x<<-1", keep.source=TRUE))
-expect_equal(pd_get_assign_value_id(all_assignment_ids(pd), pd=pd), 5L)
+expect_equal( pd_get_assign_value_id(all_assignment_ids(pd), pd=pd)
+            , parent(.find_text('1'))
+            )
 
 pd <- get_parse_data(parse(text="1->x", keep.source=TRUE))
-expect_equal(pd_get_assign_value_id(all_assignment_ids(pd), pd=pd), 2L)
+expect_equal(pd_get_assign_value_id(all_assignment_ids(pd), pd=pd)
+            , parent(.find_text('1'))
+            )
 
 pd <- get_parse_data(parse(text="1->>x", keep.source=TRUE))
-expect_equal(pd_get_assign_value_id(all_assignment_ids(pd), pd=pd), 2L)
+expect_equal( pd_get_assign_value_id(all_assignment_ids(pd), pd=pd)
+            , parent(.find_text('1')))
 }
 
 #' @describeIn assignments Get the variable of an assignment.

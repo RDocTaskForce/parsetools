@@ -172,7 +172,6 @@ if(F){#@testing
 
     expect_is(rtn <- pd_is_relative_comment(pd$id, pd=pd), 'logical')
     expect_equal(rtn, c(F,F,F,T,F,F,F,F))
-
 }
 
 

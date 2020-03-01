@@ -78,13 +78,15 @@ if(FALSE){#@testing
             print('hello world')
         }
     "}, keep.source=TRUE))
-    fam <- get_family_pd(37, pd, include.doc.comments=TRUE, include.regular.comments=TRUE)
+
+    lid <- pd[match('LEFT_ASSIGN', pd$token), 'parent']
+    fam <- get_family_pd(lid, pd, include.doc.comments=TRUE, include.regular.comments=TRUE)
     expect_equal(fam[1,'text'], "# normal comment")
-    fam <- get_family_pd(37, pd, include.doc.comments=TRUE, include.regular.comments=FALSE)
+    fam <- get_family_pd(lid, pd, include.doc.comments=TRUE, include.regular.comments=FALSE)
     expect_equal(fam[1,'text'], "#' Documenation before")
-    fam <- get_family_pd(37, pd, include.doc.comments=FALSE, include.regular.comments=TRUE)
+    fam <- get_family_pd(lid, pd, include.doc.comments=FALSE, include.regular.comments=TRUE)
     expect_equal(fam[1,'text'], "# normal comment")
-    fam <- get_family_pd(37, pd, include.doc.comments=FALSE, include.regular.comments=FALSE)
+    fam <- get_family_pd(lid, pd, include.doc.comments=FALSE, include.regular.comments=FALSE)
     expect_equal(fam[1,'text'], "hw")
 
     pd <- get_parse_data(parse(text={"
@@ -107,6 +109,5 @@ if(FALSE){#@testing
     expect_equal(fam[1,'text'], "#' Documenation before")
     fam <- get_family_pd(expr.id, pd, include.doc.comments=TRUE, include.regular.comments=TRUE)
     expect_equal(fam[1,'text'], "# normal comment")
-
-
 }
+

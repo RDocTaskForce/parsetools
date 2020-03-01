@@ -13,8 +13,12 @@ pd_is_root(id, pd, ignore.groups = TRUE, .check = TRUE)
 
 pd_all_root_ids(pd, include.groups = TRUE)
 
-ascend_to_root(id = pd$id, pd = get("pd", parent.frame()),
-  ignore.groups = TRUE, .check = TRUE)
+ascend_to_root(
+  id = pd$id,
+  pd = get("pd", parent.frame()),
+  ignore.groups = TRUE,
+  .check = TRUE
+)
 }
 \arguments{
 \item{id}{id of the expression of interest}

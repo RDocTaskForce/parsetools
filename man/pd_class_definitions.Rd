@@ -16,8 +16,13 @@ pd_is_class_definition(id, pd, .check = TRUE)
 
 pd_is_in_class_definition(id, pd, .check = TRUE)
 
-pd_add_class_definition(name, test.is, test.in, .exists = TRUE,
-  .overwrite = FALSE)
+pd_add_class_definition(
+  name,
+  test.is,
+  test.in,
+  .exists = TRUE,
+  .overwrite = FALSE
+)
 
 pd_add_class(name, .exists = TRUE, .overwrite = FALSE)
 }

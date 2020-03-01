@@ -14,10 +14,15 @@ get_parse_data(x, ...)
 
 \method{get_parse_data}{srcfile}(x, ...)
 
-\method{get_parse_data}{srcref}(x, ..., ignore.groups = TRUE,
-  include.doc.comments = TRUE, include.regular.comments = FALSE)
+\method{get_parse_data}{srcref}(
+  x,
+  ...,
+  ignore.groups = TRUE,
+  include.doc.comments = TRUE,
+  include.regular.comments = FALSE
+)
 
-\method{get_parse_data}{function}(x, ...)
+\method{get_parse_data}{`function`}(x, ...)
 
 valid_parse_data(df)
 
@@ -39,7 +44,7 @@ as_parse_data(df)
 \description{
 Parsing data is at the core of parse tools and thus at the core
 of the documentation package. The \code{get_parse_data} function is
-essentially a customized version of \code{<getParseData>} that will return
+essentially a customized version of \verb{<getParseData>} that will return
 a cleaned up version of the parse data for a variety of objects.
 This version also fails less often, even reparsing text when
 needed.
@@ -70,7 +75,7 @@ The function must have a \code{\link[base:srcref]{srcref}}.
         #' A title
         #'
         #' A Description
-        print(\\"It Works!\\")
+        print(\"It Works!\")
         #< A return value.
     }"
     source(textConnection(text), keep.source = TRUE)

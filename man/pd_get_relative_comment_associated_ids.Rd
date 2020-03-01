@@ -26,12 +26,12 @@ A comment will not be associated with any parse id that does not have
 the same parent as the comment. For example,
 }
 \details{
-function(x #< a valid comment
-){}
+\preformatted{function(x #< a valid comment
+        )\{\}
+}
 
-would associate \code{a valid comment} with \code{x}, but
-
-function(x){ #< not a valid comment
+would associate \code{a valid comment} with \code{x}, but\preformatted{function(x)\{ #< not a valid comment
+           \}
 }
 
 would not.

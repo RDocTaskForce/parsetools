@@ -11,7 +11,7 @@ pd_identify(pd, object)
 
 \method{pd_identify}{default}(pd, object)
 
-\method{pd_identify}{NULL}(pd, object)
+\method{pd_identify}{`NULL`}(pd, object)
 
 \method{pd_identify}{srcref}(pd, object)
 }
