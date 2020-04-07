@@ -1,7 +1,5 @@
 ## Test environments
-* local windows install, R-devel r77730
-* local windows install, R 3.6.2
-* ubuntu 14.04 (on travis-ci), R 3.6.0
+* local windows install, R 3.6.3
 * win-builder (devel and release)
 * r-hub builder
 
@@ -13,4 +11,5 @@
 
 ## Notes
 
-This fixes the bug related to the parser change introduced in 77722.
+This is a minor fix to make the licenses in the individual files match
+the GPL-2 listed in the DESCRIPTION.
